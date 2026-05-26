@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title>ğŸ’˜ LoveVersus</title>
+    <title> LoveVersus</title>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -603,8 +603,8 @@
 <div class="app-container" id="appContainer">
     <header class="app-header">
         <div class="header-brand">
-            <div class="header-logo">ğŸ’˜</div>
-            <span class="header-title">Love<span class="gold-dot">âœ¦</span>Versus</span>
+            <div class="header-logo"></div>
+            <span class="header-title">Love<span class="gold-dot"></span>Versus</span>
         </div>
         <div class="header-user-pill" id="headerUserPill">
             <div class="header-avatar-placeholder" id="headerAvatarPlaceholder">?</div>
@@ -614,12 +614,12 @@
     </header>
 
     <main class="main-content" id="mainContent">
-        <!-- SecciÃ³n Citas -->
+        <!-- Sección Citas -->
         <section class="section active" id="sectionDating">
             <div class="dating-card-container">
                 <div class="dating-card" id="datingCard">
                     <img class="dating-card-photo" id="datingPhoto" src="" alt="Foto">
-                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder">ğŸ“¸</div>
+                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder"></div>
                     <div class="dating-card-gradient-overlay"></div>
                     <div class="dating-card-info">
                         <div class="dating-card-name-age">
@@ -630,12 +630,12 @@
                     </div>
                 </div>
                 <div class="dating-actions" id="datingActions">
-                    <button class="btn-action btn-dislike" id="btnDislike">âŒ</button>
-                    <button class="btn-action btn-superlike" id="btnSuperlike">â­</button>
-                    <button class="btn-action btn-like" id="btnLike">ğŸ’˜</button>
+                    <button class="btn-action btn-dislike" id="btnDislike"></button>
+                    <button class="btn-action btn-superlike" id="btnSuperlike"></button>
+                    <button class="btn-action btn-like" id="btnLike"></button>
                 </div>
                 <div class="empty-state" id="emptyDating">
-                    <div class="empty-state-icon">ğŸ’”</div>
+                    <div class="empty-state-icon"></div>
                     <h3 id="emptyDatingTitle">Cargando perfiles...</h3>
                     <p id="emptyDatingDesc">Conectando con Supabase.</p>
                     <div class="debug-error" id="debugError"></div>
@@ -644,25 +644,25 @@
             </div>
         </section>
 
-        <!-- SecciÃ³n Juegos -->
+        <!-- Sección Juegos -->
         <section class="section" id="sectionGames">
             <div id="gameMenu" class="game-menu">
                 <div class="game-card" id="btnTrivia">
-                    <h3>ğŸ§  Trivia Versus 1vs1</h3>
+                    <h3> Trivia Versus 1vs1</h3>
                     <p>Responde preguntas, reta a un amigo y descubre su compatibilidad</p>
                 </div>
                 <div class="game-card" id="btnCompatibilidad">
-                    <h3>ğŸ’ Test de Compatibilidad</h3>
+                    <h3> Test de Compatibilidad</h3>
                     <p>10 preguntas para conocer tu estilo de cita ideal</p>
                 </div>
                 <!-- Tienda de Fichas -->
                 <div style="margin-top: 24px;">
-                    <h3 style="font-size:18px; margin-bottom:12px;">ğŸª™ Tienda de Fichas</h3>
+                    <h3 style="font-size:18px; margin-bottom:12px;"> Tienda de Fichas</h3>
                     <p style="color:var(--text-secondary); margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p>
                     <div style="display:flex; flex-direction:column; gap:10px;">
-                        <button onclick="comprarFichas('buy_stars_50')" class="btn">ğŸª™ 50 Fichas (50 â­)</button>
-                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline">ğŸš€ Boost de Perfil (100 â­)</button>
-                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline">ğŸ† Entrada a Torneo (200 â­)</button>
+                        <button onclick="comprarFichas('buy_stars_50')" class="btn"> 50 Fichas (50 )</button>
+                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline"> Boost de Perfil (100 )</button>
+                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline"> Entrada a Torneo (200 )</button>
                     </div>
                     <p style="margin-top:12px; color:var(--text-secondary);">Tu saldo: <span id="saldoUsuario">0</span> fichas</p>
                 </div>
@@ -672,23 +672,23 @@
             <div id="triviaFlow" class="hidden" style="padding:16px;">
                 <div id="triviaPaso1">
                     <h3>Nueva partida de Trivia</h3>
-                    <p style="color:var(--text-secondary); margin:12px 0;">Elige cÃ³mo jugar:</p>
-                    <button class="btn" id="btnCrearPartida">â• Crear partida</button>
-                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;">ğŸ”— Unirse a partida</button>
+                    <p style="color:var(--text-secondary); margin:12px 0;">Elige cómo jugar:</p>
+                    <button class="btn" id="btnCrearPartida"> Crear partida</button>
+                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;"> Unirse a partida</button>
                 </div>
                 <div id="triviaPasoCrear" class="hidden">
                     <h3>Partida creada</h3>
-                    <p style="margin:12px 0;">Tu cÃ³digo de partida es:</p>
+                    <p style="margin:12px 0;">Tu código de partida es:</p>
                     <div class="code-input" id="codigoPartidaCreada">-----</div>
-                    <p style="color:var(--text-secondary); margin-top:8px;">Pasa este cÃ³digo a tu amigo para que se una. Luego pulsa comenzar.</p>
-                    <button class="btn" id="btnComenzarTrivia">â–¶ï¸ Comenzar a responder</button>
+                    <p style="color:var(--text-secondary); margin-top:8px;">Pasa este código a tu amigo para que se una. Luego pulsa comenzar.</p>
+                    <button class="btn" id="btnComenzarTrivia"> Comenzar a responder</button>
                 </div>
                 <div id="triviaPasoUnirse" class="hidden">
                     <h3>Unirse a partida</h3>
-                    <p style="margin:12px 0;">Ingresa el cÃ³digo:</p>
+                    <p style="margin:12px 0;">Ingresa el código:</p>
                     <input type="number" class="code-input" id="inputCodigoUnirse" placeholder="Ej: 123">
-                    <button class="btn" id="btnUnirseConfirmar">ğŸ” Buscar y unirse</button>
-                    <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">CÃ³digo no vÃ¡lido o partida ya comenzada.</p>
+                    <button class="btn" id="btnUnirseConfirmar"> Buscar y unirse</button>
+                    <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">Código no válido o partida ya comenzada.</p>
                 </div>
                 <div id="triviaPreguntas" class="hidden">
                     <h3 id="triviaPreguntaTitulo">Pregunta 1/5</h3>
@@ -700,7 +700,7 @@
                     <h3 style="text-align:center;">Resultado de compatibilidad</h3>
                     <div class="compatibility-circle" id="compatibilityScore">0%</div>
                     <p style="text-align:center; font-size:18px;" id="compatibilidadMensaje"></p>
-                    <button class="btn" id="btnVolverMenu">Volver al menÃº</button>
+                    <button class="btn" id="btnVolverMenu">Volver al menú</button>
                 </div>
             </div>
 
@@ -715,12 +715,12 @@
                     <h3 style="text-align:center;">Tu perfil de cita ideal</h3>
                     <div class="compatibility-circle" id="compatScoreCircle">0%</div>
                     <p style="text-align:center; font-size:18px;" id="compatMensaje"></p>
-                    <button class="btn" id="btnVolverMenuCompat">Volver al menÃº</button>
+                    <button class="btn" id="btnVolverMenuCompat">Volver al menú</button>
                 </div>
             </div>
         </section>
 
-        <!-- SecciÃ³n Perfil -->
+        <!-- Sección Perfil -->
         <section class="section" id="sectionProfile">
             <div class="profile-container">
                 <div class="profile-avatar-placeholder-large" id="profileAvatarPlaceholder">?</div>
@@ -738,9 +738,9 @@
     </main>
 
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">ğŸ’˜</span><span>Citas</span></button>
-        <button class="nav-item" data-section="sectionGames"><span class="nav-icon">ğŸ•¹ï¸</span><span>Versus</span></button>
-        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">ğŸ‘¤</span><span>Perfil</span></button>
+        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon"></span><span>Citas</span></button>
+        <button class="nav-item" data-section="sectionGames"><span class="nav-icon"></span><span>Versus</span></button>
+        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon"></span><span>Perfil</span></button>
     </nav>
 </div>
 
@@ -751,7 +751,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 <script>
 (function() {
-    // ConfiguraciÃ³n
+    // Configuración
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
     let supabaseClient, tgUser, currentSection = 'sectionDating';
@@ -762,16 +762,16 @@
     let currentGameId = null, currentPlayerNumber = 1, triviaResponses = [];
     let allTriviaQuestions = [], currentTriviaQIndex = 0;
     const preguntasCompatibilidad = [
-        { pregunta: "Â¿QuÃ© prefieres en una primera cita?", opciones: ["Cena romÃ¡ntica", "Aventura al aire libre", "CafÃ© y conversaciÃ³n", "Cine en casa"] },
-        { pregunta: "Â¿QuÃ© cualidad valoras mÃ¡s?", opciones: ["Sentido del humor", "Inteligencia", "Amabilidad", "Espontaneidad"] },
-        { pregunta: "Â¿CuÃ¡l es tu plan ideal de fin de semana?", opciones: ["Fiesta con amigos", "Viaje improvisado", "MaratÃ³n de series", "Leer un buen libro"] },
-        { pregunta: "Â¿CÃ³mo te describes?", opciones: ["Aventurero/a", "Tranquilo/a", "Sociable", "Creativo/a"] },
-        { pregunta: "Â¿QuÃ© no soportas?", opciones: ["La impuntualidad", "La falta de ambiciÃ³n", "La mala higiene", "La arrogancia"] },
-        { pregunta: "Â¿CuÃ¡l es tu lenguaje del amor?", opciones: ["Palabras de afirmaciÃ³n", "Actos de servicio", "Tiempo de calidad", "Contacto fÃ­sico"] },
-        { pregunta: "Â¿QuÃ© tipo de mÃºsica prefieres?", opciones: ["Pop", "Rock", "ElectrÃ³nica", "Indie"] },
-        { pregunta: "Â¿QuÃ© te hace reÃ­r?", opciones: ["Chistes malos", "Sarcasmo", "Situaciones absurdas", "Memes"] },
-        { pregunta: "Â¿CÃ³mo manejas los conflictos?", opciones: ["Hablando directamente", "Dando espacio", "Buscando compromisos", "EvitÃ¡ndolos"] },
-        { pregunta: "Â¿QuÃ© esperas de una relaciÃ³n?", opciones: ["Apoyo mutuo", "DiversiÃ³n constante", "Crecimiento personal", "Estabilidad"] }
+        { pregunta: "¿Qué prefieres en una primera cita?", opciones: ["Cena romántica", "Aventura al aire libre", "Café y conversación", "Cine en casa"] },
+        { pregunta: "¿Qué cualidad valoras más?", opciones: ["Sentido del humor", "Inteligencia", "Amabilidad", "Espontaneidad"] },
+        { pregunta: "¿Cuál es tu plan ideal de fin de semana?", opciones: ["Fiesta con amigos", "Viaje improvisado", "Maratón de series", "Leer un buen libro"] },
+        { pregunta: "¿Cómo te describes?", opciones: ["Aventurero/a", "Tranquilo/a", "Sociable", "Creativo/a"] },
+        { pregunta: "¿Qué no soportas?", opciones: ["La impuntualidad", "La falta de ambición", "La mala higiene", "La arrogancia"] },
+        { pregunta: "¿Cuál es tu lenguaje del amor?", opciones: ["Palabras de afirmación", "Actos de servicio", "Tiempo de calidad", "Contacto físico"] },
+        { pregunta: "¿Qué tipo de música prefieres?", opciones: ["Pop", "Rock", "Electrónica", "Indie"] },
+        { pregunta: "¿Qué te hace reír?", opciones: ["Chistes malos", "Sarcasmo", "Situaciones absurdas", "Memes"] },
+        { pregunta: "¿Cómo manejas los conflictos?", opciones: ["Hablando directamente", "Dando espacio", "Buscando compromisos", "Evitándolos"] },
+        { pregunta: "¿Qué esperas de una relación?", opciones: ["Apoyo mutuo", "Diversión constante", "Crecimiento personal", "Estabilidad"] }
     ];
     let respuestasCompat = [];
 
@@ -786,7 +786,7 @@
         setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
-    // NavegaciÃ³n
+    // Navegación
     function switchSection(sectionId) {
         if (currentSection === sectionId) return;
         currentSection = sectionId;
@@ -859,7 +859,7 @@
             datingQueue = data.filter(u => !interacted.has(u.telegram_id));
             if (datingQueue.length===0) {
                 $('#emptyDatingTitle').textContent = 'Ya viste todos';
-                $('#emptyDatingDesc').textContent = 'Vuelve mÃ¡s tarde.';
+                $('#emptyDatingDesc').textContent = 'Vuelve más tarde.';
                 showEmpty(true); return;
             }
             currentProfileIdx = 0;
@@ -896,7 +896,7 @@
         const p = datingQueue[currentProfileIdx];
         interacted.add(p.telegram_id);
         localStorage.setItem('lv_interacted', JSON.stringify([...interacted]));
-        showToast(type==='like'?'ğŸ’˜ Â¡Te gusta!':type==='super'?'â­ Super Like':'âŒ Descartado');
+        showToast(type==='like'?' ¡Te gusta!':type==='super'?' Super Like':' Descartado');
         currentProfileIdx++;
         if (currentProfileIdx < datingQueue.length) {
             animateCard(() => { showProfile(); animateCardIn(); });
@@ -966,11 +966,11 @@
     });
     async function cargarPreguntasTrivia() {
         const todas = [
-            { pregunta: "Â¿CuÃ¡l es el ocÃ©ano mÃ¡s grande?", opciones: ["AtlÃ¡ntico", "Ãndico", "PacÃ­fico", "Ãrtico"], correcta: 2 },
-            { pregunta: "Â¿QuiÃ©n escribiÃ³ 'Cien aÃ±os de soledad'?", opciones: ["Vargas Llosa", "GarcÃ­a MÃ¡rquez", "Allende", "Borges"], correcta: 1 },
-            { pregunta: "Â¿CuÃ¡ntos planetas hay en el sistema solar?", opciones: ["7", "8", "9", "10"], correcta: 1 },
-            { pregunta: "Â¿CuÃ¡l es el rÃ­o mÃ¡s largo del mundo?", opciones: ["Nilo", "Amazonas", "YangtsÃ©", "Misisipi"], correcta: 1 },
-            { pregunta: "Â¿En quÃ© aÃ±o llegÃ³ el hombre a la Luna?", opciones: ["1965", "1969", "1971", "1967"], correcta: 1 }
+            { pregunta: "¿Cuál es el océano más grande?", opciones: ["Atlántico", "Índico", "Pacífico", "Ártico"], correcta: 2 },
+            { pregunta: "¿Quién escribió 'Cien años de soledad'?", opciones: ["Vargas Llosa", "García Márquez", "Allende", "Borges"], correcta: 1 },
+            { pregunta: "¿Cuántos planetas hay en el sistema solar?", opciones: ["7", "8", "9", "10"], correcta: 1 },
+            { pregunta: "¿Cuál es el río más largo del mundo?", opciones: ["Nilo", "Amazonas", "Yangtsé", "Misisipi"], correcta: 1 },
+            { pregunta: "¿En qué año llegó el hombre a la Luna?", opciones: ["1965", "1969", "1971", "1967"], correcta: 1 }
         ];
         allTriviaQuestions = todas.sort(()=>Math.random()-0.5).slice(0,5);
     }
@@ -1026,7 +1026,7 @@
         $('#triviaResultado').classList.remove('hidden');
         $('#compatibilityScore').textContent = score+'%';
         $('#compatibilityScore').style.background = `conic-gradient(var(--accent-green) 0% ${score}%, #2a2a2a ${score}% 100%)`;
-        $('#compatibilidadMensaje').textContent = score>70 ? 'Â¡Gran compatibilidad! ğŸ’˜' : 'PodrÃ­an ser buenos amigos.';
+        $('#compatibilidadMensaje').textContent = score>70 ? '¡Gran compatibilidad! ' : 'Podrían ser buenos amigos.';
     }
     $('#btnVolverMenu').addEventListener('click', resetGamesView);
 
@@ -1066,46 +1066,29 @@
         $('#compatScoreCircle').textContent = porcentaje+'%';
         $('#compatScoreCircle').style.background = `conic-gradient(var(--accent-gold) 0% ${porcentaje}%, #2a2a2a ${porcentaje}% 100%)`;
         let mensaje = '';
-        if(porcentaje>80) mensaje='Eres un espÃ­ritu libre. Busca a alguien que te siga el ritmo.';
-        else if(porcentaje>50) mensaje='Valoras la estabilidad y la buena conversaciÃ³n.';
-        else mensaje='Eres Ãºnico/a. Alguien autÃ©ntico te conviene.';
+        if(porcentaje>80) mensaje='Eres un espíritu libre. Busca a alguien que te siga el ritmo.';
+        else if(porcentaje>50) mensaje='Valoras la estabilidad y la buena conversación.';
+        else mensaje='Eres único/a. Alguien auténtico te conviene.';
         $('#compatMensaje').textContent = mensaje;
     }
     $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
 
-    // ======================== PAGOS CON TELEGRAM STARS ========================
-    async function comprarFichas(productId) {
-        if (!tgUser || !tgUser.id) {
-            showToast('Debes iniciar sesiÃ³n en Telegram', 'error');
+    // ======================== PAGOS CON TELEGRAM STARS (FLUJO NATIVO) ========================
+    function comprarFichas(productId) {
+        if (!window.Telegram?.WebApp) {
+            showToast('Abre la app desde Telegram', 'error');
             return;
         }
-        try {
-            const { data: invoiceLink, error } = await supabaseClient
-                .rpc('create_invoice', { user_id: tgUser.id, product_id: productId });
-            if (error) throw error;
-            if (!invoiceLink) throw new Error('No se obtuvo enlace de pago');
 
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
-                    if (status === 'paid') {
-                        let fichas = 0;
-                        if (productId === 'buy_stars_50') fichas = 50;
-                        else if (productId === 'entrada_torneo') fichas = 200;
-                        if (fichas > 0) {
-                            await supabaseClient.rpc('add_fichas', { user_id: tgUser.id, amount: fichas });
-                        }
-                        showToast('âœ… Â¡Compra exitosa!', 'success');
-                        actualizarSaldoUI();
-                    } else {
-                        showToast('Pago cancelado', '');
-                    }
-                });
-            } else {
-                showToast('Abre la app desde Telegram para pagar', '');
-            }
-        } catch (e) {
-            showToast('Error: ' + e.message, 'error');
+        const productosValidos = ['buy_stars_50', 'boost_perfil', 'entrada_torneo'];
+        if (!productosValidos.includes(productId)) {
+            showToast('Producto no válido', 'error');
+            return;
         }
+
+        // Enviar señal al bot (esto abre el chat automáticamente)
+        window.Telegram.WebApp.sendData(productId);
+        showToast(' Revisa el chat con el bot para pagar', 'success');
     }
 
     async function actualizarSaldoUI() {
@@ -1125,7 +1108,7 @@
             loadingOverlay.classList.add('hidden');
             setTimeout(()=>loadingOverlay.remove(),500);
         },800);
-        setTimeout(()=> showToast('ğŸš€ Â¡Bienvenido/a!', 'success'), 1200);
+        setTimeout(()=> showToast(' ¡Bienvenido/a!', 'success'), 1200);
     }
     document.readyState==='loading' ? document.addEventListener('DOMContentLoaded', init) : init();
 })();
