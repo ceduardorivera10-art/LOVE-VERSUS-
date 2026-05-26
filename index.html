@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title> LoveVersus - Citas & Juegos</title>
+    <title>üíò LoveVersus</title>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -20,124 +20,622 @@
             --text-primary: #f5f5f5;
             --text-secondary: #b0b0b0;
             --text-tertiary: #6e6e6e;
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
             --radius-lg: 20px;
             --radius-md: 16px;
-            --radius-full: 9999px;
+            --radius-full: 50%;
             --nav-height: 64px;
             --header-height: 52px;
-            --safe-area-bottom: env(safe-area-inset-bottom, 12px);
+            --safe-bottom: env(safe-area-inset-bottom, 12px);
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html, body { height:100%; width:100%; background:var(--bg-primary); color:var(--text-primary); font-family:-apple-system, sans-serif; overflow:hidden; -webkit-tap-highlight-color:transparent; user-select:none; }
-        .app-container { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:480px; margin:0 auto; background:var(--bg-primary); position:relative; }
-        .app-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; min-height:var(--header-height); background:var(--bg-secondary); border-bottom:1px solid #1f1f1f; z-index:100; }
-        .header-brand { display:flex; align-items:center; gap:10px; }
-        .header-logo { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display:flex; align-items:center; justify-content:center; font-size:18px; }
-        .header-title { font-size:17px; font-weight:700; }
-        .gold-dot { color:var(--accent-gold); }
-        .header-user-pill { display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid #2a2a2a; border-radius:30px; padding:5px 12px 5px 5px; cursor:pointer; }
-        .header-avatar, .header-avatar-placeholder { width:30px; height:30px; border-radius:50%; }
-        .header-avatar { object-fit:cover; display:none; }
-        .header-avatar-placeholder { background:linear-gradient(135deg, var(--accent-blue), #af52de); display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; font-weight:700; }
-        .header-user-name { font-size:13px; font-weight:600; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .main-content { flex:1; overflow-y:auto; padding-bottom:calc(var(--nav-height) + var(--safe-area-bottom) + 8px); }
-        .section { display:none; min-height:100%; animation: fadeSlideIn 0.3s ease; }
-        .section.active { display:block; }
-        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.4;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            min-height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid #1f1f1f;
+            z-index: 100;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .gold-dot {
+            color: var(--accent-gold);
+        }
+
+        .header-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-radius: 30px;
+            padding: 5px 12px 5px 5px;
+            cursor: pointer;
+        }
+
+        .header-avatar, .header-avatar-placeholder {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-full);
+        }
+
+        .header-avatar {
+            object-fit: cover;
+            display: none;
+        }
+
+        .header-avatar-placeholder {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .header-user-name {
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 8px);
+        }
+
+        .section {
+            display: none;
+            min-height: 100%;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* Citas */
-        .dating-card-container { display:flex; flex-direction:column; align-items:center; padding:20px 16px; gap:20px; }
-        .dating-card { width:100%; max-width:360px; background:var(--bg-card); border-radius:var(--radius-lg); overflow:hidden; position:relative; border:1px solid #1f1f1f; display:none; }
-        .dating-card-photo { width:100%; height:280px; object-fit:cover; display:none; }
-        .dating-card-photo-placeholder { width:100%; height:280px; background:linear-gradient(135deg, #1a1a2e, #1e1e3a); display:flex; align-items:center; justify-content:center; font-size:90px; position:relative; }
-        .dating-card-gradient-overlay { position:absolute; bottom:0; left:0; right:0; height:100px; background:linear-gradient(transparent, rgba(10,10,10,0.85)); pointer-events:none; }
-        .dating-card-info { padding:16px 18px; position:relative; z-index:2; margin-top:-40px; }
-        .dating-card-name-age { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-        .dating-card-name { font-size:22px; font-weight:700; }
-        .dating-card-age { font-size:20px; color:var(--text-secondary); }
-        .dating-card-bio { font-size:14px; color:var(--text-secondary); line-height:1.4; margin-top:6px; }
-        .dating-actions { display:flex; gap:24px; justify-content:center; padding:8px 0 16px; display:none; }
-        .btn-action { width:56px; height:56px; border-radius:50%; border:2px solid #2a2a2a; background:var(--bg-card); font-size:26px; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; }
-        .btn-action:active { transform:scale(0.88); }
-        .btn-dislike { color:#ff3b30; border-color:#ff3b3050; }
-        .btn-like { color:#34c759; border-color:#34c75950; }
-        .btn-superlike { color:var(--accent-gold); border-color:var(--accent-gold); width:46px; height:46px; font-size:20px; }
-        .empty-state { text-align:center; padding:40px 20px; color:var(--text-tertiary); display:none; }
-        .empty-state-icon { font-size:60px; opacity:0.6; }
+        .dating-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            gap: 20px;
+        }
+
+        .dating-card {
+            width: 100%;
+            max-width: 360px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid #1f1f1f;
+            display: none;
+        }
+
+        .dating-card-photo {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: none;
+        }
+
+        .dating-card-photo-placeholder {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #1a1a2e, #1e1e3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 90px;
+            position: relative;
+        }
+
+        .dating-card-gradient-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(transparent, rgba(10,10,10,0.85));
+            pointer-events: none;
+        }
+
+        .dating-card-info {
+            padding: 16px 18px;
+            position: relative;
+            z-index: 2;
+            margin-top: -40px;
+        }
+
+        .dating-card-name-age {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .dating-card-name {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .dating-card-age {
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        .dating-card-bio {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .dating-actions {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            padding: 8px 0 16px;
+            display: none;
+        }
+
+        .btn-action {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            border: 2px solid #2a2a2a;
+            background: var(--bg-card);
+            font-size: 26px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-action:active {
+            transform: scale(0.88);
+        }
+
+        .btn-dislike {
+            color: #ff3b30;
+            border-color: #ff3b3050;
+        }
+
+        .btn-like {
+            color: #34c759;
+            border-color: #34c75950;
+        }
+
+        .btn-superlike {
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+            width: 46px;
+            height: 46px;
+            font-size: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+            display: none;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            opacity: 0.6;
+        }
 
         /* Juegos */
-        .game-menu { display:flex; flex-direction:column; gap:14px; padding:16px; }
-        .game-card { background:var(--bg-card); border-radius:var(--radius-lg); padding:20px; cursor:pointer; transition:0.2s; border:1px solid #1f1f1f; }
-        .game-card:active { transform:scale(0.97); background:#1e1e1e; }
-        .game-card h3 { font-size:18px; margin-bottom:6px; }
-        .game-card p { font-size:14px; color:var(--text-secondary); }
-        .btn { background:var(--accent-blue); color:#fff; border:none; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; cursor:pointer; transition:0.2s; width:100%; margin-top:12px; }
-        .btn:active { opacity:0.8; transform:scale(0.97); }
-        .btn-outline { background:transparent; border:2px solid var(--accent-blue); color:var(--accent-blue); }
-        .option-btn { background:#1c1c1e; border:2px solid #2a2a2a; color:var(--text-primary); padding:14px; border-radius:12px; font-size:15px; cursor:pointer; transition:0.2s; text-align:left; margin-bottom:8px; width:100%; }
-        .option-btn.selected { border-color:var(--accent-blue); background:#1a2a3a; }
-        .code-input { width:100%; background:#1c1c1e; border:2px solid #2a2a2a; color:#fff; padding:12px; border-radius:12px; font-size:16px; text-align:center; letter-spacing:2px; }
-        .compatibility-circle { width:120px; height:120px; border-radius:50%; background:conic-gradient(var(--accent-green) 0% var(--score), #2a2a2a var(--score) 100%); display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:700; margin:20px auto; }
-        .hidden { display:none !important; }
-        .debug-error { background:#ff3b3010; border:1px solid #ff3b30; color:#ff3b30; padding:10px; border-radius:8px; margin-top:10px; font-size:12px; display:none; }
+        .game-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #1f1f1f;
+        }
+
+        .game-card:active {
+            transform: scale(0.97);
+            background: #1e1e1e;
+        }
+
+        .game-card h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .game-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .option-btn {
+            background: #1c1c1e;
+            border: 2px solid #2a2a2a;
+            color: var(--text-primary);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .option-btn:active {
+            background: #2a2a2a;
+        }
+
+        .code-input {
+            width: 100%;
+            background: #1c1c1e;
+            border: 2px solid #2a2a2a;
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .compatibility-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius-full);
+            background: conic-gradient(var(--accent-green) 0% var(--score), #2a2a2a var(--score) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin: 20px auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .debug-error {
+            background: #ff3b3010;
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+            display: none;
+        }
 
         /* Perfil */
-        .profile-container { padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:16px; }
-        .profile-avatar-large { width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid var(--accent-gold); box-shadow:0 0 20px rgba(201,168,76,0.15); }
-        .profile-avatar-placeholder-large { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display:flex; align-items:center; justify-content:center; font-size:40px; color:#fff; font-weight:700; border:3px solid var(--accent-gold); }
-        .profile-name { font-size:22px; font-weight:700; text-align:center; }
-        .profile-username { font-size:14px; color:var(--accent-blue); text-align:center; }
-        .profile-id-text { font-size:11px; color:var(--text-tertiary); text-align:center; font-family:monospace; background:#1c1c1e; padding:4px 10px; border-radius:6px; }
-        .profile-stats { display:flex; gap:20px; justify-content:center; width:100%; }
-        .profile-stat { text-align:center; background:var(--bg-card); border-radius:var(--radius-md); padding:12px 16px; border:1px solid #1f1f1f; flex:1; max-width:100px; }
-        .profile-stat-value { font-size:20px; font-weight:700; }
-        .profile-stat-label { font-size:10px; color:var(--text-tertiary); text-transform:uppercase; margin-top:2px; }
+        .profile-container {
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
 
-        .bottom-nav { position:absolute; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:var(--bg-nav); border-top:1px solid #1f1f1f; padding:6px 8px var(--safe-area-bottom); height:calc(var(--nav-height) + var(--safe-area-bottom)); backdrop-filter:blur(20px); }
-        .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 14px; border-radius:10px; border:none; background:transparent; color:var(--text-tertiary); font-family:inherit; position:relative; }
-        .nav-item.active { color:var(--accent-blue); }
-        .nav-item.active::before { content:''; position:absolute; top:-7px; width:24px; height:3px; background:var(--accent-blue); border-radius:0 0 3px 3px; }
-        .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-120px); background:var(--bg-card); border:1px solid #2a2a2a; padding:12px 20px; border-radius:30px; font-size:13px; font-weight:600; z-index:999; transition:0.3s; pointer-events:none; }
-        .toast.show { transform:translateX(-50%) translateY(0); }
-        .toast.success { border-color:#34c759; color:#34c759; }
-        .toast.error { border-color:#ff3b30; color:#ff3b30; }
-        .loading-overlay { position:fixed; inset:0; background:var(--bg-primary); display:flex; align-items:center; justify-content:center; z-index:1000; transition:0.4s; }
-        .loading-overlay.hidden { opacity:0; pointer-events:none; }
-        .spinner { width:36px; height:36px; border:3px solid #2a2a2a; border-top-color:var(--accent-blue); border-radius:50%; animation:spin 0.7s linear infinite; }
-        @keyframes spin { to{transform:rotate(360deg);} }
+        .profile-avatar-large {
+            width: 90px;
+            height: 90px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 20px rgba(201,168,76,0.15);
+        }
+
+        .profile-avatar-placeholder-large {
+            width: 90px;
+            height: 90px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 700;
+            border: 3px solid var(--accent-gold);
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .profile-username {
+            font-size: 14px;
+            color: var(--accent-blue);
+            text-align: center;
+        }
+
+        .profile-id-text {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-align: center;
+            font-family: monospace;
+            background: #1c1c1e;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .profile-stat {
+            text-align: center;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            border: 1px solid #1f1f1f;
+            flex: 1;
+            max-width: 100px;
+        }
+
+        .profile-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .profile-stat-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background: var(--bg-nav);
+            border-top: 1px solid #1f1f1f;
+            padding: 6px 8px var(--safe-bottom);
+            height: calc(var(--nav-height) + var(--safe-bottom));
+            backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-tertiary);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-blue);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -7px;
+            width: 24px;
+            height: 3px;
+            background: var(--accent-blue);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 999;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-color: #34c759;
+            color: #34c759;
+        }
+
+        .toast.error {
+            border-color: #ff3b30;
+            color: #ff3b30;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: 0.4s;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #2a2a2a;
+            border-top-color: var(--accent-blue);
+            border-radius: var(--radius-full);
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 <div class="app-container" id="appContainer">
     <header class="app-header">
-        <div class="header-brand"><div class="header-logo"></div><span class="header-title">Love<span class="gold-dot"></span>Versus</span></div>
+        <div class="header-brand">
+            <div class="header-logo">üíò</div>
+            <span class="header-title">Love<span class="gold-dot">‚ú¶</span>Versus</span>
+        </div>
         <div class="header-user-pill" id="headerUserPill">
             <div class="header-avatar-placeholder" id="headerAvatarPlaceholder">?</div>
             <img class="header-avatar" id="headerAvatar" src="" alt="Avatar">
             <span class="header-user-name" id="headerUserName">Cargando...</span>
         </div>
     </header>
+
     <main class="main-content" id="mainContent">
-        <!--  CITAS -->
+        <!-- Secci√≥n Citas -->
         <section class="section active" id="sectionDating">
             <div class="dating-card-container">
                 <div class="dating-card" id="datingCard">
                     <img class="dating-card-photo" id="datingPhoto" src="" alt="Foto">
-                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder"></div>
+                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder">üì∏</div>
                     <div class="dating-card-gradient-overlay"></div>
                     <div class="dating-card-info">
-                        <div class="dating-card-name-age"><span class="dating-card-name" id="datingName"></span><span class="dating-card-age" id="datingAge"></span></div>
+                        <div class="dating-card-name-age">
+                            <span class="dating-card-name" id="datingName"></span>
+                            <span class="dating-card-age" id="datingAge"></span>
+                        </div>
                         <p class="dating-card-bio" id="datingBio"></p>
                     </div>
                 </div>
                 <div class="dating-actions" id="datingActions">
-                    <button class="btn-action btn-dislike" id="btnDislike"></button>
-                    <button class="btn-action btn-superlike" id="btnSuperlike"></button>
-                    <button class="btn-action btn-like" id="btnLike"></button>
+                    <button class="btn-action btn-dislike" id="btnDislike">‚ùå</button>
+                    <button class="btn-action btn-superlike" id="btnSuperlike">‚≠ê</button>
+                    <button class="btn-action btn-like" id="btnLike">üíò</button>
                 </div>
                 <div class="empty-state" id="emptyDating">
-                    <div class="empty-state-icon"></div>
+                    <div class="empty-state-icon">üíî</div>
                     <h3 id="emptyDatingTitle">Cargando perfiles...</h3>
                     <p id="emptyDatingDesc">Conectando con Supabase.</p>
                     <div class="debug-error" id="debugError"></div>
@@ -146,16 +644,27 @@
             </div>
         </section>
 
-        <!--  VERSUS (Juegos) -->
+        <!-- Secci√≥n Juegos -->
         <section class="section" id="sectionGames">
             <div id="gameMenu" class="game-menu">
                 <div class="game-card" id="btnTrivia">
-                    <h3> Trivia Versus 1vs1</h3>
+                    <h3>üß† Trivia Versus 1vs1</h3>
                     <p>Responde preguntas, reta a un amigo y descubre su compatibilidad</p>
                 </div>
                 <div class="game-card" id="btnCompatibilidad">
-                    <h3> Test de Compatibilidad</h3>
+                    <h3>üíû Test de Compatibilidad</h3>
                     <p>10 preguntas para conocer tu estilo de cita ideal</p>
+                </div>
+                <!-- Tienda de Fichas -->
+                <div style="margin-top: 24px;">
+                    <h3 style="font-size:18px; margin-bottom:12px;">ü™ô Tienda de Fichas</h3>
+                    <p style="color:var(--text-secondary); margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <button onclick="comprarFichas('buy_stars_50')" class="btn">ü™ô 50 Fichas (50 ‚≠ê)</button>
+                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline">üöÄ Boost de Perfil (100 ‚≠ê)</button>
+                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline">üèÜ Entrada a Torneo (200 ‚≠ê)</button>
+                    </div>
+                    <p style="margin-top:12px; color:var(--text-secondary);">Tu saldo: <span id="saldoUsuario">0</span> fichas</p>
                 </div>
             </div>
 
@@ -163,23 +672,23 @@
             <div id="triviaFlow" class="hidden" style="padding:16px;">
                 <div id="triviaPaso1">
                     <h3>Nueva partida de Trivia</h3>
-                    <p style="color:var(--text-secondary); margin:12px 0;">Elige cÛmo jugar:</p>
-                    <button class="btn" id="btnCrearPartida"> Crear partida</button>
-                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;"> Unirse a partida</button>
+                    <p style="color:var(--text-secondary); margin:12px 0;">Elige c√≥mo jugar:</p>
+                    <button class="btn" id="btnCrearPartida">‚ûï Crear partida</button>
+                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;">üîó Unirse a partida</button>
                 </div>
                 <div id="triviaPasoCrear" class="hidden">
                     <h3>Partida creada</h3>
-                    <p style="margin:12px 0;">Tu cÛdigo de partida es:</p>
+                    <p style="margin:12px 0;">Tu c√≥digo de partida es:</p>
                     <div class="code-input" id="codigoPartidaCreada">-----</div>
-                    <p style="color:var(--text-secondary); margin-top:8px;">Pasa este cÛdigo a tu amigo para que se una. Luego pulsa comenzar.</p>
-                    <button class="btn" id="btnComenzarTrivia"> Comenzar a responder</button>
+                    <p style="color:var(--text-secondary); margin-top:8px;">Pasa este c√≥digo a tu amigo para que se una. Luego pulsa comenzar.</p>
+                    <button class="btn" id="btnComenzarTrivia">‚ñ∂Ô∏è Comenzar a responder</button>
                 </div>
                 <div id="triviaPasoUnirse" class="hidden">
                     <h3>Unirse a partida</h3>
-                    <p style="margin:12px 0;">Ingresa el cÛdigo:</p>
+                    <p style="margin:12px 0;">Ingresa el c√≥digo:</p>
                     <input type="number" class="code-input" id="inputCodigoUnirse" placeholder="Ej: 123">
-                    <button class="btn" id="btnUnirseConfirmar"> Buscar y unirse</button>
-                    <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">CÛdigo no v·lido o partida ya comenzada.</p>
+                    <button class="btn" id="btnUnirseConfirmar">üîç Buscar y unirse</button>
+                    <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">C√≥digo no v√°lido o partida ya comenzada.</p>
                 </div>
                 <div id="triviaPreguntas" class="hidden">
                     <h3 id="triviaPreguntaTitulo">Pregunta 1/5</h3>
@@ -191,7 +700,7 @@
                     <h3 style="text-align:center;">Resultado de compatibilidad</h3>
                     <div class="compatibility-circle" id="compatibilityScore">0%</div>
                     <p style="text-align:center; font-size:18px;" id="compatibilidadMensaje"></p>
-                    <button class="btn" id="btnVolverMenu">Volver al men˙</button>
+                    <button class="btn" id="btnVolverMenu">Volver al men√∫</button>
                 </div>
             </div>
 
@@ -206,12 +715,12 @@
                     <h3 style="text-align:center;">Tu perfil de cita ideal</h3>
                     <div class="compatibility-circle" id="compatScoreCircle">0%</div>
                     <p style="text-align:center; font-size:18px;" id="compatMensaje"></p>
-                    <button class="btn" id="btnVolverMenuCompat">Volver al men˙</button>
+                    <button class="btn" id="btnVolverMenuCompat">Volver al men√∫</button>
                 </div>
             </div>
         </section>
 
-        <!--  PERFIL -->
+        <!-- Secci√≥n Perfil -->
         <section class="section" id="sectionProfile">
             <div class="profile-container">
                 <div class="profile-avatar-placeholder-large" id="profileAvatarPlaceholder">?</div>
@@ -222,17 +731,19 @@
                 <div class="profile-stats">
                     <div class="profile-stat"><span class="profile-stat-value">0</span><span class="profile-stat-label">Matches</span></div>
                     <div class="profile-stat"><span class="profile-stat-value">0</span><span class="profile-stat-label">Juegos</span></div>
-                    <div class="profile-stat"><span class="profile-stat-value">0</span><span class="profile-stat-label">Stars</span></div>
+                    <div class="profile-stat"><span class="profile-stat-value" id="saldoPerfil">0</span><span class="profile-stat-label">Fichas</span></div>
                 </div>
             </div>
         </section>
     </main>
+
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="sectionDating"><span style="font-size:22px;"></span><span>Citas</span></button>
-        <button class="nav-item" data-section="sectionGames"><span style="font-size:22px;"></span><span>Versus</span></button>
-        <button class="nav-item" data-section="sectionProfile"><span style="font-size:22px;"></span><span>Perfil</span></button>
+        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">üíò</span><span>Citas</span></button>
+        <button class="nav-item" data-section="sectionGames"><span class="nav-icon">üïπÔ∏è</span><span>Versus</span></button>
+        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">üë§</span><span>Perfil</span></button>
     </nav>
 </div>
+
 <div class="toast" id="toast"></div>
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
@@ -240,7 +751,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 <script>
 (function() {
-    // ======================== CONFIGURACI”N ========================
+    // Configuraci√≥n
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
     let supabaseClient, tgUser, currentSection = 'sectionDating';
@@ -251,16 +762,16 @@
     let currentGameId = null, currentPlayerNumber = 1, triviaResponses = [];
     let allTriviaQuestions = [], currentTriviaQIndex = 0;
     const preguntasCompatibilidad = [
-        { pregunta: "øQuÈ prefieres en una primera cita?", opciones: ["Cena rom·ntica", "Aventura al aire libre", "CafÈ y conversaciÛn", "Cine en casa"] },
-        { pregunta: "øQuÈ cualidad valoras m·s?", opciones: ["Sentido del humor", "Inteligencia", "Amabilidad", "Espontaneidad"] },
-        { pregunta: "øCu·l es tu plan ideal de fin de semana?", opciones: ["Fiesta con amigos", "Viaje improvisado", "MaratÛn de series", "Leer un buen libro"] },
-        { pregunta: "øCÛmo te describes?", opciones: ["Aventurero/a", "Tranquilo/a", "Sociable", "Creativo/a"] },
-        { pregunta: "øQuÈ no soportas?", opciones: ["La impuntualidad", "La falta de ambiciÛn", "La mala higiene", "La arrogancia"] },
-        { pregunta: "øCu·l es tu lenguaje del amor?", opciones: ["Palabras de afirmaciÛn", "Actos de servicio", "Tiempo de calidad", "Contacto fÌsico"] },
-        { pregunta: "øQuÈ tipo de m˙sica prefieres?", opciones: ["Pop", "Rock", "ElectrÛnica", "Indie"] },
-        { pregunta: "øQuÈ te hace reÌr?", opciones: ["Chistes malos", "Sarcasmo", "Situaciones absurdas", "Memes"] },
-        { pregunta: "øCÛmo manejas los conflictos?", opciones: ["Hablando directamente", "Dando espacio", "Buscando compromisos", "Evit·ndolos"] },
-        { pregunta: "øQuÈ esperas de una relaciÛn?", opciones: ["Apoyo mutuo", "DiversiÛn constante", "Crecimiento personal", "Estabilidad"] }
+        { pregunta: "¬øQu√© prefieres en una primera cita?", opciones: ["Cena rom√°ntica", "Aventura al aire libre", "Caf√© y conversaci√≥n", "Cine en casa"] },
+        { pregunta: "¬øQu√© cualidad valoras m√°s?", opciones: ["Sentido del humor", "Inteligencia", "Amabilidad", "Espontaneidad"] },
+        { pregunta: "¬øCu√°l es tu plan ideal de fin de semana?", opciones: ["Fiesta con amigos", "Viaje improvisado", "Marat√≥n de series", "Leer un buen libro"] },
+        { pregunta: "¬øC√≥mo te describes?", opciones: ["Aventurero/a", "Tranquilo/a", "Sociable", "Creativo/a"] },
+        { pregunta: "¬øQu√© no soportas?", opciones: ["La impuntualidad", "La falta de ambici√≥n", "La mala higiene", "La arrogancia"] },
+        { pregunta: "¬øCu√°l es tu lenguaje del amor?", opciones: ["Palabras de afirmaci√≥n", "Actos de servicio", "Tiempo de calidad", "Contacto f√≠sico"] },
+        { pregunta: "¬øQu√© tipo de m√∫sica prefieres?", opciones: ["Pop", "Rock", "Electr√≥nica", "Indie"] },
+        { pregunta: "¬øQu√© te hace re√≠r?", opciones: ["Chistes malos", "Sarcasmo", "Situaciones absurdas", "Memes"] },
+        { pregunta: "¬øC√≥mo manejas los conflictos?", opciones: ["Hablando directamente", "Dando espacio", "Buscando compromisos", "Evit√°ndolos"] },
+        { pregunta: "¬øQu√© esperas de una relaci√≥n?", opciones: ["Apoyo mutuo", "Diversi√≥n constante", "Crecimiento personal", "Estabilidad"] }
     ];
     let respuestasCompat = [];
 
@@ -270,11 +781,12 @@
     const toast = $('#toast');
     const loadingOverlay = $('#loadingOverlay');
     function showToast(msg, type='') {
-        toast.textContent = msg; toast.className = 'toast '+type+' show';
+        toast.textContent = msg;
+        toast.className = 'toast '+type+' show';
         setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
-    // ======================== NAVEGACI”N ========================
+    // Navegaci√≥n
     function switchSection(sectionId) {
         if (currentSection === sectionId) return;
         currentSection = sectionId;
@@ -282,11 +794,12 @@
         document.getElementById(sectionId).classList.add('active');
         $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.section === sectionId));
         $('#mainContent').scrollTop = 0;
+        if (sectionId === 'sectionProfile') actualizarSaldoUI();
     }
     $$('.nav-item').forEach(item => item.addEventListener('click', () => switchSection(item.dataset.section)));
     $('#headerUserPill').addEventListener('click', () => switchSection('sectionProfile'));
 
-    // ======================== TELEGRAM ========================
+    // Telegram
     function initTelegram() {
         if (window.Telegram?.WebApp) {
             const tg = window.Telegram.WebApp;
@@ -313,12 +826,13 @@
         }
     }
 
-    // ======================== SUPABASE ========================
+    // Supabase
     function initSupabase() {
         try {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             syncUser();
             loadDatingProfiles();
+            actualizarSaldoUI();
         } catch(e) { showToast('Error Supabase', 'error'); }
     }
     async function syncUser() {
@@ -331,29 +845,33 @@
         }, { onConflict: 'telegram_id' });
     }
 
-    // ======================== CITAS ========================
+    // Citas
     async function loadDatingProfiles() {
         if (!supabaseClient) return;
         try {
             const { data, error } = await supabaseClient.from('users').select('*').neq('telegram_id', tgUser.id);
             if (error) throw error;
             if (!data || data.length===0) {
-                $('#emptyDatingTitle').textContent = 'No hay perfiles'; $('#emptyDatingDesc').textContent = 'Agrega usuarios en Supabase.';
+                $('#emptyDatingTitle').textContent = 'No hay perfiles';
+                $('#emptyDatingDesc').textContent = 'Agrega usuarios en Supabase.';
                 showEmpty(true); return;
             }
             datingQueue = data.filter(u => !interacted.has(u.telegram_id));
             if (datingQueue.length===0) {
-                $('#emptyDatingTitle').textContent = 'Ya viste todos'; $('#emptyDatingDesc').textContent = 'Vuelve m·s tarde.';
+                $('#emptyDatingTitle').textContent = 'Ya viste todos';
+                $('#emptyDatingDesc').textContent = 'Vuelve m√°s tarde.';
                 showEmpty(true); return;
             }
             currentProfileIdx = 0;
             showProfile();
-        } catch(e) { showEmpty(true); $('#debugError').textContent = e.message; $('#debugError').style.display='block'; }
+        } catch(e) {
+            showEmpty(true);
+            $('#debugError').textContent = e.message;
+            $('#debugError').style.display='block';
+        }
     }
     function showProfile() {
-        if (!datingQueue.length || currentProfileIdx >= datingQueue.length) {
-            showEmpty(true); return;
-        }
+        if (!datingQueue.length || currentProfileIdx >= datingQueue.length) { showEmpty(true); return; }
         const p = datingQueue[currentProfileIdx];
         $('#datingCard').style.display='block'; $('#datingActions').style.display='flex';
         $('#emptyDating').style.display='none';
@@ -378,7 +896,7 @@
         const p = datingQueue[currentProfileIdx];
         interacted.add(p.telegram_id);
         localStorage.setItem('lv_interacted', JSON.stringify([...interacted]));
-        showToast(type==='like'?' °Te gusta!':type==='super'?' Super Like':' Descartado');
+        showToast(type==='like'?'üíò ¬°Te gusta!':type==='super'?'‚≠ê Super Like':'‚ùå Descartado');
         currentProfileIdx++;
         if (currentProfileIdx < datingQueue.length) {
             animateCard(() => { showProfile(); animateCardIn(); });
@@ -396,7 +914,7 @@
     $('#btnDislike').addEventListener('click', ()=>handleDatingAction('dislike'));
     $('#btnSuperlike').addEventListener('click', ()=>handleDatingAction('super'));
 
-    // ======================== JUEGOS ========================
+    // Juegos
     function resetGamesView() {
         $('#gameMenu').classList.remove('hidden');
         $('#triviaFlow').classList.add('hidden');
@@ -407,11 +925,7 @@
         $('#gameMenu').classList.add('hidden');
         $('#triviaFlow').classList.remove('hidden');
         $('#triviaPaso1').classList.remove('hidden');
-        // Ocultar los dem·s pasos
-        $('#triviaPasoCrear').classList.add('hidden');
-        $('#triviaPasoUnirse').classList.add('hidden');
-        $('#triviaPreguntas').classList.add('hidden');
-        $('#triviaResultado').classList.add('hidden');
+        ['triviaPasoCrear','triviaPasoUnirse','triviaPreguntas','triviaResultado'].forEach(id => $('#'+id).classList.add('hidden'));
     });
     $('#btnCrearPartida').addEventListener('click', async ()=>{
         await cargarPreguntasTrivia();
@@ -452,11 +966,11 @@
     });
     async function cargarPreguntasTrivia() {
         const todas = [
-            { pregunta: "øCu·l es el ocÈano m·s grande?", opciones: ["Atl·ntico", "Õndico", "PacÌfico", "¡rtico"], correcta: 2 },
-            { pregunta: "øQuiÈn escribiÛ 'Cien aÒos de soledad'?", opciones: ["Vargas Llosa", "GarcÌa M·rquez", "Allende", "Borges"], correcta: 1 },
-            { pregunta: "øCu·ntos planetas hay en el sistema solar?", opciones: ["7", "8", "9", "10"], correcta: 1 },
-            { pregunta: "øCu·l es el rÌo m·s largo del mundo?", opciones: ["Nilo", "Amazonas", "YangtsÈ", "Misisipi"], correcta: 1 },
-            { pregunta: "øEn quÈ aÒo llegÛ el hombre a la Luna?", opciones: ["1965", "1969", "1971", "1967"], correcta: 1 }
+            { pregunta: "¬øCu√°l es el oc√©ano m√°s grande?", opciones: ["Atl√°ntico", "√çndico", "Pac√≠fico", "√Årtico"], correcta: 2 },
+            { pregunta: "¬øQui√©n escribi√≥ 'Cien a√±os de soledad'?", opciones: ["Vargas Llosa", "Garc√≠a M√°rquez", "Allende", "Borges"], correcta: 1 },
+            { pregunta: "¬øCu√°ntos planetas hay en el sistema solar?", opciones: ["7", "8", "9", "10"], correcta: 1 },
+            { pregunta: "¬øCu√°l es el r√≠o m√°s largo del mundo?", opciones: ["Nilo", "Amazonas", "Yangts√©", "Misisipi"], correcta: 1 },
+            { pregunta: "¬øEn qu√© a√±o lleg√≥ el hombre a la Luna?", opciones: ["1965", "1969", "1971", "1967"], correcta: 1 }
         ];
         allTriviaQuestions = todas.sort(()=>Math.random()-0.5).slice(0,5);
     }
@@ -496,7 +1010,10 @@
             let matches = 0;
             for(let i=0; i<p1.length; i++) if(p1[i].selectedOption === p2[i].selectedOption) matches++;
             const compat = Math.round((matches/p1.length)*100);
-            await supabaseClient.from('trivia_games').update({ compatibility_score: compat, status:'completed', completed_at:new Date().toISOString() }).eq('id', currentGameId);
+            await supabaseClient.from('trivia_games').update({
+                compatibility_score: compat, status:'completed',
+                completed_at: new Date().toISOString()
+            }).eq('id', currentGameId);
             mostrarResultadoTrivia(compat);
         } else {
             $('#triviaPreguntas').classList.remove('hidden');
@@ -509,9 +1026,9 @@
         $('#triviaResultado').classList.remove('hidden');
         $('#compatibilityScore').textContent = score+'%';
         $('#compatibilityScore').style.background = `conic-gradient(var(--accent-green) 0% ${score}%, #2a2a2a ${score}% 100%)`;
-        $('#compatibilidadMensaje').textContent = score>70 ? '°Gran compatibilidad! ' : 'PodrÌan ser buenos amigos.';
+        $('#compatibilidadMensaje').textContent = score>70 ? '¬°Gran compatibilidad! üíò' : 'Podr√≠an ser buenos amigos.';
     }
-    $('#btnVolverMenu').addEventListener('click', ()=>{ resetGamesView(); });
+    $('#btnVolverMenu').addEventListener('click', resetGamesView);
 
     // Test Compatibilidad
     $('#btnCompatibilidad').addEventListener('click', ()=>{
@@ -549,19 +1066,66 @@
         $('#compatScoreCircle').textContent = porcentaje+'%';
         $('#compatScoreCircle').style.background = `conic-gradient(var(--accent-gold) 0% ${porcentaje}%, #2a2a2a ${porcentaje}% 100%)`;
         let mensaje = '';
-        if(porcentaje>80) mensaje='Eres un espÌritu libre. Busca a alguien que te siga el ritmo.';
-        else if(porcentaje>50) mensaje='Valoras la estabilidad y la buena conversaciÛn.';
-        else mensaje='Eres ˙nico/a. Alguien autÈntico te conviene.';
+        if(porcentaje>80) mensaje='Eres un esp√≠ritu libre. Busca a alguien que te siga el ritmo.';
+        else if(porcentaje>50) mensaje='Valoras la estabilidad y la buena conversaci√≥n.';
+        else mensaje='Eres √∫nico/a. Alguien aut√©ntico te conviene.';
         $('#compatMensaje').textContent = mensaje;
     }
-    $('#btnVolverMenuCompat').addEventListener('click', ()=>{ resetGamesView(); });
+    $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
 
-    // ======================== INICIO ========================
+    // ======================== PAGOS CON TELEGRAM STARS ========================
+    async function comprarFichas(productId) {
+        if (!tgUser || !tgUser.id) {
+            showToast('Debes iniciar sesi√≥n en Telegram', 'error');
+            return;
+        }
+        try {
+            const { data: invoiceLink, error } = await supabaseClient
+                .rpc('create_invoice', { user_id: tgUser.id, product_id: productId });
+            if (error) throw error;
+            if (!invoiceLink) throw new Error('No se obtuvo enlace de pago');
+
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
+                    if (status === 'paid') {
+                        let fichas = 0;
+                        if (productId === 'buy_stars_50') fichas = 50;
+                        else if (productId === 'entrada_torneo') fichas = 200;
+                        if (fichas > 0) {
+                            await supabaseClient.rpc('add_fichas', { user_id: tgUser.id, amount: fichas });
+                        }
+                        showToast('‚úÖ ¬°Compra exitosa!', 'success');
+                        actualizarSaldoUI();
+                    } else {
+                        showToast('Pago cancelado', '');
+                    }
+                });
+            } else {
+                showToast('Abre la app desde Telegram para pagar', '');
+            }
+        } catch (e) {
+            showToast('Error: ' + e.message, 'error');
+        }
+    }
+
+    async function actualizarSaldoUI() {
+        if (!supabaseClient || !tgUser) return;
+        const { data: balance } = await supabaseClient.rpc('get_balance', { user_id: tgUser.id });
+        const saldoEl = document.getElementById('saldoUsuario');
+        if (saldoEl) saldoEl.textContent = balance || 0;
+        const saldoPerfilEl = document.getElementById('saldoPerfil');
+        if (saldoPerfilEl) saldoPerfilEl.textContent = balance || 0;
+    }
+
+    // Inicio
     function init() {
         initTelegram();
         initSupabase();
-        setTimeout(()=>{ loadingOverlay.classList.add('hidden'); setTimeout(()=>loadingOverlay.remove(),500); },800);
-        setTimeout(()=> showToast(' °Bienvenido/a!', 'success'), 1200);
+        setTimeout(()=>{
+            loadingOverlay.classList.add('hidden');
+            setTimeout(()=>loadingOverlay.remove(),500);
+        },800);
+        setTimeout(()=> showToast('üöÄ ¬°Bienvenido/a!', 'success'), 1200);
     }
     document.readyState==='loading' ? document.addEventListener('DOMContentLoaded', init) : init();
 })();
