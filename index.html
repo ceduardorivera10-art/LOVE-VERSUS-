@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title> LoveVersus</title>
+    <title>&#x1F498; LoveVersus</title>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -603,8 +603,8 @@
 <div class="app-container" id="appContainer">
     <header class="app-header">
         <div class="header-brand">
-            <div class="header-logo"></div>
-            <span class="header-title">Love<span class="gold-dot"></span>Versus</span>
+            <div class="header-logo">&#x1F498;</div>
+            <span class="header-title">Love<span class="gold-dot">&#x2726;</span>Versus</span>
         </div>
         <div class="header-user-pill" id="headerUserPill">
             <div class="header-avatar-placeholder" id="headerAvatarPlaceholder">?</div>
@@ -619,7 +619,7 @@
             <div class="dating-card-container">
                 <div class="dating-card" id="datingCard">
                     <img class="dating-card-photo" id="datingPhoto" src="" alt="Foto">
-                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder"></div>
+                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder">&#x1F4F8;</div>
                     <div class="dating-card-gradient-overlay"></div>
                     <div class="dating-card-info">
                         <div class="dating-card-name-age">
@@ -630,12 +630,12 @@
                     </div>
                 </div>
                 <div class="dating-actions" id="datingActions">
-                    <button class="btn-action btn-dislike" id="btnDislike"></button>
-                    <button class="btn-action btn-superlike" id="btnSuperlike"></button>
-                    <button class="btn-action btn-like" id="btnLike"></button>
+                    <button class="btn-action btn-dislike" id="btnDislike">&#x274C;</button>
+                    <button class="btn-action btn-superlike" id="btnSuperlike">&#x2B50;</button>
+                    <button class="btn-action btn-like" id="btnLike">&#x1F498;</button>
                 </div>
                 <div class="empty-state" id="emptyDating">
-                    <div class="empty-state-icon"></div>
+                    <div class="empty-state-icon">&#x1F494;</div>
                     <h3 id="emptyDatingTitle">Cargando perfiles...</h3>
                     <p id="emptyDatingDesc">Conectando con Supabase.</p>
                     <div class="debug-error" id="debugError"></div>
@@ -648,21 +648,21 @@
         <section class="section" id="sectionGames">
             <div id="gameMenu" class="game-menu">
                 <div class="game-card" id="btnTrivia">
-                    <h3> Trivia Versus 1vs1</h3>
+                    <h3>&#x1F9E0; Trivia Versus 1vs1</h3>
                     <p>Responde preguntas, reta a un amigo y descubre su compatibilidad</p>
                 </div>
                 <div class="game-card" id="btnCompatibilidad">
-                    <h3> Test de Compatibilidad</h3>
+                    <h3>&#x1F49E; Test de Compatibilidad</h3>
                     <p>10 preguntas para conocer tu estilo de cita ideal</p>
                 </div>
                 <!-- Tienda de Fichas -->
                 <div style="margin-top: 24px;">
-                    <h3 style="font-size:18px; margin-bottom:12px;"> Tienda de Fichas</h3>
+                    <h3 style="font-size:18px; margin-bottom:12px;">&#x1FA99; Tienda de Fichas</h3>
                     <p style="color:var(--text-secondary); margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p>
                     <div style="display:flex; flex-direction:column; gap:10px;">
-                        <button onclick="comprarFichas('buy_stars_50')" class="btn"> 50 Fichas (50 )</button>
-                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline"> Boost de Perfil (100 )</button>
-                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline"> Entrada a Torneo (200 )</button>
+                        <button onclick="comprarFichas('buy_stars_50')" class="btn">&#x1FA99; 50 Fichas (50 &#x2B50;)</button>
+                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline">&#x1F680; Boost de Perfil (100 &#x2B50;)</button>
+                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline">&#x1F3C6; Entrada a Torneo (200 &#x2B50;)</button>
                     </div>
                     <p style="margin-top:12px; color:var(--text-secondary);">Tu saldo: <span id="saldoUsuario">0</span> fichas</p>
                 </div>
@@ -673,21 +673,21 @@
                 <div id="triviaPaso1">
                     <h3>Nueva partida de Trivia</h3>
                     <p style="color:var(--text-secondary); margin:12px 0;">Elige cómo jugar:</p>
-                    <button class="btn" id="btnCrearPartida"> Crear partida</button>
-                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;"> Unirse a partida</button>
+                    <button class="btn" id="btnCrearPartida">&#x2795; Crear partida</button>
+                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;">&#x1F517; Unirse a partida</button>
                 </div>
                 <div id="triviaPasoCrear" class="hidden">
                     <h3>Partida creada</h3>
                     <p style="margin:12px 0;">Tu código de partida es:</p>
                     <div class="code-input" id="codigoPartidaCreada">-----</div>
                     <p style="color:var(--text-secondary); margin-top:8px;">Pasa este código a tu amigo para que se una. Luego pulsa comenzar.</p>
-                    <button class="btn" id="btnComenzarTrivia"> Comenzar a responder</button>
+                    <button class="btn" id="btnComenzarTrivia">&#x25B6;&#xFE0F; Comenzar a responder</button>
                 </div>
                 <div id="triviaPasoUnirse" class="hidden">
                     <h3>Unirse a partida</h3>
                     <p style="margin:12px 0;">Ingresa el código:</p>
                     <input type="number" class="code-input" id="inputCodigoUnirse" placeholder="Ej: 123">
-                    <button class="btn" id="btnUnirseConfirmar"> Buscar y unirse</button>
+                    <button class="btn" id="btnUnirseConfirmar">&#x1F50D; Buscar y unirse</button>
                     <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">Código no válido o partida ya comenzada.</p>
                 </div>
                 <div id="triviaPreguntas" class="hidden">
@@ -738,9 +738,9 @@
     </main>
 
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon"></span><span>Citas</span></button>
-        <button class="nav-item" data-section="sectionGames"><span class="nav-icon"></span><span>Versus</span></button>
-        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon"></span><span>Perfil</span></button>
+        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">&#x1F498;</span><span>Citas</span></button>
+        <button class="nav-item" data-section="sectionGames"><span class="nav-icon">&#x1F579;&#xFE0F;</span><span>Versus</span></button>
+        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">&#x1F464;</span><span>Perfil</span></button>
     </nav>
 </div>
 
