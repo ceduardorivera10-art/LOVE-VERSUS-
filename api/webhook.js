@@ -4,20 +4,21 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const update = req.body;
-    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    
+    // 🔑 Token temporal (SOLO PARA PRUEBAS, REVOCAR DESPUÉS)
+    const BOT_TOKEN = '8347165317:AAEvzDeIksjNU25vDQX03AgNXy1dmBISQaE';
 
-    // Conexión a Supabase (solo para cuando se confirme el pago)
     const supabase = createClient(
         process.env.SUPABASE_URL,
         process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // 1. 📨 Señal desde la Mini App (web_app_data)
+    // 1. Señal desde la Mini App
     if (update.message?.web_app_data) {
         const chatId = update.message.chat.id;
-        const data = update.message.web_app_data.data; // ej: 'buy_stars_50'
+        const data = update.message.web_app_data.data;
 
-        // 🔍 MENSAJE DE PRUEBA (confirma que el webhook recibe la señal)
+        // Mensaje de confirmación
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -27,13 +28,11 @@ export default async function handler(req, res) {
             })
         });
 
-        // Definir productos
         let producto = {};
         if (data === 'buy_stars_50') producto = { titulo: '50 Fichas', amount: 50, desc: 'Para apostar en partidas' };
         else if (data === 'boost_perfil') producto = { titulo: 'Boost de Perfil', amount: 100, desc: '24h destacado' };
         else if (data === 'entrada_torneo') producto = { titulo: 'Entrada Torneo', amount: 200, desc: 'Acceso total' };
 
-        // Enviar la factura de Telegram Stars
         if (producto.titulo) {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
                 method: 'POST',
@@ -43,7 +42,7 @@ export default async function handler(req, res) {
                     title: producto.titulo,
                     description: producto.desc,
                     payload: data,
-                    provider_token: '',        // Vacío para Stars (XTR)
+                    provider_token: '',
                     currency: 'XTR',
                     prices: [{ label: producto.titulo, amount: producto.amount }]
                 })
@@ -51,7 +50,7 @@ export default async function handler(req, res) {
         }
     }
 
-    // 2. ⏳ Pre‑checkout (obligatorio responder)
+    // 2. Pre-checkout
     if (update.pre_checkout_query) {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/answerPreCheckoutQuery`, {
             method: 'POST',
@@ -63,7 +62,7 @@ export default async function handler(req, res) {
         });
     }
 
-    // 3. ✅ Pago exitoso
+    // 3. Pago exitoso
     if (update.message?.successful_payment) {
         const userId = update.message.from.id;
         const payload = update.message.successful_payment.invoice_payload;
@@ -72,13 +71,9 @@ export default async function handler(req, res) {
         let fichas = 0;
         if (payload === 'buy_stars_50') fichas = 50;
         else if (payload === 'entrada_torneo') fichas = 200;
-        // boost_perfil no suma fichas
 
         if (fichas > 0) {
-            await supabase.rpc('add_fichas', {
-                user_id: userId,
-                amount: fichas
-            });
+            await supabase.rpc('add_fichas', { user_id: userId, amount: fichas });
         }
 
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
