@@ -77,8 +77,9 @@
         }
         .dating-card-photo { width:100%; height:280px; object-fit:cover; display:none; }
         .dating-card-photo-placeholder {
-            width:100%; height:280px; background:linear-gradient(135deg, #1a1a2e, #1e1e3a);
-            display:flex; align-items:center; justify-content:center; font-size:90px; position:relative;
+            width:100%; height:280px; display:flex; align-items:center; justify-content:center; 
+            font-size:90px; font-weight:700; color:#fff; position:relative;
+            text-transform:uppercase;
         }
         .dating-card-gradient-overlay {
             position:absolute; bottom:0; left:0; right:0; height:100px;
@@ -223,7 +224,7 @@
             <div class="dating-card-container">
                 <div class="dating-card" id="datingCard">
                     <img class="dating-card-photo" id="datingPhoto" src="" alt="Foto">
-                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder">📸</div>
+                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder"></div>
                     <div class="dating-card-gradient-overlay"></div>
                     <div class="dating-card-info">
                         <div class="dating-card-name-age"><span class="dating-card-name" id="datingName"></span><span class="dating-card-age" id="datingAge"></span></div>
@@ -478,12 +479,20 @@
         $('#emptyDating').style.display='none';
         $('#datingName').textContent = p.first_name||''; $('#datingAge').textContent = p.age||'';
         $('#datingBio').textContent = p.bio||'';
+        // Foto o placeholder mejorado
+        const photoPlaceholder = $('#datingPhotoPlaceholder');
         if (p.photo_url) {
-            $('#datingPhoto').src=p.photo_url; $('#datingPhoto').style.display='block';
-            $('#datingPhotoPlaceholder').style.display='none';
+            $('#datingPhoto').src = p.photo_url;
+            $('#datingPhoto').style.display = 'block';
+            photoPlaceholder.style.display = 'none';
         } else {
-            $('#datingPhoto').style.display='none'; $('#datingPhotoPlaceholder').style.display='flex';
-            $('#datingPhotoPlaceholder').textContent = (p.first_name||'?')[0].toUpperCase();
+            $('#datingPhoto').style.display = 'none';
+            photoPlaceholder.style.display = 'flex';
+            const inicial = (p.first_name || '?')[0].toUpperCase();
+            photoPlaceholder.textContent = inicial;
+            const colores = ['#e94560', '#3390ec', '#c9a84c', '#34c759', '#af52de', '#ff9500'];
+            const colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
+            photoPlaceholder.style.background = `linear-gradient(135deg, ${colorAleatorio}, #1a1a2e)`;
         }
     }
     function showEmpty(show) {
@@ -674,15 +683,15 @@
     }
     $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
 
-    // ======================== PAGOS CON TELEGRAM STARS (FUNCIÓN EXPUESTA GLOBALMENTE) ========================
+    // ======================== PAGOS CON TELEGRAM STARS ========================
     async function comprarFichas(productId) {
         if (!tgUser || !tgUser.id) {
             showToast('Debes iniciar sesión en Telegram', 'error');
             return;
         }
 
-        // 🔑 Token de prueba (revocar después de la prueba)
-        const BOT_TOKEN = '8700972875:AAGQEYOKJDFZYF6fNs-atiDy2RPG6YMdUOU';
+        // 🔑 Token de prueba (REVOCAR DESPUÉS)
+        const BOT_TOKEN = '8347165317:AAEvzDeIksjNU25vDQX03AgNXy1dmBISQaE';
 
         const productos = {
             buy_stars_50: { nombre: '50 Fichas', cantidad: 50, descripcion: 'Para apostar en partidas' },
@@ -731,7 +740,7 @@
             alert('Error de conexión:\n' + e.message);
         }
     }
-    // Exponer la función globalmente para el onclick
+    // Exponer la función globalmente
     window.comprarFichas = comprarFichas;
 
     async function actualizarSaldoUI() {
