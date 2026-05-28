@@ -674,46 +674,37 @@
     }
     $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
 
-    // ======================== PAGOS CON TELEGRAM STARS (MÉTODO DIRECTO CON DIAGNÓSTICO) ========================
+    // ======================== PAGOS CON TELEGRAM STARS (FUNCIÓN EXPUESTA GLOBALMENTE) ========================
     async function comprarFichas(productId) {
-        // Verificar que estamos en Telegram
-        if (!window.Telegram?.WebApp) {
-            alert('ERROR: No estás dentro de Telegram. Abre la app desde el bot.');
-            return;
-        }
-
-        // Verificar usuario
         if (!tgUser || !tgUser.id) {
-            alert('ERROR: Usuario no identificado. Recarga la Mini App.');
+            showToast('Debes iniciar sesión en Telegram', 'error');
             return;
         }
 
-        // 🔑 NUEVO Token de prueba
+        // 🔑 Token de prueba (revocar después de la prueba)
         const BOT_TOKEN = '8700972875:AAGQEYOKJDFZYF6fNs-atiDy2RPG6YMdUOU';
 
-        // Datos del producto
         const productos = {
-            buy_stars_50: { nombre: '50 Fichas', cantidad: 50 },
-            boost_perfil: { nombre: 'Boost de Perfil', cantidad: 100 },
-            entrada_torneo: { nombre: 'Entrada a Torneo', cantidad: 200 }
+            buy_stars_50: { nombre: '50 Fichas', cantidad: 50, descripcion: 'Para apostar en partidas' },
+            boost_perfil: { nombre: 'Boost de Perfil', cantidad: 100, descripcion: 'Tu perfil primero 24h' },
+            entrada_torneo: { nombre: 'Entrada a Torneo', cantidad: 200, descripcion: 'Participa en torneos' }
         };
 
         const producto = productos[productId];
         if (!producto) {
-            alert('ERROR: Producto no válido');
+            showToast('Producto no válido', 'error');
             return;
         }
 
         const payload = tgUser.id + '_' + Date.now();
 
         try {
-            // Llamar a la API de Telegram
             const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: producto.nombre,
-                    description: 'Compra en LoveVersus',
+                    description: producto.descripcion,
                     payload: payload,
                     provider_token: '',
                     currency: 'XTR',
@@ -722,27 +713,26 @@
             });
 
             const data = await response.json();
-            
-            // Mostrar respuesta en alerta (para diagnosticar)
-            alert('Respuesta de Telegram:\n' + JSON.stringify(data, null, 2));
 
             if (!data.ok) {
-                alert('ERROR al crear factura:\n' + data.description);
+                alert('Error al crear factura:\n' + data.description);
                 return;
             }
 
             const invoiceLink = data.result;
 
-            // Abrir factura
             if (window.Telegram?.WebApp) {
                 window.Telegram.WebApp.openTelegramLink(invoiceLink);
+                showToast('📄 Abriendo factura...', 'success');
             } else {
-                alert('No se pudo abrir la factura. Abre manualmente:\n' + invoiceLink);
+                alert('Factura creada, pero no se puede abrir automáticamente.\nEnlace: ' + invoiceLink);
             }
         } catch (e) {
-            alert('EXCEPCIÓN:\n' + e.message);
+            alert('Error de conexión:\n' + e.message);
         }
     }
+    // Exponer la función globalmente para el onclick
+    window.comprarFichas = comprarFichas;
 
     async function actualizarSaldoUI() {
         if (!supabaseClient || !tgUser) return;
