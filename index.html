@@ -284,7 +284,7 @@
 (function() {
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
-    const BOT_TOKEN = 'AQUI_TU_TOKEN_DE_PRUEBA'; // ← pon aquí el token de prueba
+    const BOT_TOKEN = 'AQUI_TU_TOKEN_DE_PRUEBA'; // ← pon aquí tu token de prueba
 
     let supabaseClient, tgUser, currentSection = 'sectionDating';
     let datingQueue = [], currentProfileIdx = 0;
@@ -295,6 +295,10 @@
     let allTriviaQuestions = [], currentTriviaQIndex = 0;
     let correctasJugador1 = 0, correctasJugador2 = 0;
     let isAnswerLocked = false;
+    let timerInterval = null;
+    let tiempoPorPregunta = 15; // segundos
+    let tiempoRestante = 0;
+    let preguntaIniciada = false;
 
     const preguntasCompatibilidad = [
         { pregunta: "¿Qué prefieres en una primera cita?", opciones: ["Cena romántica", "Aventura al aire libre", "Café y conversación", "Cine en casa"] },
@@ -540,7 +544,6 @@
             `;
             listEl.appendChild(div);
         });
-        // Asignar eventos a botones recién creados
         $$('#onlinePlayersList .invite-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 invitarJugador(this.dataset.id, this.dataset.name);
@@ -610,6 +613,7 @@
         $('#triviaFlow').classList.add('hidden');
         $('#compatFlow').classList.add('hidden');
         supabaseClient.removeAllChannels();
+        if (timerInterval) clearInterval(timerInterval);
     }
 
     $('#btnTrivia').addEventListener('click', async () => {
@@ -619,7 +623,6 @@
         }
         $('#gameMenu').classList.add('hidden');
         $('#triviaFlow').classList.remove('hidden');
-        $('#triviaPaso1').classList.remove('hidden');
         $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaPaso1').classList.remove('hidden');
     });
@@ -709,12 +712,55 @@
         allTriviaQuestions = todas.sort(()=>Math.random()-0.5).slice(0,5);
     }
 
+    function detenerTemporizador() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+    }
+
+    function iniciarTemporizador() {
+        detenerTemporizador();
+        tiempoRestante = tiempoPorPregunta;
+        actualizarTemporizadorUI();
+        timerInterval = setInterval(() => {
+            tiempoRestante--;
+            actualizarTemporizadorUI();
+            if (tiempoRestante <= 0) {
+                detenerTemporizador();
+                // Tiempo agotado: seleccionar automáticamente sin respuesta
+                if (!isAnswerLocked) {
+                    seleccionarRespuestaTrivia(-1); // -1 indica sin respuesta
+                }
+            }
+        }, 1000);
+    }
+
+    function actualizarTemporizadorUI() {
+        let timerEl = $('#timerDisplay');
+        if (!timerEl) {
+            timerEl = document.createElement('div');
+            timerEl.id = 'timerDisplay';
+            timerEl.style.cssText = 'text-align:center; font-size:24px; font-weight:700; color:var(--accent-orange); margin:10px 0;';
+            $('#triviaPreguntas').insertBefore(timerEl, $('#triviaOpciones'));
+        }
+        timerEl.textContent = `⏳ ${tiempoRestante}s`;
+        if (tiempoRestante <= 5) {
+            timerEl.style.color = '#ff3b30';
+            timerEl.style.animation = 'pulse 0.5s infinite';
+        } else {
+            timerEl.style.color = 'var(--accent-orange)';
+            timerEl.style.animation = 'none';
+        }
+    }
+
     function mostrarPreguntaTrivia() {
         if (currentTriviaQIndex >= allTriviaQuestions.length) {
             finalizarRondaTrivia();
             return;
         }
         isAnswerLocked = false;
+        preguntaIniciada = true;
         $('#triviaEspera').style.display='none';
         const q = allTriviaQuestions[currentTriviaQIndex];
         $('#triviaPreguntaTitulo').textContent = `Pregunta ${currentTriviaQIndex+1}/${allTriviaQuestions.length}`;
@@ -725,21 +771,31 @@
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.textContent = op;
-            btn.addEventListener('click', () => seleccionarRespuestaTrivia(idx));
+            btn.addEventListener('click', () => {
+                if (!isAnswerLocked) seleccionarRespuestaTrivia(idx);
+            });
             opcionesDiv.appendChild(btn);
         });
+        iniciarTemporizador();
     }
 
     async function seleccionarRespuestaTrivia(selectedIdx) {
         if (isAnswerLocked) return;
         isAnswerLocked = true;
+        detenerTemporizador();
         const q = allTriviaQuestions[currentTriviaQIndex];
         const correctIdx = q.correcta;
         const botones = $$('#triviaOpciones .option-btn');
         botones.forEach(b => b.disabled = true);
-        botones[correctIdx].classList.add('correct');
-        if (selectedIdx !== correctIdx) {
-            botones[selectedIdx].classList.add('wrong');
+        // Marcar visualmente la correcta y la incorrecta si se seleccionó algo
+        if (selectedIdx >= 0) {
+            botones[correctIdx].classList.add('correct');
+            if (selectedIdx !== correctIdx) {
+                botones[selectedIdx].classList.add('wrong');
+            }
+        } else {
+            // Tiempo agotado: solo marcar la correcta
+            botones[correctIdx].classList.add('correct');
         }
         triviaResponses.push({ questionIndex: currentTriviaQIndex, selectedOption: selectedIdx });
         setTimeout(async () => {
@@ -756,6 +812,7 @@
 
     async function finalizarRondaTrivia() {
         $('#triviaPreguntas').classList.add('hidden');
+        detenerTemporizador();
         const { data, error } = await supabaseClient.from('trivia_games').select('*').eq('id', currentGameId).single();
         if (error || !data) {
             showToast('Error al obtener resultados', 'error');
@@ -764,20 +821,38 @@
         }
         const p1 = data.player1_responses || [];
         const p2 = data.player2_responses || [];
-        if (currentPlayerNumber === 1 && data.player2_telegram_id && p2.length === 0) {
+        const hayOponente = data.player2_telegram_id ? true : false;
+        
+        // Si soy el jugador 1 y no hay oponente (partida de práctica), mostrar resultado inmediato
+        if (currentPlayerNumber === 1 && !hayOponente) {
+            // Modo solitario: calculamos aciertos propios
+            correctasJugador1 = 0;
+            allTriviaQuestions.forEach((q, i) => {
+                if (p1[i] && p1[i].selectedOption === q.correcta) correctasJugador1++;
+            });
+            correctasJugador2 = 0; // no aplica
+            // Mostrar resultado personal
+            mostrarResultadoTriviaSolitario(correctasJugador1, allTriviaQuestions.length);
+            return;
+        }
+        
+        // Si hay oponente, comprobar que ambos hayan respondido
+        if (hayOponente && (currentPlayerNumber === 1 && p2.length === 0)) {
             $('#triviaEspera').style.display = 'block';
             $('#triviaPreguntas').classList.remove('hidden');
             $('#triviaOpciones').innerHTML = '';
             setTimeout(() => finalizarRondaTrivia(), 3000);
             return;
         }
-        if (currentPlayerNumber === 2 && p1.length === 0) {
+        if (hayOponente && (currentPlayerNumber === 2 && p1.length === 0)) {
             $('#triviaEspera').style.display = 'block';
             $('#triviaPreguntas').classList.remove('hidden');
             $('#triviaOpciones').innerHTML = '';
             setTimeout(() => finalizarRondaTrivia(), 3000);
             return;
         }
+        
+        // Ambos han respondido
         correctasJugador1 = 0; correctasJugador2 = 0;
         allTriviaQuestions.forEach((q, i) => {
             if (p1[i] && p1[i].selectedOption === q.correcta) correctasJugador1++;
@@ -786,29 +861,53 @@
         let ganador = null;
         if (correctasJugador1 > correctasJugador2) ganador = 1;
         else if (correctasJugador2 > correctasJugador1) ganador = 2;
+        
         if ((ganador === 1 && currentPlayerNumber === 1) || (ganador === 2 && currentPlayerNumber === 2)) {
             await supabaseClient.rpc('add_trivia_win', { user_id: tgUser.id });
             userEnergy.victorias++;
             updateProfileStats();
         }
         let matches = 0;
-        for(let i=0; i<p1.length; i++) if(p1[i].selectedOption === p2[i].selectedOption) matches++;
-        const compat = Math.round((matches/p1.length)*100);
+        for(let i=0; i<Math.min(p1.length, p2.length); i++) if(p1[i].selectedOption === p2[i].selectedOption) matches++;
+        const compat = p1.length > 0 ? Math.round((matches / p1.length) * 100) : 0;
         await supabaseClient.from('trivia_games').update({
             compatibility_score: compat, status:'completed', completed_at: new Date().toISOString()
         }).eq('id', currentGameId);
-        mostrarResultadoTrivia(compat, correctasJugador1, correctasJugador2, ganador);
+        mostrarResultadoTriviaVersus(compat, correctasJugador1, correctasJugador2, ganador);
     }
 
-    function mostrarResultadoTrivia(score, aciertos1, aciertos2, ganador) {
+    function mostrarResultadoTriviaSolitario(aciertos, total) {
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
+        $('#triviaResultado').classList.remove('hidden');
+        const porcentaje = Math.round((aciertos / total) * 100);
+        $('#compatibilityScore').textContent = porcentaje + '%';
+        $('#compatibilityScore').style.background = `conic-gradient(var(--accent-blue) 0% ${porcentaje}%, #2a2a2a ${porcentaje}% 100%)`;
+        let mensaje = `🎯 Acertaste ${aciertos} de ${total} preguntas.\n`;
+        if (porcentaje === 100) mensaje += '¡Perfecto! Eres un genio.';
+        else if (porcentaje >= 60) mensaje += '¡Buen trabajo!';
+        else mensaje += '¡Sigue practicando!';
+        $('#compatibilidadMensaje').textContent = mensaje;
+        // Quitar botón de revancha si existe
+        const existingBtn = $('#triviaResultado .revanscha-btn');
+        if (existingBtn) existingBtn.remove();
+    }
+
+    function mostrarResultadoTriviaVersus(score, aciertos1, aciertos2, ganador) {
         $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaResultado').classList.remove('hidden');
         $('#compatibilityScore').textContent = score+'%';
         $('#compatibilityScore').style.background = `conic-gradient(var(--accent-green) 0% ${score}%, #2a2a2a ${score}% 100%)`;
-        let mensaje = score>70 ? '¡Gran compatibilidad! 💘 ' : 'Podrían ser buenos amigos. ';
-        if (ganador === 1) mensaje += '(Ganaste)';
-        else if (ganador === 2) mensaje += '(Perdiste)';
-        else mensaje += '(Empate)';
+        let mensaje = `Compatibilidad: ${score}%\n`;
+        mensaje += `Tus aciertos: ${aciertos1} | Oponente: ${aciertos2}\n`;
+        if (ganador === 1) {
+            if (currentPlayerNumber === 1) mensaje += '🎉 ¡Ganaste!';
+            else mensaje += '😞 Perdiste';
+        } else if (ganador === 2) {
+            if (currentPlayerNumber === 2) mensaje += '🎉 ¡Ganaste!';
+            else mensaje += '😞 Perdiste';
+        } else {
+            mensaje += '🤝 Empate';
+        }
         const existingBtn = $('#triviaResultado .revanscha-btn');
         if (existingBtn) existingBtn.remove();
         if (ganador && Math.abs(aciertos1 - aciertos2) === 1) {
@@ -837,7 +936,7 @@
 
     $('#btnVolverMenu').addEventListener('click', resetGamesView);
 
-    // Test Compatibilidad
+    // Test Compatibilidad (sin cambios)
     $('#btnCompatibilidad').addEventListener('click', () => {
         $('#gameMenu').classList.add('hidden');
         $('#compatFlow').classList.remove('hidden');
