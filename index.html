@@ -119,6 +119,10 @@
         @keyframes pulse { 0% { transform:scale(1); } 50% { transform:scale(1.05); } 100% { transform:scale(1); } }
         .opponent-info { background:var(--bg-card); border-radius:12px; padding:12px; margin:10px 0; display:flex; align-items:center; gap:10px; }
         .opponent-avatar { width:40px; height:40px; border-radius:50%; background:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; overflow:hidden; }
+        .player-list { display:flex; flex-direction:column; gap:10px; }
+        .player-item { display:flex; align-items:center; justify-content:space-between; background:var(--bg-card); border-radius:12px; padding:12px; }
+        .player-item .player-info { display:flex; align-items:center; gap:10px; }
+        .invite-btn { background:var(--accent-blue); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-size:12px; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -189,20 +193,20 @@
             </div>
 
             <div id="triviaFlow" class="hidden" style="padding:16px;">
-                <div id="triviaPaso1">
-                    <h3>Nueva partida de Trivia</h3>
-                    <p style="color:var(--text-secondary); margin:12px 0;">Elige cómo jugar:</p>
-                    <button class="btn" id="btnCrearPartida">➕ Crear partida</button>
-                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;">🔗 Unirse a partida</button>
+                <div id="triviaPaso1" class="trivia-step">
+                    <h3>Jugar Trivia</h3>
+                    <button class="btn" id="btnCrearPartida">➕ Crear partida (código)</button>
+                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;">🔗 Unirse con código</button>
+                    <button class="btn" id="btnOnlinePlayers" style="margin-top:8px;">🌐 Ver jugadores en línea</button>
                 </div>
-                <div id="triviaPasoCrear" class="hidden">
+                <div id="triviaPasoCrear" class="hidden trivia-step">
                     <h3>Partida creada</h3>
                     <p style="margin:12px 0;">Tu código de partida es:</p>
                     <div class="code-input" id="codigoPartidaCreada">-----</div>
                     <p style="color:var(--text-secondary); margin-top:8px;">Pasa este código a tu amigo para que se una. Luego pulsa comenzar.</p>
                     <button class="btn" id="btnComenzarTrivia">▶️ Comenzar a responder</button>
                 </div>
-                <div id="triviaPasoUnirse" class="hidden">
+                <div id="triviaPasoUnirse" class="hidden trivia-step">
                     <h3>Unirse a partida</h3>
                     <p style="margin:12px 0;">Ingresa el código:</p>
                     <input type="number" class="code-input" id="inputCodigoUnirse" placeholder="Ej: 123">
@@ -210,13 +214,18 @@
                     <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">Código no válido o partida ya comenzada.</p>
                     <div id="opponentDisplay" class="opponent-info hidden"></div>
                 </div>
-                <div id="triviaPreguntas" class="hidden">
+                <div id="onlinePlayersStep" class="hidden trivia-step">
+                    <h3>Jugadores en línea</h3>
+                    <div id="onlinePlayersList" class="player-list"></div>
+                    <button class="btn btn-outline" id="btnBackFromOnline">🔙 Volver</button>
+                </div>
+                <div id="triviaPreguntas" class="hidden trivia-step">
                     <h3 id="triviaPreguntaTitulo">Pregunta 1/5</h3>
                     <p id="triviaPreguntaTexto" style="font-size:18px; margin:16px 0;"></p>
                     <div id="triviaOpciones"></div>
                     <p id="triviaEspera" style="color:var(--accent-gold); display:none;">Esperando al oponente...</p>
                 </div>
-                <div id="triviaResultado" class="hidden">
+                <div id="triviaResultado" class="hidden trivia-step">
                     <h3 style="text-align:center;">Resultado de compatibilidad</h3>
                     <div class="compatibility-circle" id="compatibilityScore">0%</div>
                     <p style="text-align:center; font-size:18px;" id="compatibilidadMensaje"></p>
@@ -271,11 +280,11 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<script>
+<!-- AQUÍ EMPIEZA LA PARTE 2 --><script>
 (function() {
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
-    const BOT_TOKEN = '8347165317:AAEvzDeIksjNU25vDQX03AgNXy1dmBISQaE'; // REVOCAR DESPUÉS
+    const BOT_TOKEN = 'AQUI_TU_TOKEN_DE_PRUEBA'; // ← pon aquí el token de prueba
 
     let supabaseClient, tgUser, currentSection = 'sectionDating';
     let datingQueue = [], currentProfileIdx = 0;
@@ -426,10 +435,7 @@
             return;
         }
         supabaseClient.rpc('use_swipe', { user_id: tgUser.id }).then(({ data }) => {
-            if (data >= 0) {
-                userEnergy.swipes = data;
-                updateEnergyDisplay();
-            }
+            if (data >= 0) { userEnergy.swipes = data; updateEnergyDisplay(); }
         });
         const p = datingQueue[currentProfileIdx];
         interacted.add(p.telegram_id);
@@ -493,11 +499,117 @@
         $('#rangoNombre').textContent = partes.slice(1).join(' ');
     }
 
+    // ======================== HEARTBEAT Y JUGADORES ONLINE ========================
+    async function startHeartbeat() {
+        if (!tgUser || !tgUser.id || !supabaseClient) return;
+        const { data: userData } = await supabaseClient.from('users').select('first_name, photo_url, username').eq('telegram_id', tgUser.id).single();
+        const firstName = userData?.first_name || tgUser.first_name || '';
+        const photo = userData?.photo_url || tgUser.photo_url || '';
+        const uname = userData?.username || tgUser.username || '';
+        await supabaseClient.rpc('heartbeat', {
+            user_id: tgUser.id,
+            user_first_name: firstName,
+            user_photo_url: photo,
+            user_username: uname
+        });
+        supabaseClient.channel('online_players_channel')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players' }, () => {
+                if (!$('#onlinePlayersStep').classList.contains('hidden')) cargarOnlinePlayers();
+            })
+            .subscribe();
+    }
+
+    async function cargarOnlinePlayers() {
+        const { data, error } = await supabaseClient.from('online_players').select('*').neq('telegram_id', tgUser.id);
+        if (error) return;
+        const listEl = $('#onlinePlayersList');
+        listEl.innerHTML = '';
+        if (!data || data.length === 0) {
+            listEl.innerHTML = '<p style="color:var(--text-tertiary); text-align:center;">No hay jugadores en línea</p>';
+            return;
+        }
+        data.forEach(player => {
+            const div = document.createElement('div');
+            div.className = 'player-item';
+            div.innerHTML = `
+                <div class="player-info">
+                    <div class="opponent-avatar">${player.photo_url ? `<img src="${player.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (player.first_name||'?')[0].toUpperCase()}</div>
+                    <span style="font-weight:600;">${player.first_name || 'Jugador'}</span>
+                </div>
+                <button class="invite-btn" data-id="${player.telegram_id}" data-name="${player.first_name}">Desafiar</button>
+            `;
+            listEl.appendChild(div);
+        });
+        // Asignar eventos a botones recién creados
+        $$('#onlinePlayersList .invite-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                invitarJugador(this.dataset.id, this.dataset.name);
+            });
+        });
+    }
+
+    async function invitarJugador(targetId, targetName) {
+        if (userEnergy.triviaGames <= 0) {
+            showToast('Sin energía para jugar', 'error');
+            return;
+        }
+        const { data, error } = await supabaseClient.from('trivia_games').insert({
+            player1_telegram_id: tgUser.id,
+            player2_telegram_id: targetId,
+            status: 'invited'
+        }).select('id').single();
+        if (error) { showToast('Error al invitar', 'error'); return; }
+        const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
+        userEnergy.triviaGames = remaining;
+        updateEnergyDisplay();
+        showToast(`Invitación enviada a ${targetName}`, 'success');
+        escucharCambiosPartida(data.id);
+    }
+
+    function escucharCambiosPartida(gameId) {
+        supabaseClient.channel('game_' + gameId)
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trivia_games', filter: `id=eq.${gameId}` }, (payload) => {
+                const game = payload.new;
+                if (game.status === 'active') {
+                    currentGameId = game.id;
+                    currentPlayerNumber = 1;
+                    $('#onlinePlayersStep').classList.add('hidden');
+                    $('#triviaPaso1').classList.add('hidden');
+                    cargarPreguntasTrivia();
+                    $('#triviaPreguntas').classList.remove('hidden');
+                    currentTriviaQIndex = 0; triviaResponses = [];
+                    mostrarPreguntaTrivia();
+                }
+            })
+            .subscribe();
+    }
+
+    async function checkInvitations() {
+        const { data, error } = await supabaseClient.from('trivia_games').select('*').eq('player2_telegram_id', tgUser.id).eq('status', 'invited');
+        if (data && data.length > 0) {
+            const game = data[0];
+            showToast(`Tienes una invitación de partida`, 'success');
+            await supabaseClient.from('trivia_games').update({ status: 'active' }).eq('id', game.id);
+            currentGameId = game.id;
+            currentPlayerNumber = 2;
+            await cargarPreguntasTrivia();
+            $('#triviaFlow').classList.remove('hidden');
+            $('#triviaPaso1').classList.add('hidden');
+            $('#triviaPreguntas').classList.remove('hidden');
+            currentTriviaQIndex=0; triviaResponses=[];
+            mostrarPreguntaTrivia();
+            const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
+            userEnergy.triviaGames = remaining;
+            updateEnergyDisplay();
+        }
+    }
+
     // ======================== JUEGOS ========================
     function resetGamesView() {
         $('#gameMenu').classList.remove('hidden');
         $('#triviaFlow').classList.add('hidden');
         $('#compatFlow').classList.add('hidden');
+        supabaseClient.removeAllChannels();
     }
 
     $('#btnTrivia').addEventListener('click', async () => {
@@ -508,7 +620,8 @@
         $('#gameMenu').classList.add('hidden');
         $('#triviaFlow').classList.remove('hidden');
         $('#triviaPaso1').classList.remove('hidden');
-        ['triviaPasoCrear','triviaPasoUnirse','triviaPreguntas','triviaResultado'].forEach(id => $('#'+id).classList.add('hidden'));
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
+        $('#triviaPaso1').classList.remove('hidden');
     });
 
     $('#btnCrearPartida').addEventListener('click', async () => {
@@ -520,7 +633,7 @@
         if (error) { showToast('Error al crear partida', 'error'); return; }
         currentGameId = data.id; currentPlayerNumber = 1;
         $('#codigoPartidaCreada').textContent = data.id;
-        $('#triviaPaso1').classList.add('hidden');
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaPasoCrear').classList.remove('hidden');
         const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
         userEnergy.triviaGames = remaining;
@@ -528,7 +641,7 @@
     });
 
     $('#btnUnirsePartida').addEventListener('click', () => {
-        $('#triviaPaso1').classList.add('hidden');
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaPasoUnirse').classList.remove('hidden');
         $('#opponentDisplay').classList.add('hidden');
     });
@@ -558,7 +671,7 @@
         }).eq('id', gameId);
         currentGameId = gameId; currentPlayerNumber = 2;
         await cargarPreguntasTrivia();
-        $('#triviaPasoUnirse').classList.add('hidden');
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaPreguntas').classList.remove('hidden');
         currentTriviaQIndex=0; triviaResponses=[];
         mostrarPreguntaTrivia();
@@ -568,10 +681,21 @@
     });
 
     $('#btnComenzarTrivia').addEventListener('click', () => {
-        $('#triviaPasoCrear').classList.add('hidden');
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaPreguntas').classList.remove('hidden');
         currentTriviaQIndex=0; triviaResponses=[];
         mostrarPreguntaTrivia();
+    });
+
+    $('#btnOnlinePlayers').addEventListener('click', () => {
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
+        $('#onlinePlayersStep').classList.remove('hidden');
+        cargarOnlinePlayers();
+    });
+
+    $('#btnBackFromOnline').addEventListener('click', () => {
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
+        $('#triviaPaso1').classList.remove('hidden');
     });
 
     async function cargarPreguntasTrivia() {
@@ -640,6 +764,20 @@
         }
         const p1 = data.player1_responses || [];
         const p2 = data.player2_responses || [];
+        if (currentPlayerNumber === 1 && data.player2_telegram_id && p2.length === 0) {
+            $('#triviaEspera').style.display = 'block';
+            $('#triviaPreguntas').classList.remove('hidden');
+            $('#triviaOpciones').innerHTML = '';
+            setTimeout(() => finalizarRondaTrivia(), 3000);
+            return;
+        }
+        if (currentPlayerNumber === 2 && p1.length === 0) {
+            $('#triviaEspera').style.display = 'block';
+            $('#triviaPreguntas').classList.remove('hidden');
+            $('#triviaOpciones').innerHTML = '';
+            setTimeout(() => finalizarRondaTrivia(), 3000);
+            return;
+        }
         correctasJugador1 = 0; correctasJugador2 = 0;
         allTriviaQuestions.forEach((q, i) => {
             if (p1[i] && p1[i].selectedOption === q.correcta) correctasJugador1++;
@@ -663,9 +801,8 @@
     }
 
     function mostrarResultadoTrivia(score, aciertos1, aciertos2, ganador) {
-        $('#triviaPreguntas').classList.add('hidden');
+        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
         $('#triviaResultado').classList.remove('hidden');
-        $('#triviaFlow').classList.remove('hidden');
         $('#compatibilityScore').textContent = score+'%';
         $('#compatibilityScore').style.background = `conic-gradient(var(--accent-green) 0% ${score}%, #2a2a2a ${score}% 100%)`;
         let mensaje = score>70 ? '¡Gran compatibilidad! 💘 ' : 'Podrían ser buenos amigos. ';
@@ -789,10 +926,13 @@
         if (saldoPerfilEl) saldoPerfilEl.textContent = balance || 0;
     }
 
+    // ======================== INICIO ========================
     async function init() {
         initTelegram();
         initSupabase();
         await doDailyLogin();
+        startHeartbeat();
+        setInterval(() => { if (tgUser) checkInvitations(); }, 10000);
         setTimeout(() => {
             loadingOverlay.classList.add('hidden');
             setTimeout(() => loadingOverlay.remove(), 500);
