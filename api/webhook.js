@@ -4,53 +4,82 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const update = req.body;
-    
-    // 🔑 Token temporal (SOLO PARA PRUEBAS, REVOCAR DESPUÉS)
-    const BOT_TOKEN = '8347165317:AAEvzDeIksjNU25vDQX03AgNXy1dmBISQaE';
+    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
     const supabase = createClient(
         process.env.SUPABASE_URL,
         process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // 1. Señal desde la Mini App
+    // 1. Señal desde la Mini App (web_app_data)
     if (update.message?.web_app_data) {
         const chatId = update.message.chat.id;
         const data = update.message.web_app_data.data;
 
-        // Mensaje de confirmación
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: '✅ Señal de compra recibida. Preparando factura...'
-            })
-        });
+        // Manejar invitación
+        if (data.startsWith('invite_')) {
+            const targetId = data.split('_')[1];
+            const inviterName = update.message.from.first_name;
+            const inviterId = update.message.from.id;
 
-        let producto = {};
-        if (data === 'buy_stars_50') producto = { titulo: '50 Fichas', amount: 50, desc: 'Para apostar en partidas' };
-        else if (data === 'boost_perfil') producto = { titulo: 'Boost de Perfil', amount: 100, desc: '24h destacado' };
-        else if (data === 'entrada_torneo') producto = { titulo: 'Entrada Torneo', amount: 200, desc: 'Acceso total' };
-
-        if (producto.titulo) {
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
+            // Enviar notificación push al oponente con botón inline
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    chat_id: chatId,
-                    title: producto.titulo,
-                    description: producto.desc,
-                    payload: data,
-                    provider_token: '',
-                    currency: 'XTR',
-                    prices: [{ label: producto.titulo, amount: producto.amount }]
+                    chat_id: targetId,
+                    text: `🎮 <b>¡${inviterName} te ha desafiado a Trivia Versus!</b>\n\n¿Aceptas el reto?`,
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [[
+                            {
+                                text: "✅ Aceptar Reto",
+                                web_app: {
+                                    url: `https://love-versus-h25yeq0br-ceduardorivera10-2786s-projects.vercel.app/?game=accept&inviter=${inviterId}`
+                                }
+                            }
+                        ]]
+                    }
+                })
+            });
+
+            // Confirmar al remitente
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: inviterId,
+                    text: `📨 Invitación enviada. Esperando respuesta...`
                 })
             });
         }
+
+        // Manejar pagos (si aún usas sendData para comprar fichas)
+        if (data.startsWith('buy_') || data.startsWith('boost_') || data.startsWith('entrada_')) {
+            let producto = {};
+            if (data === 'buy_stars_50') producto = { titulo: '50 Fichas', amount: 50, desc: 'Para apostar en partidas' };
+            else if (data === 'boost_perfil') producto = { titulo: 'Boost de Perfil', amount: 100, desc: '24h destacado' };
+            else if (data === 'entrada_torneo') producto = { titulo: 'Entrada Torneo', amount: 200, desc: 'Acceso total' };
+
+            if (producto.titulo) {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        title: producto.titulo,
+                        description: producto.desc,
+                        payload: data,
+                        provider_token: '',
+                        currency: 'XTR',
+                        prices: [{ label: producto.titulo, amount: producto.amount }]
+                    })
+                });
+            }
+        }
     }
 
-    // 2. Pre-checkout
+    // 2. Pre‑checkout query (OBLIGATORIO)
     if (update.pre_checkout_query) {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/answerPreCheckoutQuery`, {
             method: 'POST',
@@ -69,8 +98,9 @@ export default async function handler(req, res) {
         const chatId = update.message.chat.id;
 
         let fichas = 0;
-        if (payload === 'buy_stars_50') fichas = 50;
-        else if (payload === 'entrada_torneo') fichas = 200;
+        if (payload.startsWith('buy_stars_50')) fichas = 50;
+        else if (payload.startsWith('entrada_torneo')) fichas = 200;
+        // boost no da fichas
 
         if (fichas > 0) {
             await supabase.rpc('add_fichas', { user_id: userId, amount: fichas });
