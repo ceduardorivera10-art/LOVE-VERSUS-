@@ -4,6 +4,7 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const update = req.body;
+    // El token se lee de las variables de entorno de Vercel (NO lo pongas aquí directamente)
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
     const supabase = createClient(
@@ -35,7 +36,8 @@ export default async function handler(req, res) {
                             {
                                 text: "✅ Aceptar Reto",
                                 web_app: {
-                                    url: `https://love-versus-h25yeq0br-ceduardorivera10-2786s-projects.vercel.app/?game=accept&inviter=${inviterId}`
+                                    // ⚠️ Aquí debes poner la URL de tu Mini App en Vercel
+                                    url: `https://love-versus.vercel.app/?game=accept&inviter=${inviterId}`
                                 }
                             }
                         ]]
