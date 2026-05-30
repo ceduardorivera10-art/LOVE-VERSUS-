@@ -280,11 +280,10 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<script>
+<!-- AQUÍ EMPIEZA LA PARTE 2 --><script>
 (function() {
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
-    const BOT_TOKEN = 'AQUI_TU_TOKEN_DE_PRUEBA'; //  PON TU TOKEN REAL PARA PRUEBAS (luego lo quitas)
 
     let supabaseClient, tgUser, currentSection = 'sectionDating';
     let datingQueue = [], currentProfileIdx = 0;
@@ -501,7 +500,6 @@
         $('#rangoNombre').textContent = partes.slice(1).join(' ');
     }
 
-    // Heartbeat y jugadores online
     async function startHeartbeat() {
         if (!tgUser || !tgUser.id || !supabaseClient) return;
         const { data: userData } = await supabaseClient.from('users').select('first_name, photo_url, username').eq('telegram_id', tgUser.id).single();
@@ -549,7 +547,6 @@
         });
     }
 
-    // INVITACIÓN CON sendData
     async function invitarJugador(targetId, targetName) {
         if (userEnergy.triviaGames <= 0) {
             showToast('Sin energía para jugar', 'error');
@@ -949,40 +946,22 @@
     }
     $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
 
-    // Pagos
-    async function comprarFichas(productId) {
-        if (!tgUser || !tgUser.id) { showToast('Debes iniciar sesión en Telegram', 'error'); return; }
-        const productos = {
-            buy_stars_50: { nombre: '50 Fichas', cantidad: 50, descripcion: 'Para apostar en partidas' },
-            boost_perfil: { nombre: 'Boost de Perfil', cantidad: 100, descripcion: 'Tu perfil primero 24h' },
-            entrada_torneo: { nombre: 'Entrada a Torneo', cantidad: 200, descripcion: 'Participa en torneos' }
-        };
-        const producto = productos[productId];
-        if (!producto) { showToast('Producto no válido', 'error'); return; }
-        const payload = tgUser.id + '_' + Date.now();
-        try {
-            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: producto.nombre,
-                    description: producto.descripcion,
-                    payload: payload,
-                    provider_token: '',
-                    currency: 'XTR',
-                    prices: [{ label: producto.nombre, amount: producto.cantidad }]
-                })
-            });
-            const data = await response.json();
-            if (!data.ok) { alert('Error al crear factura:\n' + data.description); return; }
-            const invoiceLink = data.result;
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.openTelegramLink(invoiceLink);
-                showToast(' Abriendo factura...', 'success');
-            } else {
-                alert('Factura creada, pero no se puede abrir automáticamente.\nEnlace: ' + invoiceLink);
-            }
-        } catch (e) { alert('Error de conexión:\n' + e.message); }
+    // ======================== PAGOS SEGUROS (sendData, sin token en frontend) ========================
+    function comprarFichas(productId) {
+        if (!window.Telegram?.WebApp) {
+            showToast('Abre la app desde Telegram', 'error');
+            return;
+        }
+
+        const productosValidos = ['buy_stars_50', 'boost_perfil', 'entrada_torneo'];
+        if (!productosValidos.includes(productId)) {
+            showToast('Producto no válido', 'error');
+            return;
+        }
+
+        // Enviar la orden al bot (el webhook generará la factura y la enviará al chat)
+        window.Telegram.WebApp.sendData(productId);
+        showToast(' Revisa el chat con el bot para pagar', 'success');
     }
     window.comprarFichas = comprarFichas;
 
