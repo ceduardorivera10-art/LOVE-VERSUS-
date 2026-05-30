@@ -4,9 +4,10 @@ export default async function handler(req, res) {
     const update = req.body;
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-    // Función para llamar a Supabase REST directamente (sin SDK)
+    // Función para llamar a Supabase RPC sin SDK (fetch directo)
     async function supabaseRPC(functionName, body) {
-        const response = await fetch(`${process.env.SUPABASE_URL}/rest/v1/rpc/${functionName}`, {
+        const url = `${process.env.SUPABASE_URL}/rest/v1/rpc/${functionName}`;
+        await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -15,19 +16,14 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify(body)
         });
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Supabase RPC error: ${error}`);
-        }
-        return response;
     }
 
-    // 1. Señal desde la Mini App (web_app_data)
+    // 1. Datos desde la Mini App
     if (update.message?.web_app_data) {
         const chatId = update.message.chat.id;
         const data = update.message.web_app_data.data;
 
-        // Manejar invitación
+        // Invitaciones
         if (data.startsWith('invite_')) {
             const targetId = data.split('_')[1];
             const inviterName = update.message.from.first_name;
@@ -44,9 +40,7 @@ export default async function handler(req, res) {
                         inline_keyboard: [[
                             {
                                 text: "✅ Aceptar Reto",
-                                web_app: {
-                                    url: `https://love-versus.vercel.app/?game=accept&inviter=${inviterId}`
-                                }
+                                web_app: { url: `https://love-versus.vercel.app/?game=accept&inviter=${inviterId}` }
                             }
                         ]]
                     }
@@ -63,32 +57,30 @@ export default async function handler(req, res) {
             });
         }
 
-        // Manejar pagos
-        if (data.startsWith('buy_') || data.startsWith('boost_') || data.startsWith('entrada_')) {
+        // Pagos (comprar fichas, boost, torneo)
+        if (data === 'buy_stars_50' || data === 'boost_perfil' || data === 'entrada_torneo') {
             let producto = {};
             if (data === 'buy_stars_50') producto = { titulo: '50 Fichas', amount: 50, desc: 'Para apostar en partidas' };
             else if (data === 'boost_perfil') producto = { titulo: 'Boost de Perfil', amount: 100, desc: '24h destacado' };
             else if (data === 'entrada_torneo') producto = { titulo: 'Entrada Torneo', amount: 200, desc: 'Acceso total' };
 
-            if (producto.titulo) {
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        title: producto.titulo,
-                        description: producto.desc,
-                        payload: data,
-                        provider_token: '',
-                        currency: 'XTR',
-                        prices: [{ label: producto.titulo, amount: producto.amount }]
-                    })
-                });
-            }
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    title: producto.titulo,
+                    description: producto.desc,
+                    payload: data,
+                    provider_token: '',
+                    currency: 'XTR',
+                    prices: [{ label: producto.titulo, amount: producto.amount }]
+                })
+            });
         }
     }
 
-    // 2. Pre‑checkout query (OBLIGATORIO)
+    // 2. Pre‑checkout (obligatorio)
     if (update.pre_checkout_query) {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/answerPreCheckoutQuery`, {
             method: 'POST',
@@ -107,15 +99,11 @@ export default async function handler(req, res) {
         const chatId = update.message.chat.id;
 
         let fichas = 0;
-        if (payload.startsWith('buy_stars_50')) fichas = 50;
-        else if (payload.startsWith('entrada_torneo')) fichas = 200;
+        if (payload === 'buy_stars_50') fichas = 50;
+        else if (payload === 'entrada_torneo') fichas = 200;
 
         if (fichas > 0) {
-            try {
-                await supabaseRPC('add_fichas', { user_id: userId, amount: fichas });
-            } catch (e) {
-                console.error('Error añadiendo fichas:', e);
-            }
+            await supabaseRPC('add_fichas', { user_id: userId, amount: fichas });
         }
 
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
