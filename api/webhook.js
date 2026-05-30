@@ -1,16 +1,26 @@
-import { createClient } from '@supabase/supabase-js';
-
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const update = req.body;
-    // El token se lee de las variables de entorno de Vercel (NO lo pongas aquí directamente)
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-    const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    // Función para llamar a Supabase REST directamente (sin SDK)
+    async function supabaseRPC(functionName, body) {
+        const response = await fetch(`${process.env.SUPABASE_URL}/rest/v1/rpc/${functionName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
+                'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+            },
+            body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Supabase RPC error: ${error}`);
+        }
+        return response;
+    }
 
     // 1. Señal desde la Mini App (web_app_data)
     if (update.message?.web_app_data) {
@@ -23,7 +33,6 @@ export default async function handler(req, res) {
             const inviterName = update.message.from.first_name;
             const inviterId = update.message.from.id;
 
-            // Enviar notificación push al oponente con botón inline
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -36,7 +45,6 @@ export default async function handler(req, res) {
                             {
                                 text: "✅ Aceptar Reto",
                                 web_app: {
-                                    // ⚠️ Aquí debes poner la URL de tu Mini App en Vercel
                                     url: `https://love-versus.vercel.app/?game=accept&inviter=${inviterId}`
                                 }
                             }
@@ -45,7 +53,6 @@ export default async function handler(req, res) {
                 })
             });
 
-            // Confirmar al remitente
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -56,7 +63,7 @@ export default async function handler(req, res) {
             });
         }
 
-        // Manejar pagos (si aún usas sendData para comprar fichas)
+        // Manejar pagos
         if (data.startsWith('buy_') || data.startsWith('boost_') || data.startsWith('entrada_')) {
             let producto = {};
             if (data === 'buy_stars_50') producto = { titulo: '50 Fichas', amount: 50, desc: 'Para apostar en partidas' };
@@ -102,10 +109,13 @@ export default async function handler(req, res) {
         let fichas = 0;
         if (payload.startsWith('buy_stars_50')) fichas = 50;
         else if (payload.startsWith('entrada_torneo')) fichas = 200;
-        // boost no da fichas
 
         if (fichas > 0) {
-            await supabase.rpc('add_fichas', { user_id: userId, amount: fichas });
+            try {
+                await supabaseRPC('add_fichas', { user_id: userId, amount: fichas });
+            } catch (e) {
+                console.error('Error añadiendo fichas:', e);
+            }
         }
 
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
