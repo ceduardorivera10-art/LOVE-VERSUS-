@@ -4,1022 +4,496 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title> LoveVersus</title>
+    <title>üíò LoveVersus</title>
     <style>
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-card: #1a1a1a;
-            --bg-nav: #141414;
-            --accent-blue: #3390ec;
-            --accent-gold: #c9a84c;
-            --accent-rose: #e94560;
-            --accent-green: #34c759;
-            --accent-orange: #ff9500;
-            --accent-purple: #af52de;
-            --text-primary: #f5f5f5;
-            --text-secondary: #b0b0b0;
-            --text-tertiary: #6e6e6e;
-            --radius-lg: 20px;
-            --radius-md: 16px;
-            --radius-full: 50%;
-            --nav-height: 64px;
-            --header-height: 52px;
-            --safe-bottom: env(safe-area-inset-bottom, 12px);
+            --bg-primary: #0a0a0a; --bg-secondary: #111111; --bg-card: #1a1a1a;
+            --accent-blue: #3390ec; --accent-gold: #c9a84c; --accent-rose: #e94560;
+            --accent-green: #34c759; --text-primary: #f5f5f5; --text-secondary: #b0b0b0;
+            --radius-lg: 20px; --nav-height: 64px; --safe-bottom: env(safe-area-inset-bottom, 12px);
         }
-
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html, body {
-            height:100%; width:100%; background:var(--bg-primary); color:var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-size: 16px; line-height: 1.4; overflow: hidden;
-            -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
-        }
-        .app-container { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:480px; margin:0 auto; background:var(--bg-primary); position:relative; }
-        .app-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; min-height:var(--header-height); background:var(--bg-secondary); border-bottom:1px solid #1f1f1f; z-index:100; }
-        .header-brand { display:flex; align-items:center; gap:10px; }
-        .header-logo { width:34px; height:34px; border-radius:var(--radius-full); background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display:flex; align-items:center; justify-content:center; font-size:18px; }
-        .header-title { font-size:18px; font-weight:700; }
-        .gold-dot { color:var(--accent-gold); }
-        .header-user-pill { display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid #2a2a2a; border-radius:30px; padding:5px 12px 5px 5px; cursor:pointer; }
-        .header-avatar, .header-avatar-placeholder { width:30px; height:30px; border-radius:var(--radius-full); }
-        .header-avatar { object-fit:cover; display:none; }
-        .header-avatar-placeholder { background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; font-weight:700; }
-        .header-user-name { font-size:14px; font-weight:600; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .main-content { flex:1; overflow-y:auto; padding-bottom:calc(var(--nav-height) + var(--safe-bottom) + 8px); }
-        .section { display:none; min-height:100%; animation: fadeSlideIn 0.3s ease; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+        body { background:var(--bg-primary); color:var(--text-primary); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; overflow:hidden; user-select:none; }
+        
+        .app-container { display:flex; flex-direction:column; height:100vh; max-width:480px; margin:0 auto; position:relative; }
+        .header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--bg-secondary); border-bottom:1px solid #1f1f1f; z-index:100; }
+        .brand { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:700; }
+        .user-pill { display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid #2a2a2a; border-radius:30px; padding:4px 12px 4px 4px; cursor:pointer; }
+        .avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--accent-blue),#af52de); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; overflow:hidden; }
+        .avatar img { width:100%; height:100%; object-fit:cover; }
+        
+        .main { flex:1; overflow-y:auto; padding-bottom:calc(var(--nav-height) + var(--safe-bottom) + 10px); }
+        .section { display:none; min-height:100%; animation:fadeIn .3s ease; padding:16px; }
         .section.active { display:block; }
-        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-        /* Citas */
-        .dating-card-container { display:flex; flex-direction:column; align-items:center; padding:20px 16px; gap:20px; }
-        .dating-card { width:100%; max-width:360px; background:var(--bg-card); border-radius:var(--radius-lg); overflow:hidden; border:1px solid #1f1f1f; display:none; }
-        .dating-card-photo { width:100%; height:280px; object-fit:cover; display:none; }
-        .dating-card-photo-placeholder { width:100%; height:280px; display:flex; align-items:center; justify-content:center; font-size:90px; font-weight:700; color:#fff; text-transform:uppercase; }
-        .dating-card-gradient-overlay { position:absolute; bottom:0; left:0; right:0; height:100px; background:linear-gradient(transparent, rgba(10,10,10,0.85)); pointer-events:none; }
-        .dating-card-info { padding:16px 18px; position:relative; z-index:2; margin-top:-40px; }
-        .dating-card-name-age { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-        .dating-card-name { font-size:22px; font-weight:700; }
-        .dating-card-age { font-size:20px; color:var(--text-secondary); }
-        .dating-card-bio { font-size:14px; color:var(--text-secondary); margin-top:6px; }
-        .dating-actions { display:flex; gap:24px; justify-content:center; padding:8px 0 16px; display:none; }
-        .btn-action { width:56px; height:56px; border-radius:var(--radius-full); border:2px solid #2a2a2a; background:var(--bg-card); font-size:26px; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; }
-        .btn-action:active { transform:scale(0.88); }
-        .btn-dislike { color:#ff3b30; border-color:#ff3b3050; }
-        .btn-like { color:#34c759; border-color:#34c75950; }
-        .btn-superlike { color:var(--accent-gold); border-color:var(--accent-gold); width:46px; height:46px; font-size:20px; }
-        .empty-state { text-align:center; padding:40px 20px; color:var(--text-tertiary); display:none; }
-        .empty-state-icon { font-size:60px; opacity:0.6; }
-
-        /* Juegos */
-        .game-menu { display:flex; flex-direction:column; gap:14px; padding:16px; }
-        .game-card { background:var(--bg-card); border-radius:var(--radius-lg); padding:20px; cursor:pointer; transition:0.2s; border:1px solid #1f1f1f; }
-        .game-card:active { transform:scale(0.97); background:#1e1e1e; }
-        .game-card h3 { font-size:18px; margin-bottom:6px; }
-        .game-card p { font-size:14px; color:var(--text-secondary); }
-        .btn { background:var(--accent-blue); color:#fff; border:none; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; cursor:pointer; transition:0.2s; width:100%; margin-top:12px; }
-        .btn:active { opacity:0.8; transform:scale(0.97); }
+        /* Cards & Buttons */
+        .card { background:var(--bg-card); border-radius:var(--radius-lg); padding:20px; margin-bottom:14px; border:1px solid #1f1f1f; }
+        .btn { width:100%; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-primary { background:var(--accent-blue); color:#fff; }
         .btn-outline { background:transparent; border:2px solid var(--accent-blue); color:var(--accent-blue); }
-        .option-btn { background:#1c1c1e; border:2px solid #2a2a2a; color:var(--text-primary); padding:14px; border-radius:12px; font-size:15px; cursor:pointer; transition:0.2s; text-align:left; margin-bottom:8px; width:100%; }
-        .option-btn:active { background:#2a2a2a; }
-        .option-btn.correct { background:#34c75940; border-color:#34c759; color:#34c759; }
-        .option-btn.wrong { background:#e9456040; border-color:#e94560; color:#e94560; }
-        .code-input { width:100%; background:#1c1c1e; border:2px solid #2a2a2a; color:#fff; padding:12px; border-radius:12px; font-size:16px; text-align:center; letter-spacing:2px; }
-        .compatibility-circle { width:120px; height:120px; border-radius:var(--radius-full); background:conic-gradient(var(--accent-green) 0% var(--score), #2a2a2a var(--score) 100%); display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:700; margin:20px auto; }
-        .hidden { display:none !important; }
-        .debug-error { background:#ff3b3010; border:1px solid #ff3b30; color:#ff3b30; padding:10px; border-radius:8px; margin-top:10px; font-size:12px; display:none; }
-
-        /* Perfil */
-        .profile-container { padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:16px; }
-        .profile-avatar-large { width:90px; height:90px; border-radius:var(--radius-full); object-fit:cover; border:3px solid var(--accent-gold); box-shadow:0 0 20px rgba(201,168,76,0.15); }
-        .profile-avatar-placeholder-large { width:90px; height:90px; border-radius:var(--radius-full); background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display:flex; align-items:center; justify-content:center; font-size:40px; color:#fff; font-weight:700; border:3px solid var(--accent-gold); }
-        .profile-name { font-size:22px; font-weight:700; text-align:center; }
-        .profile-username { font-size:14px; color:var(--accent-blue); text-align:center; }
-        .profile-id-text { font-size:11px; color:var(--text-tertiary); text-align:center; font-family:monospace; background:#1c1c1e; padding:4px 10px; border-radius:6px; }
-        .profile-stats { display:flex; gap:20px; justify-content:center; width:100%; }
-        .profile-stat { text-align:center; background:var(--bg-card); border-radius:var(--radius-md); padding:12px 16px; border:1px solid #1f1f1f; flex:1; max-width:100px; }
-        .profile-stat-value { font-size:20px; font-weight:700; }
-        .profile-stat-label { font-size:10px; color:var(--text-tertiary); text-transform:uppercase; margin-top:2px; }
-
-        .bottom-nav { position:absolute; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:var(--bg-nav); border-top:1px solid #1f1f1f; padding:6px 8px var(--safe-bottom); height:calc(var(--nav-height) + var(--safe-bottom)); backdrop-filter:blur(20px); z-index:100; }
-        .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 14px; border-radius:10px; border:none; background:transparent; color:var(--text-tertiary); font-family:inherit; font-size:11px; font-weight:600; position:relative; }
-        .nav-item .nav-icon { font-size:22px; }
+        .btn:active { transform:scale(.97); opacity:.9; }
+        
+        /* Dating */
+        .dating-card { width:100%; aspect-ratio:3/4; background:var(--bg-card); border-radius:var(--radius-lg); overflow:hidden; position:relative; margin-bottom:20px; border:1px solid #1f1f1f; }
+        .dating-photo { width:100%; height:100%; object-fit:cover; }
+        .dating-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:80px; font-weight:700; background:linear-gradient(135deg,#1a1a1a,#2a2a2a); }
+        .dating-info { position:absolute; bottom:0; left:0; right:0; padding:60px 20px 20px; background:linear-gradient(transparent,rgba(0,0,0,.9)); }
+        .dating-actions { display:flex; justify-content:center; gap:20px; }
+        .action-btn { width:60px; height:60px; border-radius:50%; border:2px solid #2a2a2a; background:var(--bg-card); font-size:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        
+        /* Games */
+        .option-btn { width:100%; padding:16px; margin-bottom:10px; background:#1c1c1e; border:2px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; text-align:left; cursor:pointer; transition:.2s; }
+        .option-btn.correct { background:rgba(52,199,89,.2); border-color:var(--accent-green); color:var(--accent-green); }
+        .option-btn.wrong { background:rgba(233,69,96,.2); border-color:var(--accent-rose); color:var(--accent-rose); }
+        .timer { text-align:center; font-size:24px; font-weight:700; color:var(--accent-gold); margin:10px 0; }
+        .compat-circle { width:120px; height:120px; border-radius:50%; margin:20px auto; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; background:conic-gradient(var(--accent-green) 0% var(--score), #2a2a2a var(--score) 100%); }
+        
+        /* Profile */
+        .profile-header { text-align:center; margin-bottom:24px; }
+        .profile-avatar-lg { width:90px; height:90px; border-radius:50%; margin:0 auto 12px; border:3px solid var(--accent-gold); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:40px; background:linear-gradient(135deg,var(--accent-blue),#af52de); }
+        .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:20px; }
+        .stat-box { background:var(--bg-card); padding:12px; border-radius:12px; text-align:center; border:1px solid #1f1f1f; }
+        .stat-val { font-size:20px; font-weight:700; }
+        .stat-label { font-size:10px; color:var(--text-secondary); text-transform:uppercase; margin-top:4px; }
+        
+        /* Nav & Utils */
+        .bottom-nav { position:absolute; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:rgba(20,20,20,.95); backdrop-filter:blur(20px); border-top:1px solid #1f1f1f; padding:8px 0 var(--safe-bottom); z-index:100; }
+        .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:#6e6e6e; font-size:10px; font-weight:600; cursor:pointer; padding:6px 16px; }
         .nav-item.active { color:var(--accent-blue); }
-        .nav-item.active::before { content:''; position:absolute; top:-7px; width:24px; height:3px; background:var(--accent-blue); border-radius:0 0 3px 3px; }
-        .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-120px); background:var(--bg-card); border:1px solid #2a2a2a; padding:12px 20px; border-radius:30px; font-size:13px; font-weight:600; z-index:999; transition:0.3s; pointer-events:none; }
+        .nav-icon { font-size:22px; }
+        .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-100px); background:var(--bg-card); border:1px solid #2a2a2a; padding:12px 24px; border-radius:30px; font-size:13px; font-weight:600; z-index:999; transition:.3s; pointer-events:none; white-space:nowrap; }
         .toast.show { transform:translateX(-50%) translateY(0); }
-        .toast.success { border-color:#34c759; color:#34c759; }
-        .toast.error { border-color:#ff3b30; color:#ff3b30; }
-        .loading-overlay { position:fixed; inset:0; background:var(--bg-primary); display:flex; align-items:center; justify-content:center; z-index:1000; transition:0.4s; }
-        .loading-overlay.hidden { opacity:0; pointer-events:none; }
-        .spinner { width:36px; height:36px; border:3px solid #2a2a2a; border-top-color:var(--accent-blue); border-radius:var(--radius-full); animation:spin 0.7s linear infinite; }
-        @keyframes spin { to { transform:rotate(360deg); } }
-        .energy-badge { display:inline-block; background:var(--accent-orange); color:#fff; padding:2px 8px; border-radius:12px; font-size:12px; margin-left:8px; }
-        .revanscha-btn { background:linear-gradient(135deg, #ff9500, #ff5e3a); border:none; color:#fff; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform:scale(1); } 50% { transform:scale(1.05); } 100% { transform:scale(1); } }
-        .opponent-info { background:var(--bg-card); border-radius:12px; padding:12px; margin:10px 0; display:flex; align-items:center; gap:10px; }
-        .opponent-avatar { width:40px; height:40px; border-radius:50%; background:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; overflow:hidden; }
-        .player-list { display:flex; flex-direction:column; gap:10px; }
-        .player-item { display:flex; align-items:center; justify-content:space-between; background:var(--bg-card); border-radius:12px; padding:12px; }
-        .player-item .player-info { display:flex; align-items:center; gap:10px; }
-        .invite-btn { background:var(--accent-blue); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-size:12px; cursor:pointer; }
+        .toast.success { border-color:var(--accent-green); color:var(--accent-green); }
+        .toast.error { border-color:var(--accent-rose); color:var(--accent-rose); }
+        .loader { position:fixed; inset:0; background:var(--bg-primary); display:flex; align-items:center; justify-content:center; z-index:1000; transition:.4s; }
+        .loader.hidden { opacity:0; pointer-events:none; }
+        .spinner { width:36px; height:36px; border:3px solid #2a2a2a; border-top-color:var(--accent-blue); border-radius:50%; animation:spin .7s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        .hidden { display:none !important; }
     </style>
 </head>
 <body>
-<div class="app-container" id="appContainer">
-    <header class="app-header">
-        <div class="header-brand">
-            <div class="header-logo"></div>
-            <span class="header-title">Love<span class="gold-dot"></span>Versus</span>
-        </div>
-        <div class="header-user-pill" id="headerUserPill">
-            <div class="header-avatar-placeholder" id="headerAvatarPlaceholder">?</div>
-            <img class="header-avatar" id="headerAvatar" src="" alt="Avatar">
-            <span class="header-user-name" id="headerUserName">Cargando...</span>
-            <span class="energy-badge" id="energyBadge" style="display:none;"> <span id="energyCount">20</span></span>
+<div class="app-container">
+    <!-- Header -->
+    <header class="header">
+        <div class="brand">üíò Love<span style="color:var(--accent-gold)">‚ú¶</span>Versus</div>
+        <div class="user-pill" onclick="switchSection('sectionProfile')">
+            <div class="avatar" id="headerAvatar">?</div>
+            <span id="headerName" style="font-size:14px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Cargando...</span>
+            <span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">‚ö°<span id="energyCount">20</span></span>
         </div>
     </header>
 
-    <main class="main-content" id="mainContent">
-        <section class="section active" id="sectionDating">
-            <div class="dating-card-container">
-                <div id="streakBanner" style="display:none; background:linear-gradient(135deg, var(--accent-gold), #e0c76e); color:#000; border-radius:16px; padding:12px; text-align:center; font-weight:600; width:100%; max-width:360px;">
-                     Racha de <span id="streakDays">1</span> dÌa(s). °Has ganado <span id="streakFichas">5</span> fichas hoy!
-                </div>
+    <!-- Main Content -->
+    <main class="main">
+        <!-- CITAS -->
+        <section id="sectionDating" class="section active">
+            <div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">
+                üî• Racha de <span id="streakDays">1</span> d√≠a(s). ¬°Has ganado <span id="streakFichas">5</span> fichas!
+            </div>
+            <div id="datingCardContainer">
                 <div class="dating-card" id="datingCard">
-                    <img class="dating-card-photo" id="datingPhoto" src="" alt="Foto">
-                    <div class="dating-card-photo-placeholder" id="datingPhotoPlaceholder"></div>
-                    <div class="dating-card-gradient-overlay"></div>
-                    <div class="dating-card-info">
-                        <div class="dating-card-name-age"><span class="dating-card-name" id="datingName"></span><span class="dating-card-age" id="datingAge"></span></div>
-                        <p class="dating-card-bio" id="datingBio"></p>
+                    <img class="dating-photo" id="datingPhoto" style="display:none;">
+                    <div class="dating-placeholder" id="datingPlaceholder"></div>
+                    <div class="dating-info">
+                        <div style="font-size:22px;font-weight:700;"><span id="dName"></span> <span id="dAge" style="font-size:18px;color:var(--text-secondary);"></span></div>
+                        <p id="dBio" style="font-size:14px;color:var(--text-secondary);margin-top:6px;"></p>
                     </div>
                 </div>
                 <div class="dating-actions" id="datingActions">
-                    <button class="btn-action btn-dislike" id="btnDislike"></button>
-                    <button class="btn-action btn-superlike" id="btnSuperlike"></button>
-                    <button class="btn-action btn-like" id="btnLike"></button>
+                    <button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">‚ùå</button>
+                    <button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">‚≠ê</button>
+                    <button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">üíò</button>
                 </div>
-                <div class="empty-state" id="emptyDating">
-                    <div class="empty-state-icon"></div>
-                    <h3 id="emptyDatingTitle">Cargando perfiles...</h3>
-                    <p id="emptyDatingDesc">Conectando con Supabase.</p>
-                    <div class="debug-error" id="debugError"></div>
-                    <button onclick="location.reload()" style="margin-top:12px; background:var(--accent-blue); color:#fff; border:none; padding:8px 20px; border-radius:20px; display:none;" id="retryButton">Reintentar</button>
-                </div>
+            </div>
+            <div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;">
+                <div style="font-size:60px;opacity:.6;margin-bottom:16px;">üíî</div>
+                <h3 id="emptyTitle">No hay m√°s perfiles</h3>
+                <p id="emptyDesc">Vuelve m√°s tarde para ver nuevos usuarios.</p>
+                <button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button>
             </div>
         </section>
 
-        <section class="section" id="sectionGames">
-            <div id="gameMenu" class="game-menu">
-                <div class="game-card" id="btnTrivia">
-                    <h3> Trivia Versus 1vs1 <span style="font-size:14px; color:var(--accent-orange);">(Quedan <span id="triviaGamesLeft">5</span>)</span></h3>
-                    <p>Responde preguntas, reta a un amigo y descubre su compatibilidad</p>
+        <!-- JUEGOS -->
+        <section id="sectionGames" class="section">
+            <div id="gameMenu">
+                <div class="card" onclick="openTrivia()">
+                    <h3>üß† Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p>
                 </div>
-                <div class="game-card" id="btnCompatibilidad">
-                    <h3> Test de Compatibilidad <span style="font-size:14px; color:var(--accent-orange);">(Gratis)</span></h3>
-                    <p>10 preguntas para conocer tu estilo de cita ideal</p>
+                <div class="card" onclick="openCompatTest()">
+                    <h3>üíû Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p>
                 </div>
                 <div style="margin-top:24px;">
-                    <h3 style="font-size:18px; margin-bottom:12px;"> Tienda de Fichas</h3>
-                    <p style="color:var(--text-secondary); margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p>
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        <button onclick="comprarFichas('buy_stars_50')" class="btn"> 50 Fichas (50 )</button>
-                        <button onclick="comprarFichas('boost_perfil')" class="btn btn-outline"> Boost de Perfil (100 )</button>
-                        <button onclick="comprarFichas('entrada_torneo')" class="btn btn-outline"> Entrada a Torneo (200 )</button>
-                    </div>
-                    <p style="margin-top:12px; color:var(--text-secondary);">Tu saldo: <span id="saldoUsuario">0</span> fichas</p>
+                    <h3 style="margin-bottom:12px;">ü™ô Tienda de Fichas</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p>
+                    <button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">ü™ô 50 Fichas (50 ‚≠ê)</button>
+                    <button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">üöÄ Boost Perfil (100 ‚≠ê)</button>
+                    <button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">üèÜ Entrada Torneo (200 ‚≠ê)</button>
+                    <p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p>
                 </div>
             </div>
 
-            <div id="triviaFlow" class="hidden" style="padding:16px;">
-                <div id="triviaPaso1" class="trivia-step">
-                    <h3>Jugar Trivia</h3>
-                    <button class="btn" id="btnCrearPartida"> Crear partida (cÛdigo)</button>
-                    <button class="btn btn-outline" id="btnUnirsePartida" style="margin-top:8px;"> Unirse con cÛdigo</button>
-                    <button class="btn" id="btnOnlinePlayers" style="margin-top:8px;"> Ver jugadores en lÌnea</button>
+            <!-- Trivia Flow -->
+            <div id="triviaFlow" class="hidden">
+                <div id="triviaMenu">
+                    <h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
+                    <button class="btn btn-primary" style="margin-bottom:10px;" onclick="crearPartida()">‚ûï Crear partida (c√≥digo)</button>
+                    <button class="btn btn-outline" style="margin-bottom:10px;" onclick="showUnirse()">üîó Unirse con c√≥digo</button>
+                    <button class="btn btn-outline" onclick="showOnlinePlayers()">üåê Ver jugadores en l√≠nea</button>
+                    <button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">üîô Volver</button>
                 </div>
-                <div id="triviaPasoCrear" class="hidden trivia-step">
+                <div id="triviaCrear" class="hidden">
                     <h3>Partida creada</h3>
-                    <p style="margin:12px 0;">Tu cÛdigo de partida es:</p>
-                    <div class="code-input" id="codigoPartidaCreada">-----</div>
-                    <p style="color:var(--text-secondary); margin-top:8px;">Pasa este cÛdigo a tu amigo para que se una. Luego pulsa comenzar.</p>
-                    <button class="btn" id="btnComenzarTrivia"> Comenzar a responder</button>
+                    <p style="margin:12px 0;color:var(--text-secondary);">Tu c√≥digo de partida es:</p>
+                    <div style="background:#1c1c1e;border:2px solid #2a2a2a;padding:16px;border-radius:12px;text-align:center;font-size:24px;letter-spacing:4px;font-weight:700;margin-bottom:16px;" id="codigoCreado">-----</div>
+                    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px;">Comparte este c√≥digo con tu amigo. Cuando se una, pulsa comenzar.</p>
+                    <button class="btn btn-primary" onclick="comenzarEspera()">‚ñ∂Ô∏è Comenzar a responder</button>
                 </div>
-                <div id="triviaPasoUnirse" class="hidden trivia-step">
+                <div id="triviaUnirse" class="hidden">
                     <h3>Unirse a partida</h3>
-                    <p style="margin:12px 0;">Ingresa el cÛdigo:</p>
-                    <input type="number" class="code-input" id="inputCodigoUnirse" placeholder="Ej: 123">
-                    <button class="btn" id="btnUnirseConfirmar"> Buscar y unirse</button>
-                    <p id="errorUnirse" style="color:var(--accent-rose); margin-top:8px; display:none;">CÛdigo no v·lido o partida ya comenzada.</p>
-                    <div id="opponentDisplay" class="opponent-info hidden"></div>
+                    <input type="number" id="inputCodigo" placeholder="Ingresa el c√≥digo" style="width:100%;padding:16px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:2px;margin:16px 0;">
+                    <button class="btn btn-primary" onclick="unirsePartida()">üîç Buscar y unirse</button>
+                    <p id="errorUnirse" style="color:var(--accent-rose);margin-top:10px;font-size:14px;display:none;">C√≥digo no v√°lido o partida ya comenzada.</p>
                 </div>
-                <div id="onlinePlayersStep" class="hidden trivia-step">
-                    <h3>Jugadores en lÌnea</h3>
-                    <div id="onlinePlayersList" class="player-list"></div>
-                    <button class="btn btn-outline" id="btnBackFromOnline"> Volver</button>
+                <div id="onlinePlayers" class="hidden">
+                    <h3 style="margin-bottom:16px;">Jugadores en l√≠nea</h3>
+                    <div id="playersList"></div>
+                    <button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">üîô Volver</button>
                 </div>
-                <div id="triviaPreguntas" class="hidden trivia-step">
-                    <h3 id="triviaPreguntaTitulo">Pregunta 1/5</h3>
-                    <p id="triviaPreguntaTexto" style="font-size:18px; margin:16px 0;"></p>
-                    <div id="triviaOpciones"></div>
-                    <p id="triviaEspera" style="color:var(--accent-gold); display:none;">Esperando al oponente...</p>
+                <div id="triviaPreguntas" class="hidden">
+                    <div class="timer" id="timerDisplay">‚è≥ 15s</div>
+                    <h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3>
+                    <p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p>
+                    <div id="qOptions"></div>
+                    <p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p>
                 </div>
-                <div id="triviaResultado" class="hidden trivia-step">
-                    <h3 style="text-align:center;">Resultado de compatibilidad</h3>
-                    <div class="compatibility-circle" id="compatibilityScore">0%</div>
-                    <p style="text-align:center; font-size:18px;" id="compatibilidadMensaje"></p>
-                    <button class="btn" id="btnVolverMenu">Volver al men˙</button>
+                <div id="triviaResultado" class="hidden" style="text-align:center;">
+                    <h3 style="margin-bottom:8px;">Resultado de compatibilidad</h3>
+                    <div class="compat-circle" id="compatScore">0%</div>
+                    <p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
+                    <button class="btn btn-primary" onclick="resetGames()">Volver al men√∫</button>
                 </div>
             </div>
 
-            <div id="compatFlow" class="hidden" style="padding:16px;">
+            <!-- Compat Test Flow -->
+            <div id="compatFlow" class="hidden">
                 <div id="compatPreguntas">
-                    <h3 id="compatPreguntaTitulo">Pregunta 1/10</h3>
-                    <p id="compatPreguntaTexto" style="font-size:18px; margin:16px 0;"></p>
-                    <div id="compatOpciones"></div>
+                    <h3 id="cqTitle" style="margin-bottom:8px;">Pregunta 1/10</h3>
+                    <p id="cqText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p>
+                    <div id="cqOptions"></div>
                 </div>
-                <div id="compatResultado" class="hidden">
-                    <h3 style="text-align:center;">Tu perfil de cita ideal</h3>
-                    <div class="compatibility-circle" id="compatScoreCircle">0%</div>
-                    <p style="text-align:center; font-size:18px;" id="compatMensaje"></p>
-                    <button class="btn" id="btnVolverMenuCompat">Volver al men˙</button>
+                <div id="compatResultado" class="hidden" style="text-align:center;">
+                    <h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3>
+                    <div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div>
+                    <p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
+                    <button class="btn btn-primary" onclick="resetGames()">Volver al men√∫</button>
                 </div>
             </div>
         </section>
 
-        <section class="section" id="sectionProfile">
-            <div class="profile-container">
-                <div class="profile-avatar-placeholder-large" id="profileAvatarPlaceholder">?</div>
-                <img class="profile-avatar-large" id="profileAvatar" src="" alt="Avatar" style="display:none;">
-                <h2 class="profile-name" id="profileName">Usuario</h2>
-                <span class="profile-username" id="profileUsername">@username</span>
-                <span class="profile-id-text" id="profileId">ID: 000000000</span>
-                <div class="profile-stats">
-                    <div class="profile-stat"><span class="profile-stat-value">0</span><span class="profile-stat-label">Matches</span></div>
-                    <div class="profile-stat"><span class="profile-stat-value" id="victoriasCount">0</span><span class="profile-stat-label">Victorias</span></div>
-                    <div class="profile-stat"><span class="profile-stat-value" id="saldoPerfil">0</span><span class="profile-stat-label">Fichas</span></div>
-                </div>
-                <div style="background:var(--bg-card); border-radius:12px; padding:12px; text-align:center; width:100%;">
-                    <span style="font-size:24px; font-weight:700;" id="rangoIcono"></span>
-                    <span id="rangoNombre">Bronce</span>
-                </div>
+        <!-- PERFIL -->
+        <section id="sectionProfile" class="section">
+            <div class="profile-header">
+                <div class="profile-avatar-lg" id="profileAvatarLg">?</div>
+                <h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2>
+                <p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p>
+                <p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-val">0</div><div class="stat-label">Matches</div></div>
+                <div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div>
+                <div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div>
+            </div>
+            <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;">
+                <span id="rangoIcon" style="font-size:28px;">üü§</span>
+                <span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span>
             </div>
         </section>
     </main>
 
+    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon"></span><span>Citas</span></button>
-        <button class="nav-item" data-section="sectionGames"><span class="nav-icon"></span><span>Versus</span></button>
-        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon"></span><span>Perfil</span></button>
+        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">üíò</span>Citas</button>
+        <button class="nav-item" data-section="sectionGames"><span class="nav-icon">üïπÔ∏è</span>Versus</button>
+        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">üë§</span>Perfil</button>
     </nav>
 </div>
 
+<!-- Toast & Loader -->
 <div class="toast" id="toast"></div>
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+<div class="loader" id="loader"><div class="spinner"></div></div>
 
+<!-- Scripts -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<!-- AQUÕ EMPIEZA LA PARTE 2 --><script>
-(function() {
+<script>
+(function(){
+    // ‚öôÔ∏è CONFIGURACI√ìN
     const SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
+    const SUPABASE_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
+    
+    let supabase, tgUser;
+    let energy = { swipes:20, trivia:5, streak:0, victorias:0, rango:'üü§ Bronce' };
+    let gameId=null, playerNum=1, responses=[], questions=[], qIdx=0, locked=false, timer=null, timeLeft=15;
+    let datingQueue=[], dIdx=0, interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
+    let compatAnswers=[];
 
-    let supabaseClient, tgUser, currentSection = 'sectionDating';
-    let datingQueue = [], currentProfileIdx = 0;
-    const interacted = new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
+    // üõ†Ô∏è UTILIDADES
+    const $=s=>document.querySelector(s);
+    const $$=s=>document.querySelectorAll(s);
+    const toast=(m,t='')=>{const e=$('#toast');e.textContent=m;e.className=`toast ${t} show`;setTimeout(()=>e.classList.remove('show'),2500);};
+    const switchSection=id=>{$$('.section').forEach(s=>s.classList.remove('active'));$(`#${id}`).classList.add('active');$$('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===id));$('#main').scrollTop=0;if(id==='sectionProfile')updateBalance();};
+    $$('.nav-item').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.section)));
 
-    let userEnergy = { swipes: 20, triviaGames: 5, streak: 0, victorias: 0, rango: 'Bronce', fichasGanadas: 0 };
-    let currentGameId = null, currentPlayerNumber = 1, triviaResponses = [];
-    let allTriviaQuestions = [], currentTriviaQIndex = 0;
-    let correctasJugador1 = 0, correctasJugador2 = 0;
-    let isAnswerLocked = false;
-    let timerInterval = null;
-    let tiempoPorPregunta = 15;
-    let tiempoRestante = 0;
+    // üöÄ INICIALIZACI√ìN
+    async function init(){
+        if(window.Telegram?.WebApp){window.Telegram.WebApp.expand();window.Telegram.WebApp.ready();tgUser=window.Telegram.WebApp.initDataUnsafe?.user||{id:123456789,first_name:'Demo'};}
+        else tgUser={id:123456789,first_name:'Demo'};
+        
+        $('#headerName').textContent=tgUser.first_name;
+        $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
+        $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
+        $('#profileId').textContent='ID: '+tgUser.id;
+        const initials=(tgUser.first_name||'?')[0].toUpperCase();
+        if(tgUser.photo_url){$('#headerAvatar').innerHTML=`<img src="${tgUser.photo_url}">`;}else{$('#headerAvatar').textContent=initials;}
+        if(tgUser.photo_url){$('#profileAvatarLg').innerHTML=`<img src="${tgUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;}else{$('#profileAvatarLg').textContent=initials;}
 
-    const preguntasCompatibilidad = [
-        { pregunta: "øQuÈ prefieres en una primera cita?", opciones: ["Cena rom·ntica", "Aventura al aire libre", "CafÈ y conversaciÛn", "Cine en casa"] },
-        { pregunta: "øQuÈ cualidad valoras m·s?", opciones: ["Sentido del humor", "Inteligencia", "Amabilidad", "Espontaneidad"] },
-        { pregunta: "øCu·l es tu plan ideal de fin de semana?", opciones: ["Fiesta con amigos", "Viaje improvisado", "MaratÛn de series", "Leer un buen libro"] },
-        { pregunta: "øCÛmo te describes?", opciones: ["Aventurero/a", "Tranquilo/a", "Sociable", "Creativo/a"] },
-        { pregunta: "øQuÈ no soportas?", opciones: ["La impuntualidad", "La falta de ambiciÛn", "La mala higiene", "La arrogancia"] },
-        { pregunta: "øCu·l es tu lenguaje del amor?", opciones: ["Palabras de afirmaciÛn", "Actos de servicio", "Tiempo de calidad", "Contacto fÌsico"] },
-        { pregunta: "øQuÈ tipo de m˙sica prefieres?", opciones: ["Pop", "Rock", "ElectrÛnica", "Indie"] },
-        { pregunta: "øQuÈ te hace reÌr?", opciones: ["Chistes malos", "Sarcasmo", "Situaciones absurdas", "Memes"] },
-        { pregunta: "øCÛmo manejas los conflictos?", opciones: ["Hablando directamente", "Dando espacio", "Buscando compromisos", "Evit·ndolos"] },
-        { pregunta: "øQuÈ esperas de una relaciÛn?", opciones: ["Apoyo mutuo", "DiversiÛn constante", "Crecimiento personal", "Estabilidad"] }
-    ];
-    let respuestasCompat = [];
+        try{
+            supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+            await dailyLogin();
+            updateBalance();
+            loadProfiles();
+        }catch(e){console.error(e);toast('Error de conexi√≥n','error');$('#retryBtn').style.display='inline-block';}
 
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => document.querySelectorAll(s);
-    const toast = $('#toast');
-    const loadingOverlay = $('#loadingOverlay');
-    function showToast(msg, type='') {
-        toast.textContent = msg;
-        toast.className = 'toast '+type+' show';
-        setTimeout(() => toast.classList.remove('show'), 2200);
+        // Verificar invitaci√≥n aceptada
+        const params=new URLSearchParams(window.location.search);
+        if(params.get('accept')&&tgUser) await checkInvite(params.get('from'));
+
+        setTimeout(()=>$('#loader').classList.add('hidden'),600);
     }
 
-    function switchSection(sectionId) {
-        if (currentSection === sectionId) return;
-        currentSection = sectionId;
-        $$('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
-        $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.section === sectionId));
-        $('#mainContent').scrollTop = 0;
-        if (sectionId === 'sectionProfile') actualizarSaldoUI();
-    }
-    $$('.nav-item').forEach(item => item.addEventListener('click', () => switchSection(item.dataset.section)));
-    $('#headerUserPill').addEventListener('click', () => switchSection('sectionProfile'));
+    // üí∞ PAGOS SEGUROS (Anti-CORS / Anti-Nepal)
+    window.comprarFichas=function(pid){
+        if(!window.Telegram?.WebApp)return toast('Abre desde Telegram','error');
+        if(!['buy_stars_50','boost_perfil','entrada_torneo'].includes(pid))return toast('Producto inv√°lido','error');
+        window.Telegram.WebApp.sendData(pid);
+        toast('üöÄ Revisa el chat para pagar','success');
+    };
 
-    function initTelegram() {
-        if (window.Telegram?.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.expand(); tg.ready();
-            tgUser = tg.initDataUnsafe?.user || null;
-        }
-        if (!tgUser) tgUser = { id: 123456789, first_name: 'Demo', username: 'demo', photo_url: '' };
-        $('#headerUserName').textContent = tgUser.first_name;
-        const initials = (tgUser.first_name||'?')[0].toUpperCase();
-        if (tgUser.photo_url) {
-            $('#headerAvatar').src = tgUser.photo_url; $('#headerAvatar').style.display='block';
-            $('#headerAvatarPlaceholder').style.display='none';
-        } else {
-            $('#headerAvatarPlaceholder').textContent = initials;
-        }
-        $('#profileName').textContent = (tgUser.first_name||'') + (tgUser.last_name ? ' '+tgUser.last_name : '');
-        $('#profileUsername').textContent = '@' + (tgUser.username||'sin_username');
-        $('#profileId').textContent = 'ID: '+tgUser.id;
-        if (tgUser.photo_url) {
-            $('#profileAvatar').src = tgUser.photo_url; $('#profileAvatar').style.display='block';
-            $('#profileAvatarPlaceholder').style.display='none';
-        } else {
-            $('#profileAvatarPlaceholder').textContent = initials;
-        }
-    }
+    // üéÆ INVITACI√ìN SEGURA
+    window.invitarJugador=async function(tid,tname){
+        if(energy.trivia<=0)return toast('Sin energ√≠a','error');
+        const{data}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
+        energy.trivia=data;updateEnergy();
+        window.Telegram.WebApp.sendData(`invite_${tid}`);
+        toast(`üì® Invitando a ${tname}...`,'success');
+        backToTriviaMenu();
+    };
 
-    function initSupabase() {
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            syncUser();
-            loadDatingProfiles();
-            actualizarSaldoUI();
-        } catch(e) { showToast('Error Supabase', 'error'); }
-    }
-    async function syncUser() {
-        if (!supabaseClient || !tgUser) return;
-        await supabaseClient.from('users').upsert({
-            telegram_id: tgUser.id,
-            first_name: tgUser.first_name, last_name: tgUser.last_name||'',
-            username: tgUser.username||'', photo_url: tgUser.photo_url||'',
-            last_login: new Date().toISOString()
-        }, { onConflict: 'telegram_id' });
-    }
-
-    async function loadDatingProfiles() {
-        if (!supabaseClient) return;
-        try {
-            const { data, error } = await supabaseClient.from('users').select('*').neq('telegram_id', tgUser.id);
-            if (error) throw error;
-            if (!data || data.length===0) {
-                $('#emptyDatingTitle').textContent = 'No hay perfiles';
-                $('#emptyDatingDesc').textContent = 'Agrega usuarios en Supabase.';
-                showEmpty(true); return;
-            }
-            datingQueue = data.filter(u => !interacted.has(u.telegram_id));
-            if (datingQueue.length===0) {
-                $('#emptyDatingTitle').textContent = 'Ya viste todos';
-                $('#emptyDatingDesc').textContent = 'Vuelve m·s tarde.';
-                showEmpty(true); return;
-            }
-            currentProfileIdx = 0;
-            showProfile();
-        } catch(e) {
-            showEmpty(true);
-            $('#debugError').textContent = e.message;
-            $('#debugError').style.display='block';
-        }
-    }
-    function showProfile() {
-        if (!datingQueue.length || currentProfileIdx >= datingQueue.length) { showEmpty(true); return; }
-        const p = datingQueue[currentProfileIdx];
-        $('#datingCard').style.display='block'; $('#datingActions').style.display='flex';
-        $('#emptyDating').style.display='none';
-        $('#datingName').textContent = p.first_name||''; $('#datingAge').textContent = p.age||'';
-        $('#datingBio').textContent = p.bio||'';
-        const photoPlaceholder = $('#datingPhotoPlaceholder');
-        if (p.photo_url) {
-            $('#datingPhoto').src = p.photo_url;
-            $('#datingPhoto').style.display = 'block';
-            photoPlaceholder.style.display = 'none';
-        } else {
-            $('#datingPhoto').style.display = 'none';
-            photoPlaceholder.style.display = 'flex';
-            const inicial = (p.first_name || '?')[0].toUpperCase();
-            photoPlaceholder.textContent = inicial;
-            const colores = ['#e94560', '#3390ec', '#c9a84c', '#34c759', '#af52de', '#ff9500'];
-            const colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
-            photoPlaceholder.style.background = `linear-gradient(135deg, ${colorAleatorio}, #1a1a2e)`;
-        }
-    }
-    function showEmpty(show) {
-        if (show) {
-            $('#datingCard').style.display='none'; $('#datingActions').style.display='none';
-            $('#emptyDating').style.display='block';
-        }
-    }
-    function handleDatingAction(type) {
-        if (!datingQueue.length || currentProfileIdx >= datingQueue.length) return;
-        if (userEnergy.swipes <= 0) {
-            showToast(' Sin energÌa de swipes. Espera hasta maÒana.', 'error');
-            return;
-        }
-        supabaseClient.rpc('use_swipe', { user_id: tgUser.id }).then(({ data }) => {
-            if (data >= 0) { userEnergy.swipes = data; updateEnergyDisplay(); }
-        });
-        const p = datingQueue[currentProfileIdx];
-        interacted.add(p.telegram_id);
-        localStorage.setItem('lv_interacted', JSON.stringify([...interacted]));
-        showToast(type==='like'?' °Te gusta!':type==='super'?' Super Like':' Descartado');
-        currentProfileIdx++;
-        if (currentProfileIdx < datingQueue.length) {
-            animateCard(() => { showProfile(); animateCardIn(); });
-        } else { animateCard(() => showEmpty(true)); }
-    }
-    function animateCard(cb) {
-        $('#datingCard').style.transition='0.3s'; $('#datingCard').style.transform='translateX(120%) rotate(20deg)'; $('#datingCard').style.opacity='0';
-        setTimeout(cb,300);
-    }
-    function animateCardIn() {
-        $('#datingCard').style.transition='none'; $('#datingCard').style.transform='translateX(-30px)'; $('#datingCard').style.opacity='0';
-        setTimeout(()=>{ $('#datingCard').style.transition='0.35s cubic-bezier(0.34,1.56,0.64,1)'; $('#datingCard').style.transform='translateX(0)'; $('#datingCard').style.opacity='1'; },50);
-    }
-    $('#btnLike').addEventListener('click', ()=>handleDatingAction('like'));
-    $('#btnDislike').addEventListener('click', ()=>handleDatingAction('dislike'));
-    $('#btnSuperlike').addEventListener('click', ()=>handleDatingAction('super'));
-
-    async function doDailyLogin() {
-        if (!supabaseClient || !tgUser) return;
-        try {
-            const { data, error } = await supabaseClient.rpc('daily_login', { user_id: tgUser.id });
-            if (error) throw error;
-            userEnergy = {
-                swipes: data.swipes,
-                triviaGames: data.trivia_games,
-                streak: data.streak,
-                victorias: data.victorias,
-                rango: data.rango,
-                fichasGanadas: data.fichas_ganadas
-            };
-            if (data.fichas_ganadas > 0) {
-                $('#streakBanner').style.display = 'block';
-                $('#streakDays').textContent = data.streak;
-                $('#streakFichas').textContent = data.fichas_ganadas;
-                showToast(` Has ganado ${data.fichas_ganadas} fichas por tu racha de ${data.streak} dÌas!`, 'success');
-            }
-            updateEnergyDisplay();
-            updateProfileStats();
-        } catch(e) {
-            console.error('Error en daily_login:', e);
-            showToast('Error al cargar datos de energÌa', 'error');
-        }
-    }
-
-    function updateEnergyDisplay() {
-        $('#energyCount').textContent = userEnergy.swipes;
-        $('#energyBadge').style.display = userEnergy.swipes <= 5 ? 'inline-block' : 'none';
-        $('#triviaGamesLeft').textContent = userEnergy.triviaGames;
-    }
-
-    function updateProfileStats() {
-        $('#victoriasCount').textContent = userEnergy.victorias;
-        const partes = userEnergy.rango.split(' ');
-        $('#rangoIcono').textContent = partes[0];
-        $('#rangoNombre').textContent = partes.slice(1).join(' ');
-    }
-
-    async function startHeartbeat() {
-        if (!tgUser || !tgUser.id || !supabaseClient) return;
-        const { data: userData } = await supabaseClient.from('users').select('first_name, photo_url, username').eq('telegram_id', tgUser.id).single();
-        const firstName = userData?.first_name || tgUser.first_name || '';
-        const photo = userData?.photo_url || tgUser.photo_url || '';
-        const uname = userData?.username || tgUser.username || '';
-        await supabaseClient.rpc('heartbeat', {
-            user_id: tgUser.id,
-            user_first_name: firstName,
-            user_photo_url: photo,
-            user_username: uname
-        });
-        supabaseClient.channel('online_players_channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players' }, () => {
-                if (!$('#onlinePlayersStep').classList.contains('hidden')) cargarOnlinePlayers();
-            })
-            .subscribe();
-    }
-
-    async function cargarOnlinePlayers() {
-        const { data, error } = await supabaseClient.from('online_players').select('*').neq('telegram_id', tgUser.id);
-        if (error) return;
-        const listEl = $('#onlinePlayersList');
-        listEl.innerHTML = '';
-        if (!data || data.length === 0) {
-            listEl.innerHTML = '<p style="color:var(--text-tertiary); text-align:center;">No hay jugadores en lÌnea</p>';
-            return;
-        }
-        data.forEach(player => {
-            const div = document.createElement('div');
-            div.className = 'player-item';
-            div.innerHTML = `
-                <div class="player-info">
-                    <div class="opponent-avatar">${player.photo_url ? `<img src="${player.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (player.first_name||'?')[0].toUpperCase()}</div>
-                    <span style="font-weight:600;">${player.first_name || 'Jugador'}</span>
-                </div>
-                <button class="invite-btn" data-id="${player.telegram_id}" data-name="${player.first_name}">Desafiar</button>
-            `;
-            listEl.appendChild(div);
-        });
-        $$('#onlinePlayersList .invite-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                invitarJugador(this.dataset.id, this.dataset.name);
-            });
-        });
-    }
-
-    async function invitarJugador(targetId, targetName) {
-        if (userEnergy.triviaGames <= 0) {
-            showToast('Sin energÌa para jugar', 'error');
-            return;
-        }
-        const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
-        userEnergy.triviaGames = remaining;
-        updateEnergyDisplay();
-
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.sendData(`invite_${targetId}`);
-            showToast(` Invitando a ${targetName}...`, 'success');
-            await supabaseClient.from('trivia_games').insert({
-                player1_telegram_id: tgUser.id,
-                player2_telegram_id: parseInt(targetId),
-                status: 'invited'
-            });
-            $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-            $('#triviaPaso1').classList.remove('hidden');
-        } else {
-            showToast('Abre desde Telegram para invitar', 'error');
-        }
-    }
-
-    function escucharCambiosPartida(gameId) {
-        supabaseClient.channel('game_' + gameId)
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trivia_games', filter: `id=eq.${gameId}` }, (payload) => {
-                const game = payload.new;
-                if (game.status === 'active') {
-                    currentGameId = game.id;
-                    currentPlayerNumber = 1;
-                    $('#onlinePlayersStep').classList.add('hidden');
-                    $('#triviaPaso1').classList.add('hidden');
-                    cargarPreguntasTrivia();
-                    $('#triviaPreguntas').classList.remove('hidden');
-                    currentTriviaQIndex = 0; triviaResponses = [];
-                    mostrarPreguntaTrivia();
-                }
-            })
-            .subscribe();
-    }
-
-    async function checkInvitations() {
-        const { data, error } = await supabaseClient.from('trivia_games').select('*').eq('player2_telegram_id', tgUser.id).eq('status', 'invited');
-        if (data && data.length > 0) {
-            const game = data[0];
-            showToast(`Tienes una invitaciÛn de partida`, 'success');
-            await supabaseClient.from('trivia_games').update({ status: 'active' }).eq('id', game.id);
-            currentGameId = game.id;
-            currentPlayerNumber = 2;
-            await cargarPreguntasTrivia();
-            $('#triviaFlow').classList.remove('hidden');
-            $('#triviaPaso1').classList.add('hidden');
-            $('#triviaPreguntas').classList.remove('hidden');
-            currentTriviaQIndex=0; triviaResponses=[];
-            mostrarPreguntaTrivia();
-            const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
-            userEnergy.triviaGames = remaining;
-            updateEnergyDisplay();
-        }
-    }
-
-    function resetGamesView() {
-        $('#gameMenu').classList.remove('hidden');
-        $('#triviaFlow').classList.add('hidden');
-        $('#compatFlow').classList.add('hidden');
-        supabaseClient.removeAllChannels();
-        if (timerInterval) clearInterval(timerInterval);
-    }
-
-    $('#btnTrivia').addEventListener('click', async () => {
-        if (userEnergy.triviaGames <= 0) {
-            showToast(' Sin partidas de trivia hoy.', 'error');
-            return;
-        }
-        $('#gameMenu').classList.add('hidden');
-        $('#triviaFlow').classList.remove('hidden');
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPaso1').classList.remove('hidden');
-    });
-
-    $('#btnCrearPartida').addEventListener('click', async () => {
-        if (userEnergy.triviaGames <= 0) { showToast('Sin energÌa', 'error'); return; }
-        await cargarPreguntasTrivia();
-        const { data, error } = await supabaseClient.from('trivia_games').insert({
-            player1_telegram_id: tgUser.id, status: 'waiting'
-        }).select('id').single();
-        if (error) { showToast('Error al crear partida', 'error'); return; }
-        currentGameId = data.id; currentPlayerNumber = 1;
-        $('#codigoPartidaCreada').textContent = data.id;
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPasoCrear').classList.remove('hidden');
-        const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
-        userEnergy.triviaGames = remaining;
-        updateEnergyDisplay();
-    });
-
-    $('#btnUnirsePartida').addEventListener('click', () => {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPasoUnirse').classList.remove('hidden');
-        $('#opponentDisplay').classList.add('hidden');
-    });
-
-    $('#btnUnirseConfirmar').addEventListener('click', async () => {
-        const gameId = parseInt($('#inputCodigoUnirse').value);
-        if (!gameId) return;
-        const { data, error } = await supabaseClient.from('trivia_games').select('*').eq('id', gameId).single();
-        if (error || !data || data.status!=='waiting') {
-            $('#errorUnirse').style.display='block';
-            return;
-        }
-        const { data: player1Data } = await supabaseClient.from('users').select('first_name, photo_url').eq('telegram_id', data.player1_telegram_id).single();
-        if (player1Data) {
-            const opponentDiv = $('#opponentDisplay');
-            opponentDiv.innerHTML = `
-                <div class="opponent-avatar">${player1Data.photo_url ? `<img src="${player1Data.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (player1Data.first_name||'?')[0].toUpperCase()}</div>
-                <div>
-                    <p style="font-weight:600;color:var(--text-primary);">${player1Data.first_name || 'Oponente'}</p>
-                    <p style="font-size:12px;color:var(--text-secondary);">te ha desafiado</p>
-                </div>
-            `;
-            opponentDiv.classList.remove('hidden');
-        }
-        await supabaseClient.from('trivia_games').update({
-            player2_telegram_id: tgUser.id, status: 'active'
-        }).eq('id', gameId);
-        currentGameId = gameId; currentPlayerNumber = 2;
-        await cargarPreguntasTrivia();
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPreguntas').classList.remove('hidden');
-        currentTriviaQIndex=0; triviaResponses=[];
-        mostrarPreguntaTrivia();
-        const { data: remaining } = await supabaseClient.rpc('use_trivia_game', { user_id: tgUser.id });
-        userEnergy.triviaGames = remaining;
-        updateEnergyDisplay();
-    });
-
-    $('#btnComenzarTrivia').addEventListener('click', () => {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPreguntas').classList.remove('hidden');
-        currentTriviaQIndex=0; triviaResponses=[];
-        mostrarPreguntaTrivia();
-    });
-
-    $('#btnOnlinePlayers').addEventListener('click', () => {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#onlinePlayersStep').classList.remove('hidden');
-        cargarOnlinePlayers();
-    });
-
-    $('#btnBackFromOnline').addEventListener('click', () => {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaPaso1').classList.remove('hidden');
-    });
-
-    async function cargarPreguntasTrivia() {
-        const todas = [
-            { pregunta: "øCu·l es el ocÈano m·s grande?", opciones: ["Atl·ntico", "Õndico", "PacÌfico", "¡rtico"], correcta: 2 },
-            { pregunta: "øQuiÈn escribiÛ 'Cien aÒos de soledad'?", opciones: ["Vargas Llosa", "GarcÌa M·rquez", "Allende", "Borges"], correcta: 1 },
-            { pregunta: "øCu·ntos planetas hay en el sistema solar?", opciones: ["7", "8", "9", "10"], correcta: 1 },
-            { pregunta: "øCu·l es el rÌo m·s largo del mundo?", opciones: ["Nilo", "Amazonas", "YangtsÈ", "Misisipi"], correcta: 1 },
-            { pregunta: "øEn quÈ aÒo llegÛ el hombre a la Luna?", opciones: ["1965", "1969", "1971", "1967"], correcta: 1 }
-        ];
-        allTriviaQuestions = todas.sort(()=>Math.random()-0.5).slice(0,5);
-    }
-
-    function detenerTemporizador() {
-        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-    }
-
-    function iniciarTemporizador() {
-        detenerTemporizador();
-        tiempoRestante = tiempoPorPregunta;
-        actualizarTemporizadorUI();
-        timerInterval = setInterval(() => {
-            tiempoRestante--;
-            actualizarTemporizadorUI();
-            if (tiempoRestante <= 0) {
-                detenerTemporizador();
-                if (!isAnswerLocked) seleccionarRespuestaTrivia(-1);
-            }
-        }, 1000);
-    }
-
-    function actualizarTemporizadorUI() {
-        let timerEl = $('#timerDisplay');
-        if (!timerEl) {
-            timerEl = document.createElement('div');
-            timerEl.id = 'timerDisplay';
-            timerEl.style.cssText = 'text-align:center; font-size:24px; font-weight:700; color:var(--accent-orange); margin:10px 0;';
-            $('#triviaPreguntas').insertBefore(timerEl, $('#triviaOpciones'));
-        }
-        timerEl.textContent = ` ${tiempoRestante}s`;
-        timerEl.style.color = tiempoRestante <= 5 ? '#ff3b30' : 'var(--accent-orange)';
-        timerEl.style.animation = tiempoRestante <= 5 ? 'pulse 0.5s infinite' : 'none';
-    }
-
-    function mostrarPreguntaTrivia() {
-        if (currentTriviaQIndex >= allTriviaQuestions.length) {
-            finalizarRondaTrivia();
-            return;
-        }
-        isAnswerLocked = false;
-        $('#triviaEspera').style.display='none';
-        const q = allTriviaQuestions[currentTriviaQIndex];
-        $('#triviaPreguntaTitulo').textContent = `Pregunta ${currentTriviaQIndex+1}/${allTriviaQuestions.length}`;
-        $('#triviaPreguntaTexto').textContent = q.pregunta;
-        const opcionesDiv = $('#triviaOpciones');
-        opcionesDiv.innerHTML = '';
-        q.opciones.forEach((op, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.textContent = op;
-            btn.addEventListener('click', () => { if (!isAnswerLocked) seleccionarRespuestaTrivia(idx); });
-            opcionesDiv.appendChild(btn);
-        });
-        iniciarTemporizador();
-    }
-
-    async function seleccionarRespuestaTrivia(selectedIdx) {
-        if (isAnswerLocked) return;
-        isAnswerLocked = true;
-        detenerTemporizador();
-        const q = allTriviaQuestions[currentTriviaQIndex];
-        const correctIdx = q.correcta;
-        const botones = $$('#triviaOpciones .option-btn');
-        botones.forEach(b => b.disabled = true);
-        if (selectedIdx >= 0) {
-            botones[correctIdx].classList.add('correct');
-            if (selectedIdx !== correctIdx) botones[selectedIdx].classList.add('wrong');
-        } else {
-            botones[correctIdx].classList.add('correct');
-        }
-        triviaResponses.push({ questionIndex: currentTriviaQIndex, selectedOption: selectedIdx });
-        setTimeout(async () => {
-            currentTriviaQIndex++;
-            if (currentTriviaQIndex < allTriviaQuestions.length) {
-                mostrarPreguntaTrivia();
-            } else {
-                const columna = currentPlayerNumber===1 ? 'player1_responses' : 'player2_responses';
-                await supabaseClient.from('trivia_games').update({ [columna]: triviaResponses }).eq('id', currentGameId);
-                finalizarRondaTrivia();
-            }
-        }, 800);
-    }
-
-    async function finalizarRondaTrivia() {
-        $('#triviaPreguntas').classList.add('hidden');
-        detenerTemporizador();
-        const { data, error } = await supabaseClient.from('trivia_games').select('*').eq('id', currentGameId).single();
-        if (error || !data) {
-            showToast('Error al obtener resultados', 'error');
-            resetGamesView();
-            return;
-        }
-        const p1 = data.player1_responses || [];
-        const p2 = data.player2_responses || [];
-        const hayOponente = data.player2_telegram_id ? true : false;
-
-        if (currentPlayerNumber === 1 && !hayOponente) {
-            correctasJugador1 = 0;
-            allTriviaQuestions.forEach((q, i) => { if (p1[i] && p1[i].selectedOption === q.correcta) correctasJugador1++; });
-            mostrarResultadoTriviaSolitario(correctasJugador1, allTriviaQuestions.length);
-            return;
-        }
-
-        if (hayOponente && ((currentPlayerNumber === 1 && p2.length === 0) || (currentPlayerNumber === 2 && p1.length === 0))) {
-            $('#triviaEspera').style.display = 'block';
-            $('#triviaPreguntas').classList.remove('hidden');
-            $('#triviaOpciones').innerHTML = '';
-            setTimeout(() => finalizarRondaTrivia(), 3000);
-            return;
-        }
-
-        correctasJugador1 = 0; correctasJugador2 = 0;
-        allTriviaQuestions.forEach((q, i) => {
-            if (p1[i] && p1[i].selectedOption === q.correcta) correctasJugador1++;
-            if (p2[i] && p2[i].selectedOption === q.correcta) correctasJugador2++;
-        });
-        let ganador = null;
-        if (correctasJugador1 > correctasJugador2) ganador = 1;
-        else if (correctasJugador2 > correctasJugador1) ganador = 2;
-
-        if ((ganador === 1 && currentPlayerNumber === 1) || (ganador === 2 && currentPlayerNumber === 2)) {
-            await supabaseClient.rpc('add_trivia_win', { user_id: tgUser.id });
-            userEnergy.victorias++;
-            updateProfileStats();
-        }
-        let matches = 0;
-        for(let i=0; i<Math.min(p1.length, p2.length); i++) if(p1[i].selectedOption === p2[i].selectedOption) matches++;
-        const compat = p1.length > 0 ? Math.round((matches / p1.length) * 100) : 0;
-        await supabaseClient.from('trivia_games').update({
-            compatibility_score: compat, status:'completed', completed_at: new Date().toISOString()
-        }).eq('id', currentGameId);
-        mostrarResultadoTriviaVersus(compat, correctasJugador1, correctasJugador2, ganador);
-    }
-
-    function mostrarResultadoTriviaSolitario(aciertos, total) {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaResultado').classList.remove('hidden');
-        const porcentaje = Math.round((aciertos / total) * 100);
-        $('#compatibilityScore').textContent = porcentaje + '%';
-        $('#compatibilityScore').style.background = `conic-gradient(var(--accent-blue) 0% ${porcentaje}%, #2a2a2a ${porcentaje}% 100%)`;
-        let mensaje = ` Acertaste ${aciertos} de ${total} preguntas.\n`;
-        if (porcentaje === 100) mensaje += '°Perfecto! Eres un genio.';
-        else if (porcentaje >= 60) mensaje += '°Buen trabajo!';
-        else mensaje += '°Sigue practicando!';
-        $('#compatibilidadMensaje').textContent = mensaje;
-        const existingBtn = $('#triviaResultado .revanscha-btn');
-        if (existingBtn) existingBtn.remove();
-    }
-
-    function mostrarResultadoTriviaVersus(score, aciertos1, aciertos2, ganador) {
-        $$('.trivia-step').forEach(s => s.classList.add('hidden'));
-        $('#triviaResultado').classList.remove('hidden');
-        $('#compatibilityScore').textContent = score+'%';
-        $('#compatibilityScore').style.background = `conic-gradient(var(--accent-green) 0% ${score}%, #2a2a2a ${score}% 100%)`;
-        let mensaje = `Compatibilidad: ${score}%\n`;
-        mensaje += `Tus aciertos: ${aciertos1} | Oponente: ${aciertos2}\n`;
-        if (ganador === 1) {
-            if (currentPlayerNumber === 1) mensaje += ' °Ganaste!';
-            else mensaje += ' Perdiste';
-        } else if (ganador === 2) {
-            if (currentPlayerNumber === 2) mensaje += ' °Ganaste!';
-            else mensaje += ' Perdiste';
-        } else {
-            mensaje += ' Empate';
-        }
-        const existingBtn = $('#triviaResultado .revanscha-btn');
-        if (existingBtn) existingBtn.remove();
-        if (ganador && Math.abs(aciertos1 - aciertos2) === 1) {
-            mensaje += '\n°Casi! øPedir revancha?';
-            const btnRevancha = document.createElement('button');
-            btnRevancha.className = 'btn revanscha-btn';
-            btnRevancha.textContent = ' °Pedir Revancha! (5 fichas)';
-            btnRevancha.onclick = pedirRevancha;
-            $('#triviaResultado').appendChild(btnRevancha);
-        }
-        $('#compatibilidadMensaje').textContent = mensaje;
-    }
-
-    async function pedirRevancha() {
-        const { data: balance } = await supabaseClient.rpc('get_balance', { user_id: tgUser.id });
-        if (balance < 5) {
-            showToast('No tienes suficientes fichas', 'error');
-            return;
-        }
-        await supabaseClient.rpc('add_fichas', { user_id: tgUser.id, amount: -5 });
-        showToast(' °Revancha aceptada!', 'success');
-        resetGamesView();
-        $('#btnTrivia').click();
-        setTimeout(() => $('#btnCrearPartida').click(), 200);
-    }
-
-    $('#btnVolverMenu').addEventListener('click', resetGamesView);
-
-    // Test Compatibilidad
-    $('#btnCompatibilidad').addEventListener('click', () => {
-        $('#gameMenu').classList.add('hidden');
-        $('#compatFlow').classList.remove('hidden');
-        $('#compatPreguntas').classList.remove('hidden');
-        $('#compatResultado').classList.add('hidden');
-        respuestasCompat = []; currentTriviaQIndex = 0;
-        mostrarPreguntaCompat();
-    });
-    function mostrarPreguntaCompat() {
-        if (currentTriviaQIndex >= preguntasCompatibilidad.length) { calcularResultadoCompat(); return; }
-        const q = preguntasCompatibilidad[currentTriviaQIndex];
-        $('#compatPreguntaTitulo').textContent = `Pregunta ${currentTriviaQIndex+1}/10`;
-        $('#compatPreguntaTexto').textContent = q.pregunta;
-        const opcionesDiv = $('#compatOpciones');
-        opcionesDiv.innerHTML = '';
-        q.opciones.forEach((op, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn'; btn.textContent = op;
-            btn.addEventListener('click', () => {
-                respuestasCompat.push(idx);
-                currentTriviaQIndex++;
-                mostrarPreguntaCompat();
-            });
-            opcionesDiv.appendChild(btn);
-        });
-    }
-    function calcularResultadoCompat() {
-        const suma = respuestasCompat.reduce((a,b)=>a+b,0);
-        const max = preguntasCompatibilidad.length * 3;
-        const porcentaje = Math.round((suma/max)*100);
-        $('#compatPreguntas').classList.add('hidden');
-        $('#compatResultado').classList.remove('hidden');
-        $('#compatScoreCircle').textContent = porcentaje+'%';
-        $('#compatScoreCircle').style.background = `conic-gradient(var(--accent-gold) 0% ${porcentaje}%, #2a2a2a ${porcentaje}% 100%)`;
-        let mensaje = '';
-        if(porcentaje>80) mensaje='Eres un espÌritu libre. Busca a alguien que te siga el ritmo.';
-        else if(porcentaje>50) mensaje='Valoras la estabilidad y la buena conversaciÛn.';
-        else mensaje='Eres ˙nico/a. Alguien autÈntico te conviene.';
-        $('#compatMensaje').textContent = mensaje;
-    }
-    $('#btnVolverMenuCompat').addEventListener('click', resetGamesView);
-
-    // ======================== PAGOS SEGUROS (sendData, sin token en frontend) ========================
-    function comprarFichas(productId) {
-        if (!window.Telegram?.WebApp) {
-            showToast('Abre la app desde Telegram', 'error');
-            return;
-        }
-
-        const productosValidos = ['buy_stars_50', 'boost_perfil', 'entrada_torneo'];
-        if (!productosValidos.includes(productId)) {
-            showToast('Producto no v·lido', 'error');
-            return;
-        }
-
-        // Enviar la orden al bot (el webhook generar· la factura y la enviar· al chat)
-        window.Telegram.WebApp.sendData(productId);
-        showToast(' Revisa el chat del bot para pagar. Luego vuelve a la app.', 'success');
-    }
-    window.comprarFichas = comprarFichas;
-
-    async function actualizarSaldoUI() {
-        if (!supabaseClient || !tgUser) return;
-        const { data: balance } = await supabaseClient.rpc('get_balance', { user_id: tgUser.id });
-        const saldoEl = document.getElementById('saldoUsuario');
-        if (saldoEl) saldoEl.textContent = balance || 0;
-        const saldoPerfilEl = document.getElementById('saldoPerfil');
-        if (saldoPerfilEl) saldoPerfilEl.textContent = balance || 0;
-    }
-
-    async function init() {
-        initTelegram();
-        initSupabase();
-        await doDailyLogin();
-        startHeartbeat();
-        setInterval(() => { if (tgUser) checkInvitations(); }, 10000);
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('game') === 'accept') {
-            const inviterId = urlParams.get('inviter');
-            const { data: game } = await supabaseClient
-                .from('trivia_games')
-                .select('*')
-                .eq('player1_telegram_id', inviterId)
-                .eq('player2_telegram_id', tgUser.id)
-                .eq('status', 'invited')
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
-
-            if (game) {
-                await supabaseClient.from('trivia_games').update({ status: 'active' }).eq('id', game.id);
-                currentGameId = game.id;
-                currentPlayerNumber = 2;
-                await cargarPreguntasTrivia();
+    // ‚úÖ MANEJO DE INVITACI√ìN ACEPTADA
+    async function checkInvite(inviterId){
+        try{
+            const{data:game}=await supabase.from('trivia_games').select('*')
+                .eq('player1_telegram_id',parseInt(inviterId))
+                .eq('player2_telegram_id',tgUser.id)
+                .eq('status','invited')
+                .order('created_at',{ascending:false}).limit(1).single();
+            if(game){
+                await supabase.from('trivia_games').update({status:'active'}).eq('id',game.id);
+                gameId=game.id;playerNum=2;
                 switchSection('sectionGames');
                 $('#gameMenu').classList.add('hidden');
                 $('#triviaFlow').classList.remove('hidden');
-                $$('.trivia-step').forEach(s => s.classList.add('hidden'));
+                $$('.trivia-step,#triviaMenu,#triviaCrear,#triviaUnirse,#onlinePlayers').forEach(s=>s.classList.add('hidden'));
                 $('#triviaPreguntas').classList.remove('hidden');
-                currentTriviaQIndex = 0;
-                triviaResponses = [];
-                mostrarPreguntaTrivia();
-                showToast(' °Reto aceptado! Comienza el juego', 'success');
-            } else {
-                showToast('Esta invitaciÛn ya expirÛ', 'error');
+                await loadQuestions();qIdx=0;responses=[];showQuestion();
+                toast('üéÆ ¬°Reto aceptado!','success');
             }
-        }
-
-        setTimeout(() => {
-            loadingOverlay.classList.add('hidden');
-            setTimeout(() => loadingOverlay.remove(), 500);
-        }, 800);
-        setTimeout(() => showToast(' °Bienvenido/a!', 'success'), 1200);
+        }catch(e){console.error(e);}
     }
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+
+    // üìÖ DAILY LOGIN
+    async function dailyLogin(){
+        const{data,error}=await supabase.rpc('daily_login',{user_id:tgUser.id});
+        if(error)throw error;
+        energy={swipes:data.swipes,trivia:data.trivia_games,streak:data.streak,victorias:data.victorias,rango:data.rango};
+        if(data.fichas_ganadas>0){$('#streakBanner').style.display='block';$('#streakDays').textContent=data.streak;$('#streakFichas').textContent=data.fichas_ganadas;toast(`üî• +${data.fichas_ganadas} fichas por racha!`,'success');}
+        updateEnergy();updateProfileStats();
+    }
+    function updateEnergy(){$('#energyCount').textContent=energy.swipes;$('#energyBadge').style.display=energy.swipes<=5?'inline-block':'none';$('#triviaLeft').textContent=energy.trivia;}
+    function updateProfileStats(){$('#victoriasStat').textContent=energy.victorias;const p=energy.rango.split(' ');$('#rangoIcon').textContent=p[0];$('#rangoName').textContent=p.slice(1).join(' ');}
+    async function updateBalance(){const{data}=await supabase.rpc('get_balance',{user_id:tgUser.id});$('#saldoTienda').textContent=data||0;$('#fichasStat').textContent=data||0;}
+
+    // üíò CITAS
+    async function loadProfiles(){
+        const{data,error}=await supabase.from('users').select('*').neq('telegram_id',tgUser.id);
+        if(error||!data.length){$('#emptyTitle').textContent='No hay perfiles';$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return;}
+        datingQueue=data.filter(u=>!interacted.has(u.telegram_id));
+        if(!datingQueue.length){$('#emptyTitle').textContent='Ya viste todos';$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return;}
+        dIdx=0;showProfile();
+    }
+    function showProfile(){
+        if(dIdx>=datingQueue.length){$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return;}
+        const p=datingQueue[dIdx];
+        $('#datingCardContainer').style.display='block';$('#emptyDating').style.display='none';
+        $('#dName').textContent=p.first_name||'';$('#dAge').textContent=p.age||'';$('#dBio').textContent=p.bio||'';
+        if(p.photo_url){$('#datingPhoto').src=p.photo_url;$('#datingPhoto').style.display='block';$('#datingPlaceholder').style.display='none';}
+        else{$('#datingPhoto').style.display='none';$('#datingPlaceholder').style.display='flex';$('#datingPlaceholder').textContent=(p.first_name||'?')[0].toUpperCase();}
+    }
+    window.handleSwipe=async function(type){
+        if(dIdx>=datingQueue.length)return;
+        if(energy.swipes<=0)return toast('‚ö° Sin energ√≠a','error');
+        const{data}=await supabase.rpc('use_swipe',{user_id:tgUser.id});
+        if(data>=0){energy.swipes=data;updateEnergy();}
+        interacted.add(datingQueue[dIdx].telegram_id);localStorage.setItem('lv_interacted',JSON.stringify([...interacted]));
+        toast(type==='like'?'üíò ¬°Te gusta!':type==='super'?'‚≠ê Super Like':'‚ùå Descartado');
+        dIdx++;showProfile();
+    };
+
+    // üß† TRIVIA
+    window.openTrivia=function(){if(energy.trivia<=0)return toast('üéÆ Sin partidas hoy','error');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');backToTriviaMenu();};
+    window.resetGames=function(){$('#triviaFlow').classList.add('hidden');$('#compatFlow').classList.add('hidden');$('#gameMenu').classList.remove('hidden');if(timer)clearInterval(timer);};
+    window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaMenu').classList.remove('hidden');};
+    window.crearPartida=async function(){
+        if(energy.trivia<=0)return toast('Sin energ√≠a','error');
+        await loadQuestions();
+        const{data,error}=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'waiting'}).select('id').single();
+        if(error)return toast('Error al crear','error');
+        gameId=data.id;playerNum=1;$('#codigoCreado').textContent=data.id;
+        $$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaCrear').classList.remove('hidden');
+        const{data:r}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=r;updateEnergy();
+    };
+    window.comenzarEspera=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');qIdx=0;responses=[];showQuestion();};
+    window.showUnirse=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaUnirse').classList.remove('hidden');$('#errorUnirse').style.display='none';};
+    window.unirsePartida=async function(){
+        const gid=parseInt($('#inputCodigo').value);if(!gid)return;
+        const{data,error}=await supabase.from('trivia_games').select('*').eq('id',gid).single();
+        if(error||!data||data.status!=='waiting')return $('#errorUnirse').style.display='block';
+        await supabase.from('trivia_games').update({player2_telegram_id:tgUser.id,status:'active'}).eq('id',gid);
+        gameId=gid;playerNum=2;await loadQuestions();
+        $$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');qIdx=0;responses=[];showQuestion();
+        const{data:r}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=r;updateEnergy();
+    };
+    window.showOnlinePlayers=async function(){
+        $$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#onlinePlayers').classList.remove('hidden');
+        const{data}=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id);
+        const list=$('#playersList');list.innerHTML='';
+        if(!data||!data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en l√≠nea</p>';return;}
+        data.forEach(p=>{
+            const div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';
+            div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover;">`:((p.first_name||'?')[0].toUpperCase())}</div><span style="font-weight:600;">${p.first_name||'Jugador'}</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador(${p.telegram_id},'${p.first_name}')">Desafiar</button>`;
+            list.appendChild(div);
+        });
+    };
+
+    // Preguntas Trivia
+    async function loadQuestions(){
+        const all=[
+            {q:"¬øCu√°l es el oc√©ano m√°s grande?",o:["Atl√°ntico","√çndico","Pac√≠fico","√Årtico"],c:2},
+            {q:"¬øQui√©n escribi√≥ 'Cien a√±os de soledad'?",o:["Vargas Llosa","Garc√≠a M√°rquez","Allende","Borges"],c:1},
+            {q:"¬øCu√°ntos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
+            {q:"¬øCu√°l es el r√≠o m√°s largo del mundo?",o:["Nilo","Amazonas","Yangts√©","Misisipi"],c:1},
+            {q:"¬øEn qu√© a√±o lleg√≥ el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
+        ];
+        questions=all.sort(()=>Math.random()-.5).slice(0,5);
+    }
+    function showQuestion(){
+        if(qIdx>=questions.length)return finishTrivia();
+        locked=false;$('#waitingMsg').style.display='none';
+        const q=questions[qIdx];
+        $('#qTitle').textContent=`Pregunta ${qIdx+1}/${questions.length}`;
+        $('#qText').textContent=q.q;
+        const opts=$('#qOptions');opts.innerHTML='';
+        q.o.forEach((o,i)=>{
+            const btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;
+            btn.onclick=()=>selectAnswer(i);opts.appendChild(btn);
+        });
+        startTimer();
+    }
+    function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1);}},1000);}
+    function updateTimerUI(){$('#timerDisplay').textContent=`‚è≥ ${timeLeft}s`;$('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';}
+    function selectAnswer(idx){
+        if(locked)return;locked=true;if(timer)clearInterval(timer);
+        const correct=questions[qIdx].c;const btns=$$('#qOptions .option-btn');
+        btns.forEach(b=>b.disabled=true);btns[correct].classList.add('correct');
+        if(idx>=0&&idx!==correct)btns[idx].classList.add('wrong');
+        responses.push({questionIndex:qIdx,selectedOption:idx});
+        setTimeout(async()=>{
+            qIdx++;
+            if(qIdx<questions.length){showQuestion();}
+            else{
+                const col=playerNum===1?'player1_responses':'player2_responses';
+                await supabase.from('trivia_games').update({[col]:responses}).eq('id',gameId);
+                finishTrivia();
+            }
+        },800);
+    }
+    async function finishTrivia(){
+        $('#triviaPreguntas').classList.add('hidden');if(timer)clearInterval(timer);
+        const{data}=await supabase.from('trivia_games').select('*').eq('id',gameId).single();
+        if(!data)return resetGames();
+        const p1=data.player1_responses||[],p2=data.player2_responses||[];
+        const hasOpponent=!!data.player2_telegram_id;
+        
+        if(playerNum===1&&!hasOpponent){
+            let correct=0;p1.forEach((r,i)=>{if(r.selectedOption===questions[i].c)correct++;});
+            showResult(Math.round(correct/questions.length*100),`üéØ Acertaste ${correct}/${questions.length}. ¬°Sigue practicando!`);return;
+        }
+        if(hasOpponent&&((playerNum===1&&!p2.length)||(playerNum===2&&!p1.length))){
+            $('#triviaPreguntas').classList.remove('hidden');$('#qOptions').innerHTML='';$('#waitingMsg').style.display='block';
+            setTimeout(finishTrivia,3000);return;
+        }
+        let c1=0,c2=0,matches=0;
+        questions.forEach((q,i)=>{
+            if(p1[i]?.selectedOption===q.c)c1++;
+            if(p2[i]?.selectedOption===q.c)c2++;
+            if(p1[i]?.selectedOption===p2[i]?.selectedOption)matches++;
+        });
+        const compat=p1.length?Math.round(matches/p1.length*100):0;
+        let winner=c1>c2?1:c2>c1?2:0;
+        if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats();}
+        await supabase.from('trivia_games').update({compatibility_score:compat,status:'completed',completed_at:new Date().toISOString()}).eq('id',gameId);
+        let msg=`Compatibilidad: ${compat}%\nTus aciertos: ${c1} | Oponente: ${c2}\n`;
+        msg+=winner===playerNum?'üéâ ¬°Ganaste!':winner===0?'ü§ù Empate':'üòû Perdiste';
+        showResult(compat,msg);
+    }
+    function showResult(score,msg){
+        $$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaResultado').classList.remove('hidden');
+        $('#compatScore').textContent=score+'%';$('#compatScore').style.setProperty('--score',score+'%');
+        $('#compatMsg').textContent=msg;
+    }
+
+    // üíû TEST COMPATIBILIDAD
+    const compatQ=[
+        {q:"¬øQu√© prefieres en una primera cita?",o:["Cena rom√°ntica","Aventura","Caf√©","Cine en casa"]},
+        {q:"¬øQu√© cualidad valoras m√°s?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},
+        {q:"¬øPlan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},
+        {q:"¬øC√≥mo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},
+        {q:"¬øQu√© no soportas?",o:["Impuntualidad","Falta ambici√≥n","Mala higiene","Arrogancia"]},
+        {q:"¬øLenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},
+        {q:"¬øM√∫sica preferida?",o:["Pop","Rock","Electr√≥nica","Indie"]},
+        {q:"¬øQu√© te hace re√≠r?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},
+        {q:"¬øC√≥mo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},
+        {q:"¬øQu√© esperas de una relaci√≥n?",o:["Apoyo","Diversi√≥n","Crecimiento","Estabilidad"]}
+    ];
+    window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ();};
+    function showCompatQ(){
+        if(qIdx>=compatQ.length){
+            const sum=compatAnswers.reduce((a,b)=>a+b,0);const pct=Math.round(sum/(compatQ.length*3)*100);
+            $('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');
+            $('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');
+            $('#compatTestMsg').textContent=pct>80?'Eres un esp√≠ritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversaci√≥n.':'Eres √∫nico/a. Alguien aut√©ntico te conviene.';
+            return;
+        }
+        const q=compatQ[qIdx];$('#cqTitle').textContent=`Pregunta ${qIdx+1}/10`;$('#cqText').textContent=q.q;
+        const opts=$('#cqOptions');opts.innerHTML='';
+        q.o.forEach((o,i)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=()=>{compatAnswers.push(i);qIdx++;showCompatQ();};opts.appendChild(btn);});
+    }
+
+    document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
 </script>
 </body>
