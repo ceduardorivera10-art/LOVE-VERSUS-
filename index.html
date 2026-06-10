@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title> LoveVersus</title>
+    <title>ğŸ’˜ LoveVersus</title>
     <style>
         :root { --bg-primary:#0a0a0a; --bg-secondary:#111; --bg-card:#1a1a1a; --accent-blue:#3390ec; --accent-gold:#c9a84c; --accent-rose:#e94560; --accent-green:#34c759; --text-primary:#f5f5f5; --text-secondary:#b0b0b0; --radius-lg:20px; --nav-height:64px; --safe-bottom:env(safe-area-inset-bottom,12px); }
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -65,61 +65,78 @@
 <body>
 <div class="app-container">
     <header class="header">
-        <div class="brand"> Love<span style="color:var(--accent-gold)"></span>Versus</div>
+        <div class="brand">ğŸ’˜ Love<span style="color:var(--accent-gold)">âœ¦</span>Versus</div>
         <div class="user-pill" onclick="switchSection('sectionProfile')">
             <div class="avatar" id="headerAvatar">?</div>
             <span id="headerName" style="font-size:14px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Cargando...</span>
-            <span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;"><span id="energyCount">20</span></span>
+            <span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">âš¡<span id="energyCount">20</span></span>
         </div>
     </header>
     <main class="main">
         <section id="sectionDating" class="section active">
-            <div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;"> Racha de <span id="streakDays">1</span> día(s). ¡Has ganado <span id="streakFichas">5</span> fichas!</div>
+            <div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">ğŸ”¥ Racha de <span id="streakDays">1</span> dÃ­a(s). Â¡Has ganado <span id="streakFichas">5</span> fichas!</div>
             <div id="datingCardContainer">
                 <div class="dating-card" id="datingCard"><img class="dating-photo" id="datingPhoto" style="display:none;"><div class="dating-placeholder" id="datingPlaceholder"></div><div class="dating-info"><div style="font-size:22px;font-weight:700;"><span id="dName"></span> <span id="dAge" style="font-size:18px;color:var(--text-secondary);"></span></div><p id="dBio" style="font-size:14px;color:var(--text-secondary);margin-top:6px;"></p></div></div>
-                <div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')"></button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')"></button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')"></button></div>
+                <div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">âŒ</button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">â­</button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">ğŸ’˜</button></div>
             </div>
-            <div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;"></div><h3 id="emptyTitle">No hay más perfiles</h3><p id="emptyDesc">Vuelve más tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
+            <div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;">ğŸ’”</div><h3 id="emptyTitle">No hay mÃ¡s perfiles</h3><p id="emptyDesc">Vuelve mÃ¡s tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
         </section>
+        
         <section id="sectionChat" class="section">
-            <h3 style="margin-bottom:16px;"> Chat en línea</h3>
+            <h3 style="margin-bottom:16px;">ğŸ’¬ Chat en lÃ­nea</h3>
             <div id="chatUsersList"></div>
             <div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;min-height:300px;display:flex;flex-direction:column;">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;"></button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">â†</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
                 <div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;max-height:250px;display:flex;flex-direction:column;gap:8px;"></div>
-                <div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;"></button></div>
+                <div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">â¤</button></div>
             </div>
         </section>
+
         <section id="sectionGames" class="section">
             <div id="gameMenu">
-                <div class="card" onclick="openTrivia()"><h3> Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
-                <div class="card" onclick="openCompatTest()"><h3> Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
-                <div style="margin-top:24px;"><h3 style="margin-bottom:12px;"> Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')"> 50 Fichas (50 )</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')"> Boost Perfil (100 )</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')"> Entrada Torneo (200 )</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
+                <div class="card" onclick="openTrivia()"><h3>ğŸ§  Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
+                <div class="card" onclick="openCompatTest()"><h3>ğŸ’ Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
+                <div style="margin-top:24px;"><h3 style="margin-bottom:12px;">ğŸª™ Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">ğŸª™ 50 Fichas (50 â­)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">ğŸš€ Boost Perfil (100 â­)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">ğŸ† Entrada Torneo (200 â­)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
             </div>
+            
+            <!-- Modal de InvitaciÃ³n a Trivia -->
+            <div id="triviaInviteModal" class="hidden" style="text-align:center; padding:20px;">
+                <h3>Â¡Reto enviado a <span id="inviteTargetName"></span>!</h3>
+                <p style="margin:15px 0; color:var(--text-secondary);">Dile a tu amigo que use este cÃ³digo para unirse:</p>
+                <div style="background:#1c1c1e; border:2px dashed var(--accent-gold); padding:15px; border-radius:12px; font-size:28px; font-weight:700; letter-spacing:3px; margin-bottom:15px;" id="inviteCodeDisplay">----</div>
+                <button class="btn btn-primary" onclick="copiarCodigoYVolver()">ğŸ“‹ Copiar CÃ³digo y Volver</button>
+            </div>
+
             <div id="triviaFlow" class="hidden">
-                <div id="triviaMenu"><h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3><button class="btn btn-primary" style="margin-bottom:10px;" onclick="crearPartida()"> Crear partida (código)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="showUnirse()"> Unirse con código</button><button class="btn btn-outline" onclick="showOnlinePlayers()"> Ver jugadores en línea</button><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()"> Volver</button></div>
-                <div id="triviaCrear" class="hidden"><h3>Partida creada</h3><p style="margin:12px 0;color:var(--text-secondary);">Tu código de partida es:</p><div style="background:#1c1c1e;border:2px solid #2a2a2a;padding:16px;border-radius:12px;text-align:center;font-size:24px;letter-spacing:4px;font-weight:700;margin-bottom:16px;" id="codigoCreado">-----</div><p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px;">Comparte este código con tu amigo. Cuando se una, pulsa comenzar.</p><button class="btn btn-primary" onclick="comenzarEspera()"> Comenzar a responder</button></div>
-                <div id="triviaUnirse" class="hidden"><h3>Unirse a partida</h3><input type="number" id="inputCodigo" placeholder="Ingresa el código" style="width:100%;padding:16px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:2px;margin:16px 0;"><button class="btn btn-primary" onclick="unirsePartida()"> Buscar y unirse</button><p id="errorUnirse" style="color:var(--accent-rose);margin-top:10px;font-size:14px;display:none;">Código no válido o partida ya comenzada.</p></div>
-                <div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en línea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()"> Volver</button></div>
-                <div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay"> 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
-                <div id="triviaResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Resultado de compatibilidad</h3><div class="compat-circle" id="compatScore">0%</div><p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
+                <div id="triviaMenu">
+                    <h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
+                    <button class="btn btn-primary" style="margin-bottom:10px;" onclick="crearPartida()">â• Crear partida (cÃ³digo)</button>
+                    <button class="btn btn-outline" style="margin-bottom:10px;" onclick="showUnirse()">ğŸ”— Unirse con cÃ³digo</button>
+                    <button class="btn btn-outline" onclick="showOnlinePlayers()">ğŸŒ Ver jugadores en lÃ­nea</button>
+                    <button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">ğŸ”™ Volver</button>
+                </div>
+                <div id="triviaCrear" class="hidden"><h3>Partida creada</h3><p style="margin:12px 0;color:var(--text-secondary);">Tu cÃ³digo de partida es:</p><div style="background:#1c1c1e;border:2px solid #2a2a2a;padding:16px;border-radius:12px;text-align:center;font-size:24px;letter-spacing:4px;font-weight:700;margin-bottom:16px;" id="codigoCreado">-----</div><p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px;">Comparte este cÃ³digo con tu amigo. Cuando se una, pulsa comenzar.</p><button class="btn btn-primary" onclick="comenzarEspera()">â–¶ï¸ Comenzar a responder</button></div>
+                <div id="triviaUnirse" class="hidden"><h3>Unirse a partida</h3><input type="number" id="inputCodigo" placeholder="Ingresa el cÃ³digo" style="width:100%;padding:16px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:2px;margin:16px 0;"><button class="btn btn-primary" onclick="unirsePartida()">ğŸ” Buscar y unirse</button><p id="errorUnirse" style="color:var(--accent-rose);margin-top:10px;font-size:14px;display:none;">CÃ³digo no vÃ¡lido o partida ya comenzada.</p></div>
+                <div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en lÃ­nea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">ğŸ”™ Volver</button></div>
+                <div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">â³ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
+                <div id="triviaResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Resultado de compatibilidad</h3><div class="compat-circle" id="compatScore">0%</div><p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menÃº</button></div>
             </div>
             <div id="compatFlow" class="hidden">
                 <div id="compatPreguntas"><h3 id="cqTitle" style="margin-bottom:8px;">Pregunta 1/10</h3><p id="cqText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="cqOptions"></div></div>
-                <div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
+                <div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menÃº</button></div>
             </div>
         </section>
         <section id="sectionProfile" class="section">
             <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
             <div class="stats-grid"><div class="stat-box"><div class="stat-val">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
-            <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;"></span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
+            <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">ğŸŸ¤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
         </section>
     </main>
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon"></span>Citas</button>
-        <button class="nav-item" data-section="sectionChat"><span class="nav-icon"></span>Chat</button>
-        <button class="nav-item" data-section="sectionGames"><span class="nav-icon"></span>Versus</button>
-        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon"></span>Perfil</button>
+        <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">ğŸ’˜</span>Citas</button>
+        <button class="nav-item" data-section="sectionChat"><span class="nav-icon">ğŸ’¬</span>Chat</button>
+        <button class="nav-item" data-section="sectionGames"><span class="nav-icon">ğŸ•¹ï¸</span>Versus</button>
+        <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">ğŸ‘¤</span>Perfil</button>
     </nav>
 </div>
 <div class="toast" id="toast"></div>
@@ -131,7 +148,7 @@
     const SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
     const SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
     const PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
-    let supabase,tgUser,energy={swipes:20,trivia:5,streak:0,victorias:0,rango:' Bronce'},gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15,datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]')),compatAnswers=[],currentChatPartner=null,chatChannel=null;
+    let supabase,tgUser,energy={swipes:20,trivia:5,streak:0,victorias:0,rango:'ğŸŸ¤ Bronce'},gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15,datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]')),compatAnswers=[],currentChatPartner=null,chatChannel=null;
     const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
     const toast=(m,t='')=>{const e=$('#toast');e.textContent=m;e.className=`toast ${t} show`;setTimeout(()=>e.classList.remove('show'),2500);};
     function switchSection(id){$$('.section').forEach(s=>s.classList.remove('active'));$(`#${id}`).classList.add('active');$$('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===id));$('#main').scrollTop=0;if(id==='sectionProfile')updateBalance();if(id==='sectionChat')loadChatUsers();}
@@ -149,43 +166,49 @@
         if(tgUser.photo_url){$('#profileAvatarLg').innerHTML=`<img src="${tgUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;}else{$('#profileAvatarLg').textContent=initials;}
         try{
             supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-            //  REGISTRA ESTADO EN LÍNEA
             const { error: onlineError } = await supabase.rpc('update_online_status', { user_id: tgUser.id, u_name: tgUser.first_name, u_photo: tgUser.photo_url || '' });
             if (onlineError) console.error('Error online:', onlineError);
             await dailyLogin();
             updateBalance();
             loadProfiles();
-        }catch(e){console.error(e);toast('Error de conexión','error');$('#retryBtn').style.display='inline-block';}
+        }catch(e){console.error(e);toast('Error de conexiÃ³n','error');$('#retryBtn').style.display='inline-block';}
         const params=new URLSearchParams(window.location.search);
         if(params.get('accept')&&tgUser) await checkInvite(params.get('from'));
         setTimeout(()=>$('#loader').classList.add('hidden'),600);
     }
 
-    window.comprarFichas=async function(productId){if(!window.Telegram?.WebApp)return toast('Abre desde Telegram','error');const productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};const producto=productos[productId];if(!producto)return toast('Producto inválido','error');try{const response=await fetch(`https://api.telegram.org/bot${PAYMENTS_BOT_TOKEN}/createInvoiceLink`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:`${tgUser.id}_${Date.now()}`,provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});const data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast(' Factura abierta','success');setTimeout(()=>updateBalance(),5000);}catch(e){console.warn('Fallo método directo, usando fallback sendData:',e);window.Telegram.WebApp.sendData(productId);toast(' Procesando pago...','success');}};
+    window.comprarFichas=async function(productId){if(!window.Telegram?.WebApp)return toast('Abre desde Telegram','error');const productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};const producto=productos[productId];if(!producto)return toast('Producto invÃ¡lido','error');try{const response=await fetch(`https://api.telegram.org/bot${PAYMENTS_BOT_TOKEN}/createInvoiceLink`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:`${tgUser.id}_${Date.now()}`,provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});const data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast('ğŸ“„ Factura abierta','success');setTimeout(()=>updateBalance(),5000);}catch(e){console.warn('Fallo mÃ©todo directo, usando fallback sendData:',e);window.Telegram.WebApp.sendData(productId);toast('ğŸ”„ Procesando pago...','success');}};
     
-    //  INVITACIÓN SIN CERRAR LA APP (Copia el código al portapapeles)
+    // ğŸ® DESAFIAR CON MODAL CLARO Y BOTÃ“N DE COPIAR
     window.invitarJugador=async function(tid,tname){
-        if(energy.trivia<=0) return toast('Sin energía','error');
-        const{data,error}=await supabase.from('trivia_games').insert({
-            player1_telegram_id: tgUser.id,
-            player2_telegram_id: tid,
-            status: 'invited'
-        }).select('id').single();
+        if(energy.trivia<=0) return toast('Sin energÃ­a','error');
+        const{data,error}=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();
         if(error) return toast('Error al crear partida','error');
-        const{data: newEnergy}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
+        const{data:newEnergy}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
         energy.trivia=newEnergy; updateEnergy();
-        const inviteCode = data.id;
-        try {
-            await navigator.clipboard.writeText(`¡Reto en LoveVersus! Usa el código: ${inviteCode}`);
-            toast(` ¡Código ${inviteCode} copiado! Envíaselo a ${tname}`,'success');
-        } catch(e) {
-            toast(` Código de reto: ${inviteCode}. Envíaselo a ${tname}`,'success');
-        }
-        backToTriviaMenu();
+        
+        $('#triviaMenu').classList.add('hidden');
+        $('#triviaInviteModal').classList.remove('hidden');
+        $('#inviteCodeDisplay').textContent = data.id;
+        $('#inviteTargetName').textContent = tname;
     };
 
-    async function checkInvite(inviterId){try{const{data:game}=await supabase.from('trivia_games').select('*').eq('player1_telegram_id',parseInt(inviterId)).eq('player2_telegram_id',tgUser.id).eq('status','invited').order('created_at',{ascending:false}).limit(1).single();if(game){await supabase.from('trivia_games').update({status:'active'}).eq('id',game.id);gameId=game.id;playerNum=2;switchSection('sectionGames');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');await loadQuestions();qIdx=0;responses=[];showQuestion();toast(' ¡Reto aceptado!','success');}}catch(e){console.error(e);}}
-    async function dailyLogin(){const{data,error}=await supabase.rpc('daily_login',{user_id:tgUser.id});if(error)throw error;energy={swipes:data.swipes,trivia:data.trivia_games,streak:data.streak,victorias:data.victorias,rango:data.rango};if(data.fichas_ganadas>0){$('#streakBanner').style.display='block';$('#streakDays').textContent=data.streak;$('#streakFichas').textContent=data.fichas_ganadas;toast(` +${data.fichas_ganadas} fichas por racha!`,'success');}updateEnergy();updateProfileStats();}
+    window.copiarCodigoYVolver = function() {
+        const code = $('#inviteCodeDisplay').textContent;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(() => toast('âœ… Â¡CÃ³digo copiado! EnvÃ­aselo por chat.', 'success'));
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = code; document.body.appendChild(textArea); textArea.select();
+            document.execCommand("Copy"); textArea.remove();
+            toast('âœ… Â¡CÃ³digo copiado! EnvÃ­aselo por chat.', 'success');
+        }
+        $('#triviaInviteModal').classList.add('hidden');
+        $('#triviaMenu').classList.remove('hidden');
+    };
+
+    async function checkInvite(inviterId){try{const{data:game}=await supabase.from('trivia_games').select('*').eq('player1_telegram_id',parseInt(inviterId)).eq('player2_telegram_id',tgUser.id).eq('status','invited').order('created_at',{ascending:false}).limit(1).single();if(game){await supabase.from('trivia_games').update({status:'active'}).eq('id',game.id);gameId=game.id;playerNum=2;switchSection('sectionGames');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');await loadQuestions();qIdx=0;responses=[];showQuestion();toast('ğŸ® Â¡Reto aceptado!','success');}}catch(e){console.error(e);}}
+    async function dailyLogin(){const{data,error}=await supabase.rpc('daily_login',{user_id:tgUser.id});if(error)throw error;energy={swipes:data.swipes,trivia:data.trivia_games,streak:data.streak,victorias:data.victorias,rango:data.rango};if(data.fichas_ganadas>0){$('#streakBanner').style.display='block';$('#streakDays').textContent=data.streak;$('#streakFichas').textContent=data.fichas_ganadas;toast(`ğŸ”¥ +${data.fichas_ganadas} fichas por racha!`,'success');}updateEnergy();updateProfileStats();}
     function updateEnergy(){$('#energyCount').textContent=energy.swipes;$('#energyBadge').style.display=energy.swipes<=5?'inline-block':'none';$('#triviaLeft').textContent=energy.trivia;}
     function updateProfileStats(){$('#victoriasStat').textContent=energy.victorias;const p=energy.rango.split(' ');$('#rangoIcon').textContent=p[0];$('#rangoName').textContent=p.slice(1).join(' ');}
     async function updateBalance(){const{data}=await supabase.rpc('get_balance',{user_id:tgUser.id});$('#saldoTienda').textContent=data||0;$('#fichasStat').textContent=data||0;}
@@ -198,77 +221,81 @@
             interacted.clear();
             localStorage.removeItem('lv_interacted');
             queue = data;
-            toast(' ¡Nuevos perfiles disponibles!', 'success');
+            toast('ğŸ”„ Â¡Nuevos perfiles disponibles!', 'success');
         }
         datingQueue = queue;
         dIdx=0;showProfile();
     }
     function showProfile(){if(dIdx>=datingQueue.length){$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return;}const p=datingQueue[dIdx];$('#datingCardContainer').style.display='block';$('#emptyDating').style.display='none';$('#dName').textContent=p.first_name||'';$('#dAge').textContent=p.age||'';$('#dBio').textContent=p.bio||'';if(p.photo_url){$('#datingPhoto').src=p.photo_url;$('#datingPhoto').style.display='block';$('#datingPlaceholder').style.display='none';}else{$('#datingPhoto').style.display='none';$('#datingPlaceholder').style.display='flex';$('#datingPlaceholder').textContent=(p.first_name||'?')[0].toUpperCase();}}
-    window.handleSwipe=async function(type){if(dIdx>=datingQueue.length)return;if(energy.swipes<=0)return toast(' Sin energía','error');const{data}=await supabase.rpc('use_swipe',{user_id:tgUser.id});if(data>=0){energy.swipes=data;updateEnergy();}interacted.add(datingQueue[dIdx].telegram_id);localStorage.setItem('lv_interacted',JSON.stringify([...interacted]));toast(type==='like'?' ¡Te gusta!':type==='super'?' Super Like':' Descartado');dIdx++;showProfile();};
+    window.handleSwipe=async function(type){if(dIdx>=datingQueue.length)return;if(energy.swipes<=0)return toast('âš¡ Sin energÃ­a','error');const{data}=await supabase.rpc('use_swipe',{user_id:tgUser.id});if(data>=0){energy.swipes=data;updateEnergy();}interacted.add(datingQueue[dIdx].telegram_id);localStorage.setItem('lv_interacted',JSON.stringify([...interacted]));toast(type==='like'?'ğŸ’˜ Â¡Te gusta!':type==='super'?'â­ Super Like':'âŒ Descartado');dIdx++;showProfile();};
 
-    //  CHAT MONETIZADO
-    window.openChatWith=function(userId,userName){
+    // ğŸ’¬ CHAT CON VERIFICACIÃ“N DE SALDO
+    window.openChatWith=async function(userId,userName){
         currentChatPartner={id:userId,name:userName};
         $('#chatPartnerName').textContent=userName;
         $('#chatUsersList').classList.add('hidden');
         $('#chatWindow').classList.remove('hidden');
-        $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;"></div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear el chat</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Demuestra tu interés y comienza la conversación.</p><button onclick="sendGift('rose')" class="btn btn-primary" style="margin-bottom:10px;"> Enviar Rosa (50 )</button><button onclick="sendGift('chocolate')" class="btn btn-outline" style="margin-bottom:10px;"> Enviar Chocolate (100 )</button><button onclick="sendGift('ring')" class="btn btn-outline"> Enviar Anillo (300 )</button></div>`;
-        $('#chatInput').parentElement.classList.add('hidden');
+        
+        const { data: saldo } = await supabase.rpc('get_balance', { user_id: tgUser.id });
+        if (saldo < 50) {
+            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">ğŸª™</div><h4 style="margin-bottom:8px;">Necesitas fichas para chatear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">EnvÃ­a un regalo para desbloquear la conversaciÃ³n. El costo mÃ­nimo es de 50 fichas.</p><button onclick="switchSection('sectionGames')" class="btn btn-primary">Ir a la Tienda de Fichas</button></div>`;
+            $('#chatInput').parentElement.classList.add('hidden');
+        } else {
+            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">ğŸ”’</div><h4 style="margin-bottom:8px;">EnvÃ­a un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Demuestra tu interÃ©s y comienza la conversaciÃ³n.</p><button onclick="sendGift('rose')" class="btn btn-primary" style="margin-bottom:10px;">ğŸŒ¹ Enviar Rosa (50 ğŸª™)</button><button onclick="sendGift('chocolate')" class="btn btn-outline" style="margin-bottom:10px;">ğŸ« Enviar Chocolate (100 ğŸª™)</button><button onclick="sendGift('ring')" class="btn btn-outline">ğŸ’ Enviar Anillo (300 ğŸª™)</button></div>`;
+            $('#chatInput').parentElement.classList.add('hidden');
+        }
         subscribeToChat();
     };
     window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel)supabase.removeChannel(chatChannel);};
     window.sendGift=async function(giftType){
         if(!currentChatPartner)return;
-        const names={rose:'una rosa ',chocolate:'un chocolate ',ring:'un anillo '};
-        if(!confirm(`¿Enviar ${names[giftType]} para desbloquear el chat?`))return;
-        const{data,error}=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:' ¡Te ha enviado un regalo!',p_gift:giftType});
+        const names={rose:'una rosa ğŸŒ¹',chocolate:'un chocolate ğŸ«',ring:'un anillo ğŸ’'};
+        if(!confirm(`Â¿Enviar ${names[giftType]} para desbloquear el chat?`))return;
+        const{data,error}=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'ğŸ Â¡Te ha enviado un regalo!',p_gift:giftType});
         if(error||!data.success)return toast(data?.error||'Saldo insuficiente','error');
-        toast(` ¡Regalo enviado! Chat desbloqueado.`,'success');
+        toast(`âœ… Â¡Regalo enviado! Chat desbloqueado.`,'success');
         updateBalance();
         $('#chatInput').parentElement.classList.remove('hidden');
         loadChatHistory();
     };
     window.sendMessage=async function(){const input=$('#chatInput');const text=input.value.trim();if(!text||!currentChatPartner)return;const{error}=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});if(error)return toast('Error al enviar','error');input.value='';};
     async function loadChatHistory(){const{data}=await supabase.from('chat_messages').select('*').or(`and(sender_id.eq.${tgUser.id},receiver_id.eq.${currentChatPartner.id}),and(sender_id.eq.${currentChatPartner.id},receiver_id.eq.${tgUser.id})`).order('created_at',{ascending:true}).limit(50);renderMessages(data||[]);}
-    function renderMessages(msgs){const container=$('#chatMessages');if(container.querySelector('button')) container.innerHTML='';msgs.forEach(m=>{const isMe=m.sender_id==tgUser.id;const div=document.createElement('div');div.className=`chat-bubble ${isMe?'me':'other'}`;let content='';if(m.gift_type==='rose')content+=' ';if(m.gift_type==='chocolate')content+=' ';if(m.gift_type==='ring')content+=' ';content+=m.message||'';div.textContent=content;container.appendChild(div);});container.scrollTop=container.scrollHeight;}
+    function renderMessages(msgs){const container=$('#chatMessages');if(container.querySelector('button')) container.innerHTML='';msgs.forEach(m=>{const isMe=m.sender_id==tgUser.id;const div=document.createElement('div');div.className=`chat-bubble ${isMe?'me':'other'}`;let content='';if(m.gift_type==='rose')content+='ğŸŒ¹ ';if(m.gift_type==='chocolate')content+='ğŸ« ';if(m.gift_type==='ring')content+='ğŸ’ ';content+=m.message||'';div.textContent=content;container.appendChild(div);});container.scrollTop=container.scrollHeight;}
     function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},(payload)=>{const msg=payload.new;if((msg.sender_id==tgUser.id&&msg.receiver_id==currentChatPartner?.id)||(msg.sender_id==currentChatPartner?.id&&msg.receiver_id==tgUser.id)){if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden');}renderMessages([msg]);}}).subscribe();}
-    
-    //  LISTA DE CHAT INTELIGENTE (Muestra "En línea" o "Hace X min")
     async function loadChatUsers(){
         const{data}=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen', { ascending: false }).limit(20);
         const list=$('#chatUsersList');list.innerHTML='';
-        if(!data||!data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios registrados aún. ¡Invita a tus amigos!</p>';return;}
+        if(!data||!data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios registrados aÃºn. Â¡Invita a tus amigos!</p>';return;}
         data.forEach(p=>{
             const lastSeen = new Date(p.last_seen);
             const diffMs = Date.now() - lastSeen.getTime();
             const diffMins = Math.floor(diffMs / 60000);
             const isOnline = diffMins < 5;
             const div=document.createElement('div');div.className='chat-user-item';
-            div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover;">`:((p.first_name||'?')[0].toUpperCase())}</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">${p.first_name||'Usuario'}</span><span style="font-size:11px;color:${isOnline?'var(--accent-green)':'var(--text-secondary)'};">${isOnline?' En línea':' Hace '+diffMins+' min'}</span></div></div>`;
+            div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover;">`:((p.first_name||'?')[0].toUpperCase())}</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">${p.first_name||'Usuario'}</span><span style="font-size:11px;color:${isOnline?'var(--accent-green)':'var(--text-secondary)'};">${isOnline?'ğŸŸ¢ En lÃ­nea':'ğŸ•’ Hace '+diffMins+' min'}</span></div></div>`;
             div.onclick=()=>openChatWith(p.telegram_id,p.first_name);
             list.appendChild(div);
         });
     }
 
-    //  TRIVIA
-    window.openTrivia=function(){if(energy.trivia<=0)return toast(' Sin partidas hoy','error');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');backToTriviaMenu();};
+    window.openTrivia=function(){if(energy.trivia<=0)return toast('ğŸ® Sin partidas hoy','error');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');backToTriviaMenu();};
     window.resetGames=function(){$('#triviaFlow').classList.add('hidden');$('#compatFlow').classList.add('hidden');$('#gameMenu').classList.remove('hidden');if(timer)clearInterval(timer);};
     window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaMenu').classList.remove('hidden');};
-    window.crearPartida=async function(){if(energy.trivia<=0)return toast('Sin energía','error');await loadQuestions();const{data,error}=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'waiting'}).select('id').single();if(error)return toast('Error al crear','error');gameId=data.id;playerNum=1;$('#codigoCreado').textContent=data.id;$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaCrear').classList.remove('hidden');const{data:r}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=r;updateEnergy();};
+    window.crearPartida=async function(){if(energy.trivia<=0)return toast('Sin energÃ­a','error');await loadQuestions();const{data,error}=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'waiting'}).select('id').single();if(error)return toast('Error al crear','error');gameId=data.id;playerNum=1;$('#codigoCreado').textContent=data.id;$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaCrear').classList.remove('hidden');const{data:r}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=r;updateEnergy();};
     window.comenzarEspera=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');qIdx=0;responses=[];showQuestion();};
     window.showUnirse=function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaUnirse').classList.remove('hidden');$('#errorUnirse').style.display='none';};
     window.unirsePartida=async function(){const gid=parseInt($('#inputCodigo').value);if(!gid)return;const{data,error}=await supabase.from('trivia_games').select('*').eq('id',gid).single();if(error||!data||data.status!=='waiting')return $('#errorUnirse').style.display='block';await supabase.from('trivia_games').update({player2_telegram_id:tgUser.id,status:'active'}).eq('id',gid);gameId=gid;playerNum=2;await loadQuestions();$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaPreguntas').classList.remove('hidden');qIdx=0;responses=[];showQuestion();const{data:r}=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=r;updateEnergy();};
-    window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#onlinePlayers').classList.remove('hidden');const{data}=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen', { ascending: false }).limit(20);const list=$('#playersList');list.innerHTML='';if(!data||!data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return;}data.forEach(p=>{const div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover;">`:((p.first_name||'?')[0].toUpperCase())}</div><span style="font-weight:600;">${p.first_name||'Jugador'}</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador(${p.telegram_id},'${p.first_name}')">Desafiar</button>`;list.appendChild(div);});};
-    async function loadQuestions(){const all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(()=>Math.random()-.5).slice(0,5);}
+    window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#onlinePlayers').classList.remove('hidden');const{data}=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen', { ascending: false }).limit(20);const list=$('#playersList');list.innerHTML='';if(!data||!data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en lÃ­nea</p>';return;}data.forEach(p=>{const div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover;">`:((p.first_name||'?')[0].toUpperCase())}</div><span style="font-weight:600;">${p.first_name||'Jugador'}</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador(${p.telegram_id},'${p.first_name}')">Desafiar</button>`;list.appendChild(div);});};
+    async function loadQuestions(){const all=[{q:"Â¿CuÃ¡l es el ocÃ©ano mÃ¡s grande?",o:["AtlÃ¡ntico","Ãndico","PacÃ­fico","Ãrtico"],c:2},{q:"Â¿QuiÃ©n escribiÃ³ 'Cien aÃ±os de soledad'?",o:["Vargas Llosa","GarcÃ­a MÃ¡rquez","Allende","Borges"],c:1},{q:"Â¿CuÃ¡ntos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"Â¿CuÃ¡l es el rÃ­o mÃ¡s largo del mundo?",o:["Nilo","Amazonas","YangtsÃ©","Misisipi"],c:1},{q:"Â¿En quÃ© aÃ±o llegÃ³ el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(()=>Math.random()-.5).slice(0,5);}
     function showQuestion(){if(qIdx>=questions.length)return finishTrivia();locked=false;$('#waitingMsg').style.display='none';const q=questions[qIdx];$('#qTitle').textContent=`Pregunta ${qIdx+1}/${questions.length}`;$('#qText').textContent=q.q;const opts=$('#qOptions');opts.innerHTML='';q.o.forEach((o,i)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=()=>selectAnswer(i);opts.appendChild(btn);});startTimer();}
     function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1);}},1000);}
-    function updateTimerUI(){$('#timerDisplay').textContent=` ${timeLeft}s`;$('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';}
+    function updateTimerUI(){$('#timerDisplay').textContent=`â³ ${timeLeft}s`;$('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';}
     function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);const correct=questions[qIdx].c;const btns=$$('#qOptions .option-btn');btns.forEach(b=>b.disabled=true);btns[correct].classList.add('correct');if(idx>=0&&idx!==correct)btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(async()=>{qIdx++;if(qIdx<questions.length){showQuestion();}else{const col=playerNum===1?'player1_responses':'player2_responses';await supabase.from('trivia_games').update({[col]:responses}).eq('id',gameId);finishTrivia();}},800);}
-    async function finishTrivia(){$('#triviaPreguntas').classList.add('hidden');if(timer)clearInterval(timer);const{data}=await supabase.from('trivia_games').select('*').eq('id',gameId).single();if(!data)return resetGames();const p1=data.player1_responses||[],p2=data.player2_responses||[];const hasOpponent=!!data.player2_telegram_id;if(playerNum===1&&!hasOpponent){let correct=0;p1.forEach((r,i)=>{if(r.selectedOption===questions[i].c)correct++;});showResult(Math.round(correct/questions.length*100),` Acertaste ${correct}/${questions.length}. ¡Sigue practicando!`);return;}if(hasOpponent&&((playerNum===1&&!p2.length)||(playerNum===2&&!p1.length))){$('#triviaPreguntas').classList.remove('hidden');$('#qOptions').innerHTML='';$('#waitingMsg').style.display='block';setTimeout(finishTrivia,3000);return;}let c1=0,c2=0,matches=0;questions.forEach((q,i)=>{if(p1[i]?.selectedOption===q.c)c1++;if(p2[i]?.selectedOption===q.c)c2++;if(p1[i]?.selectedOption===p2[i]?.selectedOption)matches++;});const compat=p1.length?Math.round(matches/p1.length*100):0;let winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats();}await supabase.from('trivia_games').update({compatibility_score:compat,status:'completed',completed_at:new Date().toISOString()}).eq('id',gameId);let msg=`Compatibilidad: ${compat}%\nTus aciertos: ${c1} | Oponente: ${c2}\n`;msg+=winner===playerNum?' ¡Ganaste!':winner===0?' Empate':' Perdiste';showResult(compat,msg);}
+    async function finishTrivia(){$('#triviaPreguntas').classList.add('hidden');if(timer)clearInterval(timer);const{data}=await supabase.from('trivia_games').select('*').eq('id',gameId).single();if(!data)return resetGames();const p1=data.player1_responses||[],p2=data.player2_responses||[];const hasOpponent=!!data.player2_telegram_id;if(playerNum===1&&!hasOpponent){let correct=0;p1.forEach((r,i)=>{if(r.selectedOption===questions[i].c)correct++;});showResult(Math.round(correct/questions.length*100),`ğŸ¯ Acertaste ${correct}/${questions.length}. Â¡Sigue practicando!`);return;}if(hasOpponent&&((playerNum===1&&!p2.length)||(playerNum===2&&!p1.length))){$('#triviaPreguntas').classList.remove('hidden');$('#qOptions').innerHTML='';$('#waitingMsg').style.display='block';setTimeout(finishTrivia,3000);return;}let c1=0,c2=0,matches=0;questions.forEach((q,i)=>{if(p1[i]?.selectedOption===q.c)c1++;if(p2[i]?.selectedOption===q.c)c2++;if(p1[i]?.selectedOption===p2[i]?.selectedOption)matches++;});const compat=p1.length?Math.round(matches/p1.length*100):0;let winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats();}await supabase.from('trivia_games').update({compatibility_score:compat,status:'completed',completed_at:new Date().toISOString()}).eq('id',gameId);let msg=`Compatibilidad: ${compat}%\nTus aciertos: ${c1} | Oponente: ${c2}\n`;msg+=winner===playerNum?'ğŸ‰ Â¡Ganaste!':winner===0?'ğŸ¤ Empate':'ğŸ˜ Perdiste';showResult(compat,msg);}
     function showResult(score,msg){$$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));$('#triviaResultado').classList.remove('hidden');$('#compatScore').textContent=score+'%';$('#compatScore').style.setProperty('--score',score+'%');$('#compatMsg').textContent=msg;}
-    const compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
+    const compatQ=[{q:"Â¿QuÃ© prefieres en una primera cita?",o:["Cena romÃ¡ntica","Aventura","CafÃ©","Cine en casa"]},{q:"Â¿QuÃ© cualidad valoras mÃ¡s?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"Â¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"Â¿CÃ³mo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"Â¿QuÃ© no soportas?",o:["Impuntualidad","Falta ambiciÃ³n","Mala higiene","Arrogancia"]},{q:"Â¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"Â¿MÃºsica preferida?",o:["Pop","Rock","ElectrÃ³nica","Indie"]},{q:"Â¿QuÃ© te hace reÃ­r?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"Â¿CÃ³mo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"Â¿QuÃ© esperas de una relaciÃ³n?",o:["Apoyo","DiversiÃ³n","Crecimiento","Estabilidad"]}];
     window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ();};
-    function showCompatQ(){if(qIdx>=compatQ.length){const sum=compatAnswers.reduce((a,b)=>a+b,0);const pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return;}const q=compatQ[qIdx];$('#cqTitle').textContent=`Pregunta ${qIdx+1}/10`;$('#cqText').textContent=q.q;const opts=$('#cqOptions');opts.innerHTML='';q.o.forEach((o,i)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=()=>{compatAnswers.push(i);qIdx++;showCompatQ();};opts.appendChild(btn);});}
+    function showCompatQ(){if(qIdx>=compatQ.length){const sum=compatAnswers.reduce((a,b)=>a+b,0);const pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espÃ­ritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversaciÃ³n.':'Eres Ãºnico/a. Alguien autÃ©ntico te conviene.';return;}const q=compatQ[qIdx];$('#cqTitle').textContent=`Pregunta ${qIdx+1}/10`;$('#cqText').textContent=q.q;const opts=$('#cqOptions');opts.innerHTML='';q.o.forEach((o,i)=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=()=>{compatAnswers.push(i);qIdx++;showCompatQ();};opts.appendChild(btn);});}
     document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
 </script>
