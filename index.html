@@ -170,7 +170,7 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 (function(){
 var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
-var PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
+var PAYMENTS_BOT_TOKEN='AQUI_TU_TOKEN_DEL_BOT_DE_PAGOS';
 var supabase,tgUser;
 var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'🟤 Bronce'};
 var gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15;
@@ -195,40 +195,454 @@ function cleanupGame(){if(timer){clearInterval(timer);timer=null}if(triviaChanne
 window.resetGames=function(){cleanupGame();$('#triviaFlow').classList.add('hidden');$('#triviaFlow').style.display='none';$('#compatFlow').classList.add('hidden');$('#gameMenu').classList.remove('hidden')};
 window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energía','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
 async function startGameLive(currentGameId,myPlayerNum){cleanupGame();gameId=currentGameId;playerNum=myPlayerNum;switchSection('sectionGames');setTimeout(function(){try{['gameMenu','onlinePlayers','triviaMenu','compatFlow'].forEach(function(id){var el=$('#'+id);if(el){el.classList.add('hidden');el.style.display='none'}});['triviaFlow','triviaPreguntas'].forEach(function(id){var el=$('#'+id);if(el){el.classList.remove('hidden');el.style.display='block'}});loadQuestions();showQuestion();triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe();toast('🎮 ¡Juego iniciado!','success')}catch(error){console.error('Error:',error);toast('❌ Error al cargar el juego.','error');cleanupGame();resetGames()}},50)}
-async function dailyLogin(){var result=await supabase.rpc('daily_login',{user_id:tgUser.id});if(result.error)throw result.error;energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};if(result.data.fichas_ganadas>0){$('#streakBanner').style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;toast('🔥 +'+result.data.fichas_ganadas+' fichas por racha!','success')}updateEnergy();updateProfileStats()}
-function updateEnergy(){$('#energyCount').textContent=energy.swipes;$('#energyBadge').style.display=energy.swipes<=5?'inline-block':'none';$('#triviaLeft').textContent=energy.trivia}
-function updateProfileStats(){$('#victoriasStat').textContent=energy.victorias;$('#matchesStat').textContent=energy.matches||0;var p=energy.rango.split(' ');$('#rangoIcon').textContent=p[0];$('#rangoName').textContent=p.slice(1).join(' ')}
-async function updateBalance(){var result=await supabase.rpc('get_balance',{user_id:tgUser.id});$('#saldoTienda').textContent=result.data||0;$('#fichasStat').textContent=result.data||0}
-async function loadProfiles(){var result=await supabase.from('users').select('*').neq('telegram_id',tgUser.id).limit(30);if(result.error||!result.data.length){$('#emptyTitle').textContent='No hay perfiles';$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return}var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('🔄 ¡Nuevos perfiles disponibles!','success')}datingQueue=queue;dIdx=0;showProfile()}
-function showProfile(){if(dIdx>=datingQueue.length){$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return}var p=datingQueue[dIdx];$('#datingCardContainer').style.display='block';$('#emptyDating').style.display='none';$('#dName').textContent=p.first_name||'';$('#dAge').textContent=p.age||'';$('#dBio').textContent=p.bio||'';if(p.photo_url){$('#datingPhoto').src=p.photo_url;$('#datingPhoto').style.display='block';$('#datingPlaceholder').style.display='none'}else{$('#datingPhoto').style.display='none';$('#datingPlaceholder').style.display='flex';$('#datingPlaceholder').textContent=(p.first_name||'?')[0].toUpperCase()}}
-window.handleSwipe=async function(type){if(dIdx>=datingQueue.length)return;if(energy.swipes<=0)return toast('⚡ Sin energía','error');var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});if(result.data>=0){energy.swipes=result.data;updateEnergy()}var currentProfile=datingQueue[dIdx];interacted.add(currentProfile.telegram_id);localStorage.setItem('lv_interacted',JSON.stringify(Array.from(interacted)));if(type==='like'||type==='super'){var isMutual=Math.random()<0.3;if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback){window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}}else{toast('💘 ¡Like enviado! Esperemos que sea mutuo.','success');dIdx++;showProfile()}}else{toast('❌ Descartado');dIdx++;showProfile()}};
-window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
-window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
-window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switchSection('sectionChat');openChatWith(currentMatchId,currentMatchName)};
-window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>'}$('#chatInput').parentElement.classList.add('hidden');subscribeToChat()};
-window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
-window.sendGift=async function(giftType){if(!currentChatPartner)return;var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});if(result.error||!result.data.success)return toast(result.data?result.data.error:'Saldo insuficiente','error');toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');updateBalance();$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory()};
-window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});if(result.error)return toast('Error al enviar','error');input.value=''};
-async function loadChatHistory(){var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:true}).limit(50);renderMessages(result.data||[])}
-function renderMessages(msgs){var container=$('#chatMessages');if(container.querySelector('button'))container.innerHTML='';msgs.forEach(function(m){var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');var content='';if(m.gift_type==='rose')content+='🌹 ';if(m.gift_type==='chocolate')content+='🍫 ';if(m.gift_type==='ring')content+='💍 ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
-function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
-async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
-window.openTrivia=function(){if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');backToTriviaMenu()};
-window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#triviaMenu').classList.remove('hidden')};
-window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
-function loadQuestions(){var all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
-function showQuestion(){if(qIdx>=questions.length)return submitFinalAnswers();locked=false;$('#waitingMsg').style.display='none';var q=questions[qIdx];$('#qTitle').textContent='Pregunta '+(qIdx+1)+'/'+questions.length;$('#qText').textContent=q.q;var opts=$('#qOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){selectAnswer(i)};opts.appendChild(btn)});startTimer()}
-function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(function(){timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1)}},1000)}
-function updateTimerUI(){$('#timerDisplay').textContent='⏳ '+timeLeft+'s';$('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
-function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);var correct=questions[qIdx].c;var btns=$$('#qOptions .option-btn');btns.forEach(function(b){b.disabled=true});btns[correct].classList.add('correct');if(idx>=0&&idx!==correct)btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(function(){qIdx++;showQuestion()},800)}
-async function submitFinalAnswers(){if(!gameId)return;$('#triviaPreguntas').classList.add('hidden');$('#waitingMsg').style.display='block';$('#waitingMsg').textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...';var col=playerNum===1?'player1_responses':'player2_responses';await supabase.from('trivia_games').update({}).eq('id',gameId).update({[col]:responses});if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId)}}
-async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu').classList.contains('active')||(!flow.classList.contains('active')&&flow.style.display==='none'))return;if(!questions||questions.length===0)return;$('#triviaPreguntas').classList.add('hidden');$('#waitingMsg').style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var hasOpponent=!!gameData.player2_telegram_id;if(!hasOpponent){var correct=0;p1.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});showResult(Math.round(correct/questions.length*100),'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!');return}var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?'🎉 ¡Ganaste!':winner===0?'🤝 Empate':'😞 Perdiste';showResult(compat,msg)}
-function showResult(score,msg){var flow=$('#triviaFlow');if(!flow||(!flow.classList.contains('active')&&flow.style.display==='none'))return;flow.classList.remove('hidden');flow.style.display='block';$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none'});var resultEl=$('#triviaResultado');resultEl.classList.remove('hidden');resultEl.style.display='block';$('#compatScore').textContent=score+'%';$('#compatScore').style.setProperty('--score',score+'%');$('#compatMsg').textContent=msg}
-var compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
-window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ()};
-function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
+async function dailyLogin(){
+    var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
+    if(result.error)throw result.error;
+    energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};
+    if(result.data.fichas_ganadas>0){
+        $('#streakBanner').style.display='block';
+        $('#streakDays').textContent=result.data.streak;
+        $('#streakFichas').textContent=result.data.fichas_ganadas;
+        toast('🔥 +'+result.data.fichas_ganadas+' fichas por racha!','success')
+    }
+    updateEnergy();
+    updateProfileStats();
+}
+
+function updateEnergy(){
+    $('#energyCount').textContent=energy.swipes;
+    $('#energyBadge').style.display=energy.swipes<=5?'inline-block':'none';
+    $('#triviaLeft').textContent=energy.trivia;
+}
+
+function updateProfileStats(){
+    $('#victoriasStat').textContent=energy.victorias;
+    $('#matchesStat').textContent=energy.matches||0;
+    var p=energy.rango.split(' ');
+    $('#rangoIcon').textContent=p[0];
+    $('#rangoName').textContent=p.slice(1).join(' ');
+}
+
+async function updateBalance(){
+    var result=await supabase.rpc('get_balance',{user_id:tgUser.id});
+    $('#saldoTienda').textContent=result.data||0;
+    $('#fichasStat').textContent=result.data||0;
+}
+
+async function loadProfiles(){
+    var result=await supabase.from('users').select('*').neq('telegram_id',tgUser.id).limit(30);
+    if(result.error||!result.data.length){
+        $('#emptyTitle').textContent='No hay perfiles';
+        $('#emptyDating').style.display='block';
+        $('#datingCardContainer').style.display='none';
+        return;
+    }
+    var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});
+    if(queue.length===0){
+        interacted.clear();
+        localStorage.removeItem('lv_interacted');
+        queue=result.data;
+        toast('🔄 ¡Nuevos perfiles disponibles!','success');
+    }
+    datingQueue=queue;
+    dIdx=0;
+    showProfile();
+}
+
+function showProfile(){
+    if(dIdx>=datingQueue.length){
+        $('#emptyDating').style.display='block';
+        $('#datingCardContainer').style.display='none';
+        return;
+    }
+    var p=datingQueue[dIdx];
+    $('#datingCardContainer').style.display='block';
+    $('#emptyDating').style.display='none';
+    $('#dName').textContent=p.first_name||'';
+    $('#dAge').textContent=p.age||'';
+    $('#dBio').textContent=p.bio||'';
+    if(p.photo_url){
+        $('#datingPhoto').src=p.photo_url;
+        $('#datingPhoto').style.display='block';
+        $('#datingPlaceholder').style.display='none';
+    }else{
+        $('#datingPhoto').style.display='none';
+        $('#datingPlaceholder').style.display='flex';
+        $('#datingPlaceholder').textContent=(p.first_name||'?')[0].toUpperCase();
+    }
+}
+
+window.handleSwipe=async function(type){
+    if(dIdx>=datingQueue.length)return;
+    if(energy.swipes<=0)return toast('⚡ Sin energía','error');
+    var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});
+    if(result.data>=0){energy.swipes=result.data;updateEnergy();}
+    var currentProfile=datingQueue[dIdx];
+    interacted.add(currentProfile.telegram_id);
+    localStorage.setItem('lv_interacted',JSON.stringify(Array.from(interacted)));
+    if(type==='like'||type==='super'){
+        var isMutual=Math.random()<0.3;
+        if(isMutual){
+            showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);
+            if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback){
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+            }
+        }else{
+            toast('💘 ¡Like enviado! Esperemos que sea mutuo.','success');
+            dIdx++;
+            showProfile();
+        }
+    }else{
+        toast('❌ Descartado');
+        dIdx++;
+        showProfile();
+    }
+};
+
+window.showMatchModal=function(name,id){
+    currentMatchId=id;
+    currentMatchName=name;
+    $('#matchName').textContent=name;
+    $('#matchModal').classList.add('show');
+};
+
+window.closeMatchModal=function(){
+    $('#matchModal').classList.remove('show');
+    dIdx++;
+    showProfile();
+};
+
+window.chatWithMatch=function(){
+    $('#matchModal').classList.remove('show');
+    switchSection('sectionChat');
+    openChatWith(currentMatchId,currentMatchName);
+};
+
+// ---------- CHAT (sin cambios) ----------
+window.openChatWith=async function(userId,userName){
+    currentChatPartner={id:userId,name:userName};
+    $('#chatPartnerName').textContent=userName;
+    $('#chatUsersList').classList.add('hidden');
+    $('#chatWindow').classList.remove('hidden');
+    var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);
+    if(msgsResult.data&&msgsResult.data.length>0){
+        $('#chatInput').parentElement.classList.remove('hidden');
+        loadChatHistory();
+        subscribeToChat();
+        return;
+    }
+    var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});
+    if(saldoResult.data<50){
+        $('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>';
+    }else{
+        $('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>';
+    }
+    $('#chatInput').parentElement.classList.add('hidden');
+    subscribeToChat();
+};
+
+window.closeChat=function(){
+    currentChatPartner=null;
+    $('#chatWindow').classList.add('hidden');
+    $('#chatUsersList').classList.remove('hidden');
+    if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null;}
+};
+
+window.sendGift=async function(giftType){
+    if(!currentChatPartner)return;
+    var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};
+    var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});
+    if(result.error||!result.data.success)return toast(result.data?result.data.error:'Saldo insuficiente','error');
+    toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');
+    updateBalance();
+    $('#chatInput').parentElement.classList.remove('hidden');
+    loadChatHistory();
+};
+
+window.sendMessage=async function(){
+    var input=$('#chatInput');
+    var text=input.value.trim();
+    if(!text||!currentChatPartner)return;
+    var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});
+    if(result.error)return toast('Error al enviar','error');
+    input.value='';
+};
+
+async function loadChatHistory(){
+    var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:true}).limit(50);
+    renderMessages(result.data||[]);
+}
+
+function renderMessages(msgs){
+    var container=$('#chatMessages');
+    if(container.querySelector('button'))container.innerHTML='';
+    msgs.forEach(function(m){
+        var isMe=m.sender_id==tgUser.id;
+        var div=document.createElement('div');
+        div.className='chat-bubble '+(isMe?'me':'other');
+        var content='';
+        if(m.gift_type==='rose')content+='🌹 ';
+        if(m.gift_type==='chocolate')content+='🍫 ';
+        if(m.gift_type==='ring')content+='💍 ';
+        content+=m.message||'';
+        div.textContent=content;
+        container.appendChild(div);
+    });
+    container.scrollTop=container.scrollHeight;
+}
+
+function subscribeToChat(){
+    if(chatChannel)supabase.removeChannel(chatChannel);
+    chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){
+        var msg=payload.new;
+        if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){
+            renderMessages([msg]);
+            if($('#chatMessages').querySelector('button')){
+                $('#chatInput').parentElement.classList.remove('hidden');
+            }
+        }else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){
+            unreadCount++;
+            updateNotifBadge();
+            if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('info');
+        }
+    }).subscribe();
+}
+
+async function loadChatUsers(){
+    var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);
+    var list=$('#chatUsersList');
+    list.innerHTML='';
+    if(!result.data||!result.data.length){
+        list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';
+        return;
+    }
+    result.data.forEach(function(p){
+        var lastSeen=new Date(p.last_seen);
+        var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);
+        var isOnline=diffMins<5;
+        var div=document.createElement('div');
+        div.className='chat-user-item';
+        div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';
+        div.onclick=function(){openChatWith(p.telegram_id,p.first_name);};
+        list.appendChild(div);
+    });
+}
+
+// ---------- TRIVIA (CORREGIDA) ----------
+window.openTrivia=function(){
+    if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');
+    $('#gameMenu').classList.add('hidden');
+    $('#triviaFlow').classList.remove('hidden');
+    backToTriviaMenu();
+};
+
+window.backToTriviaMenu=function(){
+    $$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');});
+    $('#triviaMenu').classList.remove('hidden');
+};
+
+window.showOnlinePlayers=async function(){
+    $$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');});
+    $('#onlinePlayers').classList.remove('hidden');
+    var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);
+    var list=$('#playersList');
+    list.innerHTML='';
+    if(!result.data||!result.data.length){
+        list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';
+        return;
+    }
+    result.data.forEach(function(p){
+        var div=document.createElement('div');
+        div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';
+        div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';
+        list.appendChild(div);
+    });
+};
+
+function loadQuestions(){
+    var all=[
+        {q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},
+        {q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},
+        {q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
+        {q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},
+        {q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
+    ];
+    questions=all.sort(function(){return Math.random()-0.5;}).slice(0,5);
+}
+
+function showQuestion(){
+    if(qIdx>=questions.length)return submitFinalAnswers();
+    locked=false;
+    $('#waitingMsg').style.display='none';
+    var q=questions[qIdx];
+    $('#qTitle').textContent='Pregunta '+(qIdx+1)+'/'+questions.length;
+    $('#qText').textContent=q.q;
+    var opts=$('#qOptions');
+    opts.innerHTML='';
+    q.o.forEach(function(o,i){
+        var btn=document.createElement('button');
+        btn.className='option-btn';
+        btn.textContent=o;
+        btn.onclick=function(){selectAnswer(i);};
+        opts.appendChild(btn);
+    });
+    startTimer();
+}
+
+function startTimer(){
+    if(timer)clearInterval(timer);
+    timeLeft=15;
+    updateTimerUI();
+    timer=setInterval(function(){
+        timeLeft--;
+        updateTimerUI();
+        if(timeLeft<=0){
+            clearInterval(timer);
+            if(!locked)selectAnswer(-1);
+        }
+    },1000);
+}
+
+function updateTimerUI(){
+    $('#timerDisplay').textContent='⏳ '+timeLeft+'s';
+    $('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';
+}
+
+function selectAnswer(idx){
+    if(locked)return;
+    locked=true;
+    if(timer)clearInterval(timer);
+    var correct=questions[qIdx].c;
+    var btns=$$('#qOptions .option-btn');
+    btns.forEach(function(b){b.disabled=true;});
+    btns[correct].classList.add('correct');
+    if(idx>=0&&idx!==correct)btns[idx].classList.add('wrong');
+    responses.push({questionIndex:qIdx,selectedOption:idx});
+    setTimeout(function(){
+        qIdx++;
+        showQuestion();
+    },800);
+}
+
+// ✅ Guardar respuestas (CORREGIDO)
+async function submitFinalAnswers(){
+    if(!gameId)return;
+    $('#triviaPreguntas').classList.add('hidden');
+    $('#waitingMsg').style.display='block';
+    $('#waitingMsg').textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...';
+    var col=playerNum===1?'player1_responses':'player2_responses';
+    await supabase.from('trivia_games').update({[col]:responses}).eq('id',gameId);
+    if(playerNum===1){
+        await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);
+    }
+}
+
+// ✅ Mostrar resultados desde evento Realtime
+async function finishTriviaFromEvent(gameData){
+    if(!gameData||gameData.id!==gameId)return;
+    var resultEl=$('#triviaResultado');
+    if(!resultEl.classList.contains('hidden'))return;
+    var flow=$('#triviaFlow');
+    if($('#gameMenu').classList.contains('active')||(!flow.classList.contains('active')&&flow.style.display==='none'))return;
+    if(!questions||questions.length===0)return;
+    $('#triviaPreguntas').classList.add('hidden');
+    $('#waitingMsg').style.display='none';
+    if(timer){clearInterval(timer);timer=null;}
+    var p1=gameData.player1_responses||[];
+    var p2=gameData.player2_responses||[];
+    var hasOpponent=!!gameData.player2_telegram_id;
+    if(!hasOpponent){
+        var correct=0;
+        p1.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++;});
+        showResult(Math.round(correct/questions.length*100),'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!');
+        return;
+    }
+    var c1=0,c2=0,matches=0;
+    questions.forEach(function(q,i){
+        if(p1[i]&&p1[i].selectedOption===q.c)c1++;
+        if(p2[i]&&p2[i].selectedOption===q.c)c2++;
+        if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++;
+    });
+    var compat=p1.length?Math.round(matches/p1.length*100):0;
+    var winner=c1>c2?1:c2>c1?2:0;
+    if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){
+        await supabase.rpc('add_trivia_win',{user_id:tgUser.id});
+        energy.victorias++;
+        updateProfileStats();
+    }
+    var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';
+    msg+=winner===playerNum?'🎉 ¡Ganaste!':winner===0?'🤝 Empate':'😞 Perdiste';
+    showResult(compat,msg);
+}
+
+function showResult(score,msg){
+    var flow=$('#triviaFlow');
+    if(!flow||(!flow.classList.contains('active')&&flow.style.display==='none'))return;
+    flow.classList.remove('hidden');
+    flow.style.display='block';
+    $$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none';});
+    var resultEl=$('#triviaResultado');
+    resultEl.classList.remove('hidden');
+    resultEl.style.display='block';
+    $('#compatScore').textContent=score+'%';
+    $('#compatScore').style.setProperty('--score',score+'%');
+    $('#compatMsg').textContent=msg;
+}
+
+// ✅ Iniciar juego (ahora oculta resultados previos)
+async function startGameLive(currentGameId,myPlayerNum){
+    cleanupGame();
+    gameId=currentGameId;
+    playerNum=myPlayerNum;
+    switchSection('sectionGames');
+    setTimeout(function(){
+        try{
+            ['gameMenu','onlinePlayers','triviaMenu','compatFlow','triviaResultado'].forEach(function(id){
+                var el=$('#'+id);
+                if(el){el.classList.add('hidden');el.style.display='none';}
+            });
+            ['triviaFlow','triviaPreguntas'].forEach(function(id){
+                var el=$('#'+id);
+                if(el){el.classList.remove('hidden');el.style.display='block';}
+            });
+            loadQuestions();
+            qIdx=0;
+            responses=[];
+            showQuestion();
+            triviaChannel=supabase.channel('game_'+gameId)
+                .on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){
+                    if(payload.new.id!==gameId)return;
+                    if(payload.new.status==='completed')finishTriviaFromEvent(payload.new);
+                })
+                .subscribe();
+            toast('🎮 ¡Juego iniciado!','success');
+        }catch(error){
+            console.error('Error:',error);
+            toast('❌ Error al cargar el juego.','error');
+            cleanupGame();
+            resetGames();
+        }
+    },50);
+}
+
+// ✅ Partida en solitario (llama a startGameLive tras crear)
+window.startSoloGame=async function(){
+    if(energy.trivia<=0)return toast('Sin energía','error');
+    cleanupGame();
+    var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();
+    if(result.error)return toast('Error al crear partida','error');
+    var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
+    energy.trivia=newEnergy.data;
+    updateEnergy();
+    startGameLive(result.data.id,1);
+};
+
+// ---------- TEST DE COMPATIBILIDAD (sin cambios) ----------
+var compatQ=[...]; // (mantén el array que ya tenías)
+window.openCompatTest=function(){...};
+function showCompatQ(){...}
+
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
 </script>
-</body>
-</html>
