@@ -51,7 +51,6 @@
         .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px;position:relative}
         .nav-item.active{color:var(--accent-blue)}
         .nav-icon{font-size:22px}
-        /* ✅ Badge de notificación */
         .notif-badge{position:absolute;top:2px;right:8px;background:var(--accent-rose);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;display:none}
         .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--bg-card);border:1px solid #2a2a2a;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;transition:.3s;pointer-events:none;white-space:nowrap}
         .toast.show{transform:translateX(-50%) translateY(0)}
@@ -116,7 +115,14 @@
                     <button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">🔙 Volver</button>
                 </div>
                 <div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">⏳ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
-                <div id="triviaResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Resultado de compatibilidad</h3><div class="compat-circle" id="compatScore">0%</div><p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
+                <!-- ✅ Botón "Jugar otra vez" añadido -->
+                <div id="triviaResultado" class="hidden" style="text-align:center;">
+                    <h3 style="margin-bottom:8px;">Resultado</h3>
+                    <div class="compat-circle" id="compatScore">0%</div>
+                    <p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
+                    <button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()">🔄 Jugar otra vez</button>
+                    <button class="btn btn-outline" onclick="resetGames()">🔙 Volver al menú</button>
+                </div>
             </div>
             <div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en línea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">🔙 Volver</button></div>
             <div id="compatFlow" class="hidden">
@@ -304,7 +310,7 @@
         toast('Reto rechazado','error');
     };
 
-    // ✅ Limpieza centralizada de trivia
+    // ✅ LIMPIEZA CENTRALIZADA (Único punto de verdad)
     function cleanupGame() {
         if (timer) { clearInterval(timer); timer = null; }
         if (triviaChannel) { supabase.removeChannel(triviaChannel); triviaChannel = null; }
@@ -318,13 +324,14 @@
     window.resetGames = function() {
         cleanupGame();
         $('#triviaFlow').classList.add('hidden');
+        $('#triviaFlow').style.display = 'none';
         $('#compatFlow').classList.add('hidden');
         $('#gameMenu').classList.remove('hidden');
     };
 
     window.startSoloGame = async function() {
         if (energy.trivia <= 0) return toast('Sin energía', 'error');
-        cleanupGame();
+        cleanupGame(); // ✅ Limpieza preventiva SIEMPRE antes de nueva partida
         const { data, error } = await supabase.from('trivia_games').insert({
             player1_telegram_id: tgUser.id, status: 'active'
         }).select('id').single();
@@ -335,7 +342,7 @@
     };
 
     async function startGameLive(currentGameId, myPlayerNum) {
-        cleanupGame();
+        cleanupGame(); // ✅ Doble seguridad
         gameId = currentGameId;
         playerNum = myPlayerNum;
         switchSection('sectionGames');
@@ -349,12 +356,20 @@
                 });
                 loadQuestions();
                 showQuestion();
+                
+                // ✅ Listener con GUARDIA contra eventos fantasma
                 triviaChannel = supabase.channel(`game_${gameId}`)
-                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trivia_games', filter: `id=eq.${gameId}` }, (payload) => {
-                        if (payload.new.id !== gameId) return;
+                    .on('postgres_changes', { 
+                        event: 'UPDATE', 
+                        schema: 'public', 
+                        table: 'trivia_games', 
+                        filter: `id=eq.${gameId}` 
+                    }, (payload) => {
+                        if (payload.new.id !== gameId) return; // Ignorar partidas viejas
                         if (payload.new.status === 'completed') finishTriviaFromEvent(payload.new);
                     })
                     .subscribe();
+                
                 toast('🎮 ¡Juego iniciado!', 'success');
             } catch (error) {
                 console.error("❌ Error:", error);
@@ -364,7 +379,7 @@
         }, 50); 
     }
 
-    async function dailyLogin(){
+        async function dailyLogin(){
         const{data,error}=await supabase.rpc('daily_login',{user_id:tgUser.id});
         if(error)throw error;
         energy={swipes:data.swipes,trivia:data.trivia_games,streak:data.streak,victorias:data.victorias,matches:data.matches||0,rango:data.rango};
@@ -441,9 +456,7 @@
         localStorage.setItem('lv_interacted', JSON.stringify([...interacted]));
 
         if(type === 'like' || type === 'super') {
-            // Verificar si ya nos dio like (match mutuo real) o simular 30%
             const isMutual = Math.random() < 0.3; 
-            
             if(isMutual) {
                 showMatchModal(currentProfile.first_name || 'Esta persona', currentProfile.telegram_id);
                 if(window.Telegram?.WebApp?.HapticFeedback) {
@@ -478,7 +491,6 @@
     window.chatWithMatch = function() {
         $('#matchModal').classList.remove('show');
         switchSection('sectionChat');
-        // Al ser match, openChatWith detectará que ya hay interacción y abrirá gratis
         openChatWith(currentMatchId, currentMatchName);
     };
 
@@ -489,21 +501,18 @@
         $('#chatUsersList').classList.add('hidden');
         $('#chatWindow').classList.remove('hidden');
 
-        // Verificar historial previo
         const { data: msgs } = await supabase.from('chat_messages')
             .select('id')
             .or(`and(sender_id.eq.${tgUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${tgUser.id})`)
             .limit(1);
 
         if (msgs && msgs.length > 0) {
-            // Chat ya desbloqueado (por match o regalo previo)
             $('#chatInput').parentElement.classList.remove('hidden');
             loadChatHistory();
             subscribeToChat();
             return;
         }
 
-        // Si no hay mensajes, verificar saldo para regalo
         const { data: saldo } = await supabase.rpc('get_balance', { user_id: tgUser.id });
         
         if (saldo < 50) {
@@ -583,12 +592,10 @@
         if(chatChannel) supabase.removeChannel(chatChannel);
         chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},(payload)=>{
             const msg=payload.new;
-            // Mensaje recibido en chat abierto
             if(msg.sender_id!=tgUser.id && msg.receiver_id==tgUser.id && currentChatPartner && msg.sender_id==currentChatPartner.id){
                 renderMessages([msg]);
                 if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden');}
             }
-            // Notificación si estoy fuera del chat
             else if(msg.sender_id!=tgUser.id && msg.receiver_id==tgUser.id){
                 unreadCount++;
                 updateNotifBadge();
@@ -706,7 +713,9 @@
         },800);
     }
 
+    // ✅ BLINDADO: Evita doble envío y estados fantasma
     async function submitFinalAnswers(){
+        if(!gameId) return;
         $('#triviaPreguntas').classList.add('hidden');
         $('#waitingMsg').style.display='block';
         $('#waitingMsg').textContent = playerNum===1 ? 'Calculando resultados...' : 'Esperando al oponente...';
@@ -717,11 +726,23 @@
         }
     }
 
+    // ✅ GUARDIA CUÁDRUPLE CONTRA PANTALLA NEGRA
     async function finishTriviaFromEvent(gameData){
-        if(gameData.id !== gameId) return;
+        // 1. Datos válidos y partida actual
+        if(!gameData || gameData.id !== gameId) return;
+        // 2. No mostrar si ya se mostró
+        const resultEl = $('#triviaResultado');
+        if(!resultEl.classList.contains('hidden')) return;
+        // 3. No mostrar si el usuario ya salió al menú
+        const flow = $('#triviaFlow');
+        if($('#gameMenu').classList.contains('active') || 
+           (!flow.classList.contains('active') && flow.style.display === 'none')) return;
+        // 4. No mostrar si no hay preguntas cargadas
+        if(!questions || questions.length === 0) return;
+        
         $('#triviaPreguntas').classList.add('hidden');
         $('#waitingMsg').style.display='none';
-        if(timer)clearInterval(timer);
+        if(timer){clearInterval(timer);timer=null;}
         
         const p1=gameData.player1_responses||[], p2=gameData.player2_responses||[];
         const hasOpponent=!!gameData.player2_telegram_id;
@@ -751,9 +772,23 @@
         showResult(compat,msg);
     }
 
+    // ✅ BLINDADO: Verifica estado de UI antes de renderizar
     function showResult(score,msg){
-        $$('#triviaFlow > div').forEach(s=>s.classList.add('hidden'));
-        $('#triviaResultado').classList.remove('hidden');
+        const flow = $('#triviaFlow');
+        if(!flow || (!flow.classList.contains('active') && flow.style.display === 'none')) return;
+        
+        flow.classList.remove('hidden');
+        flow.style.display='block';
+        
+        $$('#triviaFlow > div').forEach(s=>{
+            s.classList.add('hidden');
+            s.style.display='none';
+        });
+        
+        const resultEl=$('#triviaResultado');
+        resultEl.classList.remove('hidden');
+        resultEl.style.display='block';
+        
         $('#compatScore').textContent=score+'%';
         $('#compatScore').style.setProperty('--score',score+'%');
         $('#compatMsg').textContent=msg;
