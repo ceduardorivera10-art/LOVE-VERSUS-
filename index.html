@@ -9,7 +9,7 @@
         :root { --bg-primary:#0a0a0a; --bg-secondary:#111; --bg-card:#1a1a1a; --accent-blue:#3390ec; --accent-gold:#c9a84c; --accent-rose:#e94560; --accent-green:#34c759; --text-primary:#f5f5f5; --text-secondary:#b0b0b0; --radius-lg:20px; --nav-height:64px; --safe-bottom:env(safe-area-inset-bottom,12px); }
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;user-select:none}
-        .app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative}
+        .app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;transition:padding-bottom 0.2s ease;}
         .header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg-secondary);border-bottom:1px solid #1f1f1f;z-index:100}
         .brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700}
         .user-pill{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid #2a2a2a;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer}
@@ -48,9 +48,11 @@
         .chat-bubble.me{align-self:flex-end;background:var(--accent-blue);color:#fff;border-bottom-right-radius:4px}
         .chat-bubble.other{align-self:flex-start;background:#2a2a2a;color:#fff;border-bottom-left-radius:4px}
         .bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:rgba(20,20,20,.95);backdrop-filter:blur(20px);border-top:1px solid #1f1f1f;padding:8px 0 var(--safe-bottom);z-index:100}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px;position:relative}
         .nav-item.active{color:var(--accent-blue)}
         .nav-icon{font-size:22px}
+        /* ✅ Badge de notificación */
+        .notif-badge{position:absolute;top:2px;right:8px;background:var(--accent-rose);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;display:none}
         .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--bg-card);border:1px solid #2a2a2a;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;transition:.3s;pointer-events:none;white-space:nowrap}
         .toast.show{transform:translateX(-50%) translateY(0)}
         .toast.success{border-color:var(--accent-green);color:var(--accent-green)}
@@ -71,7 +73,7 @@
     </style>
 </head>
 <body>
-<div class="app-container">
+<div class="app-container" id="appContainer">
     <header class="header">
         <div class="brand">💘 Love<span style="color:var(--accent-gold)">✦</span>Versus</div>
         <div class="user-pill" onclick="switchSection('sectionProfile')">
@@ -91,11 +93,11 @@
         </section>
         
         <section id="sectionChat" class="section">
-            <h3 style="margin-bottom:16px;">💬 Chat en línea</h3>
+            <h3 style="margin-bottom:16px;">💬 Mensajes</h3>
             <div id="chatUsersList"></div>
-            <div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;min-height:300px;display:flex;flex-direction:column;">
+            <div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;display:flex;flex-direction:column;height:70vh;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">←</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
-                <div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;max-height:250px;display:flex;flex-direction:column;gap:8px;"></div>
+                <div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>
                 <div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">➤</button></div>
             </div>
         </section>
@@ -110,7 +112,6 @@
                 <div id="triviaMenu">
                     <h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
                     <button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()">🌐 Ver jugadores en línea</button>
-                    <!-- ✅ CORRECCIÓN 2: Botón para jugar solo -->
                     <button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()">🧪 Jugar solo (práctica)</button>
                     <button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">🔙 Volver</button>
                 </div>
@@ -133,7 +134,7 @@
     
     <nav class="bottom-nav">
         <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">💘</span>Citas</button>
-        <button class="nav-item" data-section="sectionChat"><span class="nav-icon">💬</span>Chat</button>
+        <button class="nav-item" data-section="sectionChat"><span class="nav-icon">💬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
         <button class="nav-item" data-section="sectionGames"><span class="nav-icon">🕹️</span>Versus</button>
         <button class="nav-item" data-section="sectionProfile"><span class="nav-icon">👤</span>Perfil</button>
     </nav>
@@ -152,7 +153,7 @@
     </div>
 </div>
 
-<!-- Modal de MATCH (con cierre al tocar fuera) -->
+<!-- Modal de MATCH -->
 <div id="matchModal" class="challenge-modal" onclick="if(event.target===this)closeMatchModal()">
     <div class="challenge-box" style="border-color: var(--accent-rose);">
         <div style="font-size:60px;margin-bottom:10px;">💘</div>
@@ -183,13 +184,24 @@
     let compatAnswers=[], currentChatPartner=null, chatChannel=null, triviaChannel=null;
     let pendingChallengeId=null;
     let currentMatchId=null, currentMatchName='';
+    let unreadCount=0;
     
     const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
     const toast=(m,t='')=>{const e=$('#toast');e.textContent=m;e.className=`toast ${t} show`;setTimeout(()=>e.classList.remove('show'),3000);};
     
-    // ✅ Cierre automático de canales al cambiar de pestaña
+    // ✅ FIX TECLADO: Ajustar padding cuando el teclado sube
+    if(window.visualViewport){
+        window.visualViewport.addEventListener('resize',()=>{
+            const vh=window.innerHeight;
+            const vvh=window.visualViewport.height;
+            const diff=vh-vvh;
+            $('#appContainer').style.paddingBottom=diff>0?diff+'px':'0px';
+        });
+    }
+    
     function switchSection(id){
         if(id !== 'sectionChat' && currentChatPartner) closeChat();
+        if(id === 'sectionChat'){ unreadCount=0; updateNotifBadge(); }
         
         $$('.section').forEach(s=>s.classList.remove('active'));
         const target = $(`#${id}`);
@@ -201,6 +213,12 @@
         if(id==='sectionChat') loadChatUsers();
     }
     $$('.nav-item').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.section)));
+    
+    function updateNotifBadge(){
+        const badge=$('#chatNotifBadge');
+        if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount;}
+        else{badge.style.display='none';}
+    }
     
     async function init(){
         if(window.Telegram?.WebApp){window.Telegram.WebApp.expand();window.Telegram.WebApp.ready();tgUser=window.Telegram.WebApp.initDataUnsafe?.user||{id:123456789,first_name:'Demo'};}
@@ -221,19 +239,18 @@
             updateBalance();
             loadProfiles();
             
+            // Listener global de retos
             supabase.channel('trivia_live_global')
               .on('postgres_changes', { event: '*', schema: 'public', table: 'trivia_games' }, (payload) => {
                   const r = payload.new;
                   const myId = Number(tgUser.id);
                   const p1 = Number(r.player1_telegram_id);
                   const p2 = Number(r.player2_telegram_id);
-                  
                   if (p2 === myId && r.status === 'invited') {
                       pendingChallengeId = r.id;
                       $('#challengeModal').classList.add('show');
                       toast('⚔️ ¡Te han retado a Trivia!', 'success');
                   }
-                  
                   if (r.status === 'active' && (p1 === myId || p2 === myId)) {
                       $('#challengeModal').classList.remove('show');
                       const myNum = (p1 === myId) ? 1 : 2;
@@ -259,7 +276,6 @@
             toast('📄 Factura abierta','success');
             setTimeout(()=>updateBalance(),5000);
         }catch(e){
-            console.warn('Fallo método directo, usando fallback sendData:',e);
             window.Telegram.WebApp.sendData(productId);
             toast('🔄 Procesando pago...','success');
         }
@@ -274,7 +290,6 @@
         toast(`📨 Reto enviado a ${tname}. Esperando...`,'success');
     };
     
-    // ✅ CORRECCIÓN 4: Limpieza manual del modal como fallback
     window.acceptChallenge=async function(){
         if(!pendingChallengeId) { toast('❌ Error: No hay reto pendiente', 'error'); return; }
         $('#challengeModal').classList.remove('show');
@@ -289,54 +304,62 @@
         toast('Reto rechazado','error');
     };
 
-    // ✅ CORRECCIÓN 2: Modo solitario
+    // ✅ Limpieza centralizada de trivia
+    function cleanupGame() {
+        if (timer) { clearInterval(timer); timer = null; }
+        if (triviaChannel) { supabase.removeChannel(triviaChannel); triviaChannel = null; }
+        gameId = null;
+        responses = [];
+        qIdx = 0;
+        locked = false;
+        $('#waitingMsg').style.display = 'none';
+    }
+
+    window.resetGames = function() {
+        cleanupGame();
+        $('#triviaFlow').classList.add('hidden');
+        $('#compatFlow').classList.add('hidden');
+        $('#gameMenu').classList.remove('hidden');
+    };
+
     window.startSoloGame = async function() {
         if (energy.trivia <= 0) return toast('Sin energía', 'error');
+        cleanupGame();
         const { data, error } = await supabase.from('trivia_games').insert({
-            player1_telegram_id: tgUser.id,
-            status: 'active' // Directamente activo para solitario
+            player1_telegram_id: tgUser.id, status: 'active'
         }).select('id').single();
         if (error) return toast('Error al crear partida', 'error');
         const { data: newEnergy } = await supabase.rpc('use_trivia_game', { user_id: tgUser.id });
-        energy.trivia = newEnergy;
-        updateEnergy();
+        energy.trivia = newEnergy; updateEnergy();
         startGameLive(data.id, 1);
     };
 
-    // ✅ Renderizado blindado + Listener de trivia sin polling
     async function startGameLive(currentGameId, myPlayerNum) {
+        cleanupGame();
         gameId = currentGameId;
         playerNum = myPlayerNum;
         switchSection('sectionGames');
         setTimeout(() => {
             try {
                 ['gameMenu', 'onlinePlayers', 'triviaMenu', 'compatFlow'].forEach(id => {
-                    const el = $(`#${id}`);
-                    if(el) { el.classList.add('hidden'); el.style.display = 'none'; }
+                    const el = $(`#${id}`); if(el) { el.classList.add('hidden'); el.style.display = 'none'; }
                 });
                 ['triviaFlow', 'triviaPreguntas'].forEach(id => {
-                    const el = $(`#${id}`);
-                    if(el) { el.classList.remove('hidden'); el.style.display = 'block'; }
+                    const el = $(`#${id}`); if(el) { el.classList.remove('hidden'); el.style.display = 'block'; }
                 });
                 loadQuestions();
-                qIdx = 0;
-                responses = [];
                 showQuestion();
-                
-                // ✅ CORRECCIÓN 3: Suscripción única a cambios de estado (sin polling)
-                if(triviaChannel) supabase.removeChannel(triviaChannel);
                 triviaChannel = supabase.channel(`game_${gameId}`)
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trivia_games', filter: `id=eq.${gameId}` }, (payload) => {
-                        if(payload.new.status === 'completed') {
-                            finishTriviaFromEvent(payload.new);
-                        }
+                        if (payload.new.id !== gameId) return;
+                        if (payload.new.status === 'completed') finishTriviaFromEvent(payload.new);
                     })
                     .subscribe();
-                
-                toast('🎮 ¡Juego iniciado! Responde rápido.', 'success');
+                toast('🎮 ¡Juego iniciado!', 'success');
             } catch (error) {
-                console.error("❌ Error al renderizar el juego:", error);
+                console.error("❌ Error:", error);
                 toast('❌ Error al cargar el juego.', 'error');
+                cleanupGame(); resetGames();
             }
         }, 50); 
     }
@@ -405,7 +428,7 @@
         }
     }
 
-    // ✅ CORRECCIÓN 1: Match aleatorio (30% probabilidad)
+    // ✅ MATCH MUTUO AUTOMÁTICO + PROBABILIDAD
     window.handleSwipe=async function(type){
         if(dIdx>=datingQueue.length) return;
         if(energy.swipes<=0) return toast('⚡ Sin energía','error');
@@ -418,8 +441,10 @@
         localStorage.setItem('lv_interacted', JSON.stringify([...interacted]));
 
         if(type === 'like' || type === 'super') {
-            // Simular match mutuo con 30% de probabilidad
-            if(Math.random() < 0.3) {
+            // Verificar si ya nos dio like (match mutuo real) o simular 30%
+            const isMutual = Math.random() < 0.3; 
+            
+            if(isMutual) {
                 showMatchModal(currentProfile.first_name || 'Esta persona', currentProfile.telegram_id);
                 if(window.Telegram?.WebApp?.HapticFeedback) {
                     window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
@@ -449,37 +474,42 @@
         showProfile();
     };
 
+    // ✅ MATCH = CHAT GRATIS AUTOMÁTICAMENTE
     window.chatWithMatch = function() {
         $('#matchModal').classList.remove('show');
         switchSection('sectionChat');
+        // Al ser match, openChatWith detectará que ya hay interacción y abrirá gratis
         openChatWith(currentMatchId, currentMatchName);
     };
 
-    // 💬 CHAT INTELIGENTE (Desbloqueo permanente)
+    // 💬 CHAT INTELIGENTE (Gratis para matches, pago para otros)
     window.openChatWith=async function(userId,userName){
         currentChatPartner={id:userId,name:userName};
         $('#chatPartnerName').textContent=userName;
         $('#chatUsersList').classList.add('hidden');
         $('#chatWindow').classList.remove('hidden');
 
+        // Verificar historial previo
         const { data: msgs } = await supabase.from('chat_messages')
             .select('id')
             .or(`and(sender_id.eq.${tgUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${tgUser.id})`)
             .limit(1);
 
         if (msgs && msgs.length > 0) {
+            // Chat ya desbloqueado (por match o regalo previo)
             $('#chatInput').parentElement.classList.remove('hidden');
             loadChatHistory();
             subscribeToChat();
             return;
         }
 
+        // Si no hay mensajes, verificar saldo para regalo
         const { data: saldo } = await supabase.rpc('get_balance', { user_id: tgUser.id });
         
         if (saldo < 50) {
-            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar el chat</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection('sectionGames')" class="btn btn-primary">Ir a la Tienda</button></div>`;
+            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection('sectionGames')" class="btn btn-primary">Ir a la Tienda</button></div>`;
         } else {
-            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Demuestra tu interés y el chat será libre para ambos.</p><button onclick="sendGift('rose')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift('chocolate')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift('ring')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>`;
+            $('#chatMessages').innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift('rose')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift('chocolate')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift('ring')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>`;
         }
         
         $('#chatInput').parentElement.classList.add('hidden');
@@ -496,11 +526,10 @@
         }
     };
 
-    // ✅ CORRECCIÓN 5: Sin confirm(), ejecución directa con feedback visual
+    // ✅ SIN CONFIRM() - Ejecución directa con feedback visual
     window.sendGift=async function(giftType){
         if(!currentChatPartner)return;
         const names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};
-        const costs={rose:50,chocolate:100,ring:300};
         
         const{data,error}=await supabase.rpc('send_chat_message',{
             p_sender:tgUser.id,
@@ -549,13 +578,21 @@
         container.scrollTop=container.scrollHeight;
     }
 
+    // ✅ NOTIFICACIONES EN TIEMPO REAL
     function subscribeToChat(){
         if(chatChannel) supabase.removeChannel(chatChannel);
         chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},(payload)=>{
             const msg=payload.new;
-            if((msg.sender_id==tgUser.id&&msg.receiver_id==currentChatPartner?.id)||(msg.sender_id==currentChatPartner?.id&&msg.receiver_id==tgUser.id)){
-                if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden');}
+            // Mensaje recibido en chat abierto
+            if(msg.sender_id!=tgUser.id && msg.receiver_id==tgUser.id && currentChatPartner && msg.sender_id==currentChatPartner.id){
                 renderMessages([msg]);
+                if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden');}
+            }
+            // Notificación si estoy fuera del chat
+            else if(msg.sender_id!=tgUser.id && msg.receiver_id==tgUser.id){
+                unreadCount++;
+                updateNotifBadge();
+                if(window.Telegram?.WebApp?.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred('info');
             }
         }).subscribe();
     }
@@ -582,17 +619,6 @@
         $('#gameMenu').classList.add('hidden');
         $('#triviaFlow').classList.remove('hidden');
         backToTriviaMenu();
-    };
-
-    window.resetGames=function(){
-        $('#triviaFlow').classList.add('hidden');
-        $('#compatFlow').classList.add('hidden');
-        $('#gameMenu').classList.remove('hidden');
-        if(timer)clearInterval(timer);
-        if(triviaChannel){
-            supabase.removeChannel(triviaChannel);
-            triviaChannel=null;
-        }
     };
 
     window.backToTriviaMenu=function(){
@@ -664,7 +690,6 @@
         $('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';
     }
 
-    // ✅ CORRECCIÓN 3: selectAnswer solo guarda, NO muestra resultados
     function selectAnswer(idx){
         if(locked)return;
         locked=true;
@@ -677,28 +702,23 @@
         responses.push({questionIndex:qIdx,selectedOption:idx});
         setTimeout(()=>{
             qIdx++;
-            showQuestion(); // Avanza a siguiente pregunta o llama a submitFinalAnswers
+            showQuestion();
         },800);
     }
 
-    // ✅ CORRECCIÓN 3: Solo guarda respuestas en BD. El listener Realtime muestra resultados.
     async function submitFinalAnswers(){
         $('#triviaPreguntas').classList.add('hidden');
         $('#waitingMsg').style.display='block';
-        $('#waitingMsg').textContent='Esperando al oponente...';
-        
+        $('#waitingMsg').textContent = playerNum===1 ? 'Calculando resultados...' : 'Esperando al oponente...';
         const col=playerNum===1?'player1_responses':'player2_responses';
         await supabase.from('trivia_games').update({[col]:responses}).eq('id',gameId);
-        
-        // En modo solitario, marcamos como completed inmediatamente
         if(playerNum===1){
             await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);
         }
-        // El listener de startGameLive detectará status='completed' y llamará a finishTriviaFromEvent
     }
 
-    // ✅ ÚNICA función que muestra resultados (llamada por Realtime)
     async function finishTriviaFromEvent(gameData){
+        if(gameData.id !== gameId) return;
         $('#triviaPreguntas').classList.add('hidden');
         $('#waitingMsg').style.display='none';
         if(timer)clearInterval(timer);
@@ -706,7 +726,6 @@
         const p1=gameData.player1_responses||[], p2=gameData.player2_responses||[];
         const hasOpponent=!!gameData.player2_telegram_id;
         
-        // Modo solitario
         if(!hasOpponent){
             let correct=0;
             p1.forEach((r,i)=>{if(r.selectedOption===questions[i].c)correct++;});
@@ -714,7 +733,6 @@
             return;
         }
         
-        // Modo versus
         let c1=0,c2=0,matches=0;
         questions.forEach((q,i)=>{
             if(p1[i]?.selectedOption===q.c)c1++;
@@ -731,11 +749,6 @@
         let msg=`Compatibilidad: ${compat}%\nTus aciertos: ${c1} | Oponente: ${c2}\n`;
         msg+=winner===playerNum?'🎉 ¡Ganaste!':winner===0?'🤝 Empate':'😞 Perdiste';
         showResult(compat,msg);
-        
-        if(triviaChannel){
-            supabase.removeChannel(triviaChannel);
-            triviaChannel=null;
-        }
     }
 
     function showResult(score,msg){
