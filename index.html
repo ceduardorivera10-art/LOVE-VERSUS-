@@ -251,14 +251,7 @@ async function init(){
         updateBalance();
         loadProfiles();
         
-        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
-            var r=payload.new;
-            var myId=Number(tgUser.id);
-            var p1=Number(r.player1_telegram_id);
-            var p2=Number(r.player2_telegram_id);
-            if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}
-            if(r.status==='active'&&(p1===myId||p2===myId)){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}
-        }).subscribe();
+        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
     }catch(e){console.error(e);toast('Error de conexión','error');var rb=$('#retryBtn');if(rb)rb.style.display='inline-block'}
     setTimeout(function(){$('#loader').classList.add('hidden')},600);
 }
