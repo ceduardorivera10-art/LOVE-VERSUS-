@@ -69,82 +69,93 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 .challenge-actions .btn{flex:1}
 .btn-accept{background:var(--accent-green);color:#fff}
 .btn-decline{background:#2a2a2a;color:var(--text-secondary)}
+.wallet-card{background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2)}
 </style>
 </head>
 <body>
 <div class="app-container" id="appContainer">
 <header class="header">
-<div class="brand"> Love<span style="color:var(--accent-gold)"></span>Versus</div>
+<div class="brand">ğŸ’˜ Love<span style="color:var(--accent-gold)">âœ¦</span>Versus</div>
 <div class="user-pill" onclick="switchSection('sectionProfile')">
 <div class="avatar" id="headerAvatar">?</div>
 <span id="headerName" style="font-size:14px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Cargando...</span>
-<span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;"><span id="energyCount">20</span></span>
+<span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">âš¡<span id="energyCount">20</span></span>
 </div>
 </header>
 <main class="main" id="main">
 <section id="sectionDating" class="section active">
-<div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;"> Racha de <span id="streakDays">1</span> día(s). ¡Has ganado <span id="streakFichas">5</span> fichas!</div>
+<div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">ğŸ”¥ Racha de <span id="streakDays">1</span> dÃ­a(s). Â¡Has ganado <span id="streakFichas">5</span> fichas!</div>
 <div id="datingCardContainer">
 <div class="dating-card" id="datingCard"><img class="dating-photo" id="datingPhoto" style="display:none;"><div class="dating-placeholder" id="datingPlaceholder"></div><div class="dating-info"><div style="font-size:22px;font-weight:700;"><span id="dName"></span> <span id="dAge" style="font-size:18px;color:var(--text-secondary);"></span></div><p id="dBio" style="font-size:14px;color:var(--text-secondary);margin-top:6px;"></p></div></div>
-<div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')"></button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')"></button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')"></button></div>
+<div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">âŒ</button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">â­</button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">ğŸ’˜</button></div>
 </div>
-<div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;"></div><h3 id="emptyTitle">No hay más perfiles</h3><p id="emptyDesc">Vuelve más tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
+<div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;">ğŸ’”</div><h3 id="emptyTitle">No hay mÃ¡s perfiles</h3><p id="emptyDesc">Vuelve mÃ¡s tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
 </section>
 <section id="sectionChat" class="section">
-<h3 style="margin-bottom:16px;"> Mensajes</h3>
+<h3 style="margin-bottom:16px;">ğŸ’¬ Mensajes</h3>
 <div id="chatUsersList"></div>
 <div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;display:flex;flex-direction:column;height:70vh;">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;"></button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">â†</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
 <div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>
-<div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;"></button></div>
+<div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">â¤</button></div>
 </div>
 </section>
 <section id="sectionGames" class="section">
 <div id="gameMenu">
-<div class="card" onclick="openTrivia()"><h3> Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
-<div class="card" onclick="openCompatTest()"><h3> Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
-<div style="margin-top:24px;"><h3 style="margin-bottom:12px;"> Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')"> 50 Fichas (50 )</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')"> Boost Perfil (100 )</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')"> Entrada Torneo (200 )</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
+<div class="card" onclick="openTrivia()"><h3>ğŸ§  Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
+<div class="card" onclick="openCompatTest()"><h3>ğŸ’ Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
+<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">ğŸª™ Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">ğŸª™ 50 Fichas (50 â­)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">ğŸš€ Boost Perfil (100 â­)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">ğŸ† Entrada Torneo (200 â­)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
 </div>
 <div id="triviaFlow" class="hidden">
 <div id="triviaMenu">
 <h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
-<button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()"> Ver jugadores en línea</button>
-<button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()"> Jugar solo (práctica)</button>
-<button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()"> Volver</button>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()">ğŸŒ Ver jugadores en lÃ­nea</button>
+<button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()">ğŸ§ª Jugar solo (prÃ¡ctica)</button>
+<button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">ğŸ”™ Volver</button>
 </div>
-<div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay"> 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
+<div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">â³ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
 <div id="triviaResultado" class="hidden" style="text-align:center;">
 <h3 style="margin-bottom:8px;">Resultado</h3>
 <div class="compat-circle" id="compatScore">0%</div>
 <p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
-<button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()"> Jugar otra vez</button>
-<button class="btn btn-outline" onclick="resetGames()"> Volver al menú</button>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()">ğŸ”„ Jugar otra vez</button>
+<button class="btn btn-outline" onclick="resetGames()">ğŸ”™ Volver al menÃº</button>
 </div>
 </div>
-<div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en línea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()"> Volver</button></div>
+<div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en lÃ­nea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">ğŸ”™ Volver</button></div>
 <div id="compatFlow" class="hidden">
 <div id="compatPreguntas"><h3 id="cqTitle" style="margin-bottom:8px;">Pregunta 1/10</h3><p id="cqText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="cqOptions"></div></div>
-<div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
+<div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menÃº</button></div>
 </div>
 </section>
 <section id="sectionProfile" class="section">
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
-<div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;"></span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
+<div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">ğŸŸ¤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
+
+<!-- INICIO BLOQUE REFERIDOS VISUAL -->
+<div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
+    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">ğŸ Tu CÃ³digo de Invitado</h4>
+    <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
+    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">ğŸ“‹ Copiar y Compartir</button>
+    <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
+</div>
+<!-- FIN BLOQUE REFERIDOS VISUAL -->
+
 </section>
 </main>
 <nav class="bottom-nav">
-<button class="nav-item active" data-section="sectionDating"><span class="nav-icon"></span>Citas</button>
-<button class="nav-item" data-section="sectionChat"><span class="nav-icon"></span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
-<button class="nav-item" data-section="sectionGames"><span class="nav-icon"></span>Versus</button>
-<button class="nav-item" data-section="sectionProfile"><span class="nav-icon"></span>Perfil</button>
+<button class="nav-item active" data-section="sectionDating"><span class="nav-icon">ğŸ’˜</span>Citas</button>
+<button class="nav-item" data-section="sectionChat"><span class="nav-icon">ğŸ’¬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
+<button class="nav-item" data-section="sectionGames"><span class="nav-icon">ğŸ•¹ï¸</span>Versus</button>
+<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">ğŸ‘¤</span>Perfil</button>
 </nav>
 </div>
 <div id="challengeModal" class="challenge-modal" onclick="if(event.target===this)declineChallenge()">
 <div class="challenge-box">
-<div style="font-size:48px;margin-bottom:10px;"></div>
-<h3 style="margin-bottom:8px;">¡Te han retado!</h3>
-<p style="color:var(--text-secondary);margin-bottom:20px;">¿Aceptas el reto de Trivia?</p>
+<div style="font-size:48px;margin-bottom:10px;">âš”ï¸</div>
+<h3 style="margin-bottom:8px;">Â¡Te han retado!</h3>
+<p style="color:var(--text-secondary);margin-bottom:20px;">Â¿Aceptas el reto de Trivia?</p>
 <div class="challenge-actions">
 <button class="btn btn-decline" onclick="declineChallenge()">Rechazar</button>
 <button class="btn btn-accept" onclick="acceptChallenge()">Aceptar</button>
@@ -153,12 +164,12 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 </div>
 <div id="matchModal" class="challenge-modal" onclick="if(event.target===this)closeMatchModal()">
 <div class="challenge-box" style="border-color: var(--accent-rose);">
-<div style="font-size:60px;margin-bottom:10px;"></div>
-<h2 style="color: var(--accent-rose); margin-bottom: 10px; font-size: 28px;">¡Es un Match!</h2>
-<p style="color:var(--text-secondary);margin-bottom:20px;">A <span id="matchName" style="color: #fff; font-weight: bold;"></span> también le gustas.</p>
+<div style="font-size:60px;margin-bottom:10px;">ğŸ’˜</div>
+<h2 style="color: var(--accent-rose); margin-bottom: 10px; font-size: 28px;">Â¡Es un Match!</h2>
+<p style="color:var(--text-secondary);margin-bottom:20px;">A <span id="matchName" style="color: #fff; font-weight: bold;"></span> tambiÃ©n le gustas.</p>
 <div class="challenge-actions">
 <button class="btn btn-decline" onclick="closeMatchModal()">Seguir buscando</button>
-<button class="btn btn-accept" style="background: var(--accent-rose);" onclick="chatWithMatch()"> Chatear ahora</button>
+<button class="btn btn-accept" style="background: var(--accent-rose);" onclick="chatWithMatch()">ğŸ’¬ Chatear ahora</button>
 </div>
 </div>
 </div>
@@ -166,69 +177,190 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div class="loader" id="loader"><div class="spinner"></div></div>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<script>
-(function(){
+<script>(function(){
 var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
 var PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
 var supabase,tgUser;
-var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:' Bronce'};
+var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'ğŸŸ¤ Bronce'};
 var gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15;
 var datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
 var compatAnswers=[],currentChatPartner=null,chatChannel=null,triviaChannel=null;
 var pendingChallengeId=null;
 var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
+var myReferralCode='';
+
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
-var toast=function(m,t){var e=$('#toast');e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
-if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;$('#appContainer').style.paddingBottom=diff>0?diff+'px':'0px'})}
-function switchSection(id){if(id!=='sectionChat'&&currentChatPartner)closeChat();if(id==='sectionChat'){unreadCount=0;updateNotifBadge()}$$('.section').forEach(function(s){s.classList.remove('active')});var target=$('#'+id);if(target)target.classList.add('active');$$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});var mainEl=$('#main');if(mainEl)mainEl.scrollTop=0;if(id==='sectionProfile')updateBalance();if(id==='sectionChat')loadChatUsers()}
+var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
+
+if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
+
+function switchSection(id){
+    if(id!=='sectionChat'&&currentChatPartner)closeChat();
+    if(id==='sectionChat'){unreadCount=0;updateNotifBadge()}
+    $$('.section').forEach(function(s){s.classList.remove('active')});
+    var target=$('#'+id);
+    if(target)target.classList.add('active');
+    $$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});
+    var mainEl=$('#main');
+    if(mainEl)mainEl.scrollTop=0;
+    if(id==='sectionProfile')updateBalance();
+    if(id==='sectionChat')loadChatUsers();
+}
+
 $$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switchSection(b.dataset.section)})});
-function updateNotifBadge(){var badge=$('#chatNotifBadge');if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
-async function init(){if(window.Telegram&&window.Telegram.WebApp){window.Telegram.WebApp.expand();window.Telegram.WebApp.ready();tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'}}else{tgUser={id:123456789,first_name:'Demo'}}$('#headerName').textContent=tgUser.first_name;$('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');$('#profileUsername').textContent='@'+(tgUser.username||'usuario');$('#profileId').textContent='ID: '+tgUser.id;var initials=(tgUser.first_name||'?')[0].toUpperCase();if(tgUser.photo_url){$('#headerAvatar').innerHTML='<img src="'+tgUser.photo_url+'">'}else{$('#headerAvatar').textContent=initials}if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}try{supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});await dailyLogin();updateBalance();loadProfiles();supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast(' ¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe()}catch(e){console.error(e);toast('Error de conexión','error');$('#retryBtn').style.display='inline-block'}setTimeout(function(){$('#loader').classList.add('hidden')},600)}
-window.comprarFichas=async function(productId){if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');var productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};var producto=productos[productId];if(!producto)return toast('Producto inválido','error');try{var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});var data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast(' Factura abierta','success');setTimeout(function(){updateBalance()},5000)}catch(e){window.Telegram.WebApp.sendData(productId);toast(' Procesando pago...','success')}};
-window.invitarJugador=async function(tid,tname){if(energy.trivia<=0)return toast('Sin energía','error');var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();if(result.error)return toast('Error al enviar reto','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();toast(' Reto enviado a '+tname+'. Esperando...','success')};
-window.acceptChallenge=async function(){if(!pendingChallengeId){toast(' Error: No hay reto pendiente','error');return}$('#challengeModal').classList.remove('show');await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId)};
-window.declineChallenge=async function(){$('#challengeModal').classList.remove('show');if(!pendingChallengeId)return;await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);pendingChallengeId=null;toast('Reto rechazado','error')};
-function cleanupGame(){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=null;responses=[];qIdx=0;locked=false;$('#waitingMsg').style.display='none'}
-window.resetGames=function(){cleanupGame();$('#triviaResultado').classList.add('hidden');$('#triviaResultado').style.display='none';$('#triviaPreguntas').classList.add('hidden');$('#triviaPreguntas').style.display='none';$('#triviaFlow').classList.add('hidden');$('#triviaFlow').style.display='none';$('#compatFlow').classList.add('hidden');$('#gameMenu').classList.remove('hidden');$('#gameMenu').style.display='block'};
-window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energía','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
-async function startGameLive(currentGameId,myPlayerNum){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=currentGameId;playerNum=myPlayerNum;responses=[];qIdx=0;locked=false;$('#waitingMsg').style.display='none';$('#triviaResultado').classList.add('hidden');$('#triviaResultado').style.display='none';$('#triviaMenu').classList.add('hidden');$('#triviaMenu').style.display='none';$('#onlinePlayers').classList.add('hidden');$('#onlinePlayers').style.display='none';$('#compatFlow').classList.add('hidden');$('#gameMenu').classList.add('hidden');$('#gameMenu').style.display='none';var flow=$('#triviaFlow');flow.classList.remove('hidden');flow.style.display='block';var preg=$('#triviaPreguntas');preg.classList.remove('hidden');preg.style.display='block';loadQuestions();showQuestion();if(playerNum===2){triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe()}toast(' ¡Juego iniciado!','success')}
-async function dailyLogin(){var result=await supabase.rpc('daily_login',{user_id:tgUser.id});if(result.error)throw result.error;energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};if(result.data.fichas_ganadas>0){$('#streakBanner').style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;toast(' +'+result.data.fichas_ganadas+' fichas por racha!','success')}updateEnergy();updateProfileStats()}
-function updateEnergy(){$('#energyCount').textContent=energy.swipes;$('#energyBadge').style.display=energy.swipes<=5?'inline-block':'none';$('#triviaLeft').textContent=energy.trivia}
-function updateProfileStats(){$('#victoriasStat').textContent=energy.victorias;$('#matchesStat').textContent=energy.matches||0;var p=energy.rango.split(' ');$('#rangoIcon').textContent=p[0];$('#rangoName').textContent=p.slice(1).join(' ')}
-async function updateBalance(){var result=await supabase.rpc('get_balance',{user_id:tgUser.id});$('#saldoTienda').textContent=result.data||0;$('#fichasStat').textContent=result.data||0}
-async function loadProfiles(){var result=await supabase.from('users').select('*').neq('telegram_id',tgUser.id).limit(30);if(result.error||!result.data.length){$('#emptyTitle').textContent='No hay perfiles';$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return}var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast(' ¡Nuevos perfiles disponibles!','success')}datingQueue=queue;dIdx=0;showProfile()}
-function showProfile(){if(dIdx>=datingQueue.length){$('#emptyDating').style.display='block';$('#datingCardContainer').style.display='none';return}var p=datingQueue[dIdx];$('#datingCardContainer').style.display='block';$('#emptyDating').style.display='none';$('#dName').textContent=p.first_name||'';$('#dAge').textContent=p.age||'';$('#dBio').textContent=p.bio||'';if(p.photo_url){$('#datingPhoto').src=p.photo_url;$('#datingPhoto').style.display='block';$('#datingPlaceholder').style.display='none'}else{$('#datingPhoto').style.display='none';$('#datingPlaceholder').style.display='flex';$('#datingPlaceholder').textContent=(p.first_name||'?')[0].toUpperCase()}}
-window.handleSwipe=async function(type){if(dIdx>=datingQueue.length)return;if(energy.swipes<=0)return toast(' Sin energía','error');var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});if(result.data>=0){energy.swipes=result.data;updateEnergy()}var currentProfile=datingQueue[dIdx];interacted.add(currentProfile.telegram_id);localStorage.setItem('lv_interacted',JSON.stringify(Array.from(interacted)));if(type==='like'||type==='super'){var isMutual=Math.random()<0.3;if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback){window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}}else{toast(' ¡Like enviado! Esperemos que sea mutuo.','success');dIdx++;showProfile()}}else{toast(' Descartado');dIdx++;showProfile()}};
-window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
+
+function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
+
+async function init(){
+    if(window.Telegram&&window.Telegram.WebApp){
+        window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.ready();
+        tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'};
+    }else{tgUser={id:123456789,first_name:'Demo'}}
+    
+    $('#headerName').textContent=tgUser.first_name;
+    $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
+    $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
+    $('#profileId').textContent='ID: '+tgUser.id;
+    var initials=(tgUser.first_name||'?')[0].toUpperCase();
+    if(tgUser.photo_url){$('#headerAvatar').innerHTML='<img src="'+tgUser.photo_url+'">'}else{$('#headerAvatar').textContent=initials}
+    if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}
+    
+    try{
+        supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
+        
+        // LLAMADA A LA NUEVA WALLET (Pieza 1: Referidos)
+        var urlParams=new URLSearchParams(window.location.search);
+        var refCode=urlParams.get('ref');
+        var walletResult=await supabase.rpc('initialize_user_wallet',{p_telegram_id:tgUser.id,p_referral_code:refCode||null});
+        if(walletResult.data&&walletResult.data.wallet){
+            var w=walletResult.data.wallet;
+            energy.trivia=w.energia_trivia||5;
+            myReferralCode=w.referral_code||'';
+            var codeEl=document.getElementById('myReferralCode');
+            if(codeEl)codeEl.textContent=myReferralCode;
+            var fichasEl=document.getElementById('fichasStat');
+            if(fichasEl)fichasEl.textContent=w.fichas||0;
+        }
+        
+        await dailyLogin();
+        updateBalance();
+        loadProfiles();
+        
+        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
+            var r=payload.new;
+            var myId=Number(tgUser.id);
+            var p1=Number(r.player1_telegram_id);
+            var p2=Number(r.player2_telegram_id);
+            if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('âš”ï¸ Â¡Te han retado a Trivia!','success')}
+            if(r.status==='active'&&(p1===myId||p2===myId)){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}
+        }).subscribe();
+    }catch(e){console.error(e);toast('Error de conexiÃ³n','error');var rb=$('#retryBtn');if(rb)rb.style.display='inline-block'}
+    setTimeout(function(){$('#loader').classList.add('hidden')},600);
+}
+
+window.copyReferralCode=function(){
+    var c=document.getElementById('myReferralCode');
+    if(!c)return;
+    var code=c.textContent;
+    if(code&&code!=='Cargando...'){
+        var shareUrl='https://t.me/share/url?url='+encodeURIComponent('https://t.me/TU_BOT?start=ref_'+code)+'&text='+encodeURIComponent('Â¡Ãšnete a LoveVersus y gana TON real! Usa mi cÃ³digo: '+code);
+        if(navigator.share){
+            navigator.share({title:'LoveVersus',text:'Â¡Gana TON real jugando! Mi cÃ³digo: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
+        }else{
+            if(navigator.clipboard){
+                navigator.clipboard.writeText(code);
+                toast('ğŸ“‹ CÃ³digo '+code+' copiado','success');
+            }else{
+                toast('Tu cÃ³digo es: '+code,'success');
+            }
+        }
+    }
+};
+
+async function dailyLogin(){
+    var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
+    if(result.error)throw result.error;
+    energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};
+    if(result.data.fichas_ganadas>0){
+        var sb=$('#streakBanner');
+        if(sb){sb.style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;}
+        toast('ğŸ”¥ +'+result.data.fichas_ganadas+' fichas por racha!','success');
+    }
+    updateEnergy();
+    updateProfileStats();
+}
+
+function updateEnergy(){
+    var ec=$('#energyCount');if(ec)ec.textContent=energy.swipes;
+    var eb=$('#energyBadge');if(eb)eb.style.display=energy.swipes<=5?'inline-block':'none';
+    var tl=$('#triviaLeft');if(tl)tl.textContent=energy.trivia;
+}
+
+function updateProfileStats(){
+    var vs=$('#victoriasStat');if(vs)vs.textContent=energy.victorias;
+    var ms=$('#matchesStat');if(ms)ms.textContent=energy.matches||0;
+    var p=energy.rango.split(' ');
+    var ri=$('#rangoIcon');if(ri)ri.textContent=p[0];
+    var rn=$('#rangoName');if(rn)rn.textContent=p.slice(1).join(' ');
+}
+
+async function updateBalance(){
+    var result=await supabase.rpc('get_balance',{user_id:tgUser.id});
+    var st=$('#saldoTienda');if(st)st.textContent=result.data||0;
+    var fs=$('#fichasStat');if(fs)fs.textContent=result.data||0;
+}
+
+async function loadProfiles(){
+    var result=await supabase.from('users').select('*').neq('telegram_id',tgUser.id).limit(30);
+    if(result.error||!result.data.length){
+        var et=$('#emptyTitle');if(et)et.textContent='No hay perfiles';
+        var ed=$('#emptyDating');if(ed)ed.style.display='block';
+        var dc=$('#datingCardContainer');if(dc)dc.style.display='none';
+        return;
+    }
+    var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});
+    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('ğŸ”„ Â¡Nuevos perfiles disponibles!','success')}
+    datingQueue=queue;dIdx=0;showProfile();
+}
+
+function showProfile(){
+    if(dIdx>=datingQueue.length){
+        var ed=$('#emptyDating');if(ed)ed.style.display='block';
+        var dc=$('#datingCardContainer');if(dc)dc.style.display='none';
+        return;
+    }
+    var p=datingQueue[dIdx];
+    var dc=$('#datingCardContainer');if(dc)dc.style.display='block';
+    var ed=$('#emptyDating');if(ed)ed.style.display='none';
+    var dn=$('#dName');if(dn)dn.textContent=p.first_name||'';
+    var da=$('#dAge');if(da)da.textContent=p.age||'';
+    var db=$('#dBio');if(db)db.textContent=p.bio||'';
+    var dp=$('#datingPhoto');
+    var dpl=$('#datingPlaceholder');
+    if(p.photo_url){if(dp){dp.src=p.photo_url;dp.style.display='block'}if(dpl)dpl.style.display='none'}
+    else{if(dp)dp.style.display='none';if(dpl){dpl.style.display='flex';dpl.textContent=(p.first_name||'?')[0].toUpperCase()}}
+}
+
+window.handleSwipe=async function(type){
+    if(dIdx>=datingQueue.length)return;
+    if(energy.swipes<=0)return toast('âš¡ Sin energÃ­a','error');
+    var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});
+    if(result.data>=0){energy.swipes=result.data;updateEnergy()}
+    var currentProfile=datingQueue[dIdx];
+    interacted.add(currentProfile.telegram_id);
+    localStorage.setItem('lv_interacted',JSON.stringify(Array.from(interacted)));
+    if(type==='like'||type==='super'){
+        var isMutual=Math.random()<0.3;
+        if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}
+        else{toast('ğŸ’˜ Â¡Like enviado!','success');dIdx++;showProfile()}
+    }else{toast('âŒ Descartado');dIdx++;showProfile()}
+};window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
 window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
 window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switchSection('sectionChat');openChatWith(currentMatchId,currentMatchName)};
-window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;"></div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;"></div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;"> Rosa (50)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;"> Chocolate (100)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline"> Anillo (300)</button></div>'}$('#chatInput').parentElement.classList.add('hidden');subscribeToChat()};
-window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
-window.sendGift=async function(giftType){if(!currentChatPartner)return;var names={rose:'una rosa ',chocolate:'un chocolate ',ring:'un anillo '};var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:' ¡Te ha enviado un regalo!',p_gift:giftType});if(result.error||!result.data.success)return toast(result.data?result.data.error:'Saldo insuficiente','error');toast(' '+names[giftType]+' enviada. Chat desbloqueado.','success');updateBalance();$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory()};
-window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});if(result.error)return toast('Error al enviar','error');input.value=''};
-async function loadChatHistory(){var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:true}).limit(50);renderMessages(result.data||[])}
-function renderMessages(msgs){var container=$('#chatMessages');if(container.querySelector('button'))container.innerHTML='';msgs.forEach(function(m){var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');var content='';if(m.gift_type==='rose')content+=' ';if(m.gift_type==='chocolate')content+=' ';if(m.gift_type==='ring')content+=' ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
-function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
-async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?' En línea':' Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
-window.openTrivia=function(){if(energy.trivia<=0)return toast(' Sin partidas hoy','error');$('#gameMenu').classList.add('hidden');$('#triviaFlow').classList.remove('hidden');backToTriviaMenu()};
-window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#triviaMenu').classList.remove('hidden')};
-window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
-function loadQuestions(){var all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
-function showQuestion(){if(qIdx>=questions.length)return submitFinalAnswers();locked=false;$('#waitingMsg').style.display='none';var q=questions[qIdx];$('#qTitle').textContent='Pregunta '+(qIdx+1)+'/'+questions.length;$('#qText').textContent=q.q;var opts=$('#qOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){selectAnswer(i)};opts.appendChild(btn)});startTimer()}
-function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(function(){timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1)}},1000)}
-function updateTimerUI(){$('#timerDisplay').textContent=' '+timeLeft+'s';$('#timerDisplay').style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
-function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);var correct=questions[qIdx].c;var btns=$$('#qOptions .option-btn');btns.forEach(function(b){b.disabled=true});btns[correct].classList.add('correct');if(idx>=0&&idx!==correct)btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(function(){qIdx++;showQuestion()},800)}
-async function submitFinalAnswers(){if(!gameId)return;$('#triviaPreguntas').classList.add('hidden');$('#waitingMsg').style.display='block';$('#waitingMsg').textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...';var col=playerNum===1?'player1_responses':'player2_responses';var updateObj={};updateObj[col]=responses;await supabase.from('trivia_games').update(updateObj).eq('id',gameId);if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);var correct=0;responses.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});var score=Math.round(correct/questions.length*100);showResult(score,' Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!')}}
-async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu').classList.contains('active'))return;if(!flow||flow.style.display==='none')return;if(!questions||questions.length===0)return;$('#triviaPreguntas').classList.add('hidden');$('#waitingMsg').style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?' ¡Ganaste!':winner===0?' Empate':' Perdiste';showResult(compat,msg)}
-function showResult(score,msg){var flow=$('#triviaFlow');if(!flow)return;flow.classList.remove('hidden');flow.style.display='block';$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none'});var resultEl=$('#triviaResultado');resultEl.classList.remove('hidden');resultEl.style.display='block';$('#compatScore').textContent=score+'%';$('#compatScore').style.setProperty('--score',score+'%');$('#compatMsg').textContent=msg}
-var compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
-window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ()};
-function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
-document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
-})();
-</script>
-</body>
-</html>
+
+window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">ğŸª™</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mÃ­nimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">ğŸ”’</div><h4 style="margin-bottom:8px;">EnvÃ­a un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">ğŸŒ¹ Rosa (50ğŸª™)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">ğŸ« Chocolate
