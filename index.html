@@ -173,7 +173,15 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
         <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);"> Depositar TON</button>
         <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);"> Retirar</button>
     </div>
-    
+    <!-- INICIO BLOQUE ADSGRAM -->
+<button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+    <span style="font-size:20px;"></span>
+    <span id="adButtonText">VER VIDEO Y GANAR TON</span>
+</button>
+<div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
+    <p style="font-size:11px;color:#f7931a;margin:0;"> 30 segundos · <b>+0.001 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+</div>
+<!-- FIN BLOQUE ADSGRAM -->
     <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;"> Comprar fichas con TON (mejor tasa)</button>
     
     <!-- Info de seguridad (Genera confianza) -->
@@ -217,6 +225,7 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div class="loader" id="loader"><div class="spinner"></div></div>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script src="https://plugin.adsgram.ai/sdk.js" data-block-id="35856"></script>
 <script>(function(){
 var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
@@ -246,7 +255,7 @@ function switchSection(id){
     $$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});
     var mainEl=$('#main');
     if(mainEl)mainEl.scrollTop=0;
- if(id==='sectionProfile'){loadWalletData()}
+ if(id==='sectionProfile'){loadWalletData();loadAdsCounter()}
     if(id==='sectionChat')loadChatUsers();
 }
 
@@ -445,6 +454,102 @@ window.buyFichasPack = async function(fichas, ton) {
     document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
     loadWalletData();
 };
+// === ADSGRAM: VER VIDEO Y GANAR TON (VERIFICADO + MEJORAS) ===
+window.watchAdForTon = async function() {
+    const adBtn = document.getElementById('adButton');
+    const adText = document.getElementById('adButtonText');
+    if (!adBtn || !adText) return toast('Error: elementos no encontrados', 'error');
+    
+    // Verificar rate-limiting local (15min entre videos)
+    const lastAd = localStorage.getItem('lastAdTime');
+    if (lastAd) {
+        const diff = Date.now() - parseInt(lastAd);
+        const mins = Math.floor(diff / 60000);
+        if (mins < 15) {
+            const remaining = 15 - mins;
+            return toast(' Espera ' + remaining + ' min para el siguiente video', 'error');
+        }
+    }
+    
+    // Deshabilitar botón y mostrar animación de carga
+    adBtn.disabled = true;
+    adBtn.innerHTML = '<span style="font-size:16px;animation:spin 1s linear infinite;"></span> <span>Cargando anuncio...</span>';
+    
+    try {
+        // Mostrar anuncio de Adsgram
+        if (window.AdsgramSDK) {
+            await window.AdsgramSDK.show();
+            
+            // Usuario completó el video
+            localStorage.setItem('lastAdTime', Date.now().toString());
+            
+            // Llamar a Supabase para registrar y recompensar
+            const result = await supabase.rpc('registrar_vista_anuncio', {
+                p_user_id: tgUser.id
+            });
+            
+            if (result.error) {
+                // MEJORA: Log de errores en base de datos
+                try {
+                    await supabase.from('errors').insert({
+                        user_id: tgUser.id,
+                        error: result.error.message,
+                        component: 'adsgram_rpc'
+                    });
+                } catch(e) { console.error('Error guardando log:', e); }
+                throw new Error(result.error.message);
+            } else if (result.data && result.data.success) {
+                toast(' +0.001 TON ganado!', 'success');
+                
+                // Actualizar contador diario
+                const adsEl = document.getElementById('adsToday');
+                if (adsEl && result.data.ads_today) {
+                    adsEl.textContent = result.data.ads_today;
+                }
+                
+                // Recargar saldos
+                loadWalletData();
+            } else {
+                throw new Error(result.data?.error || 'No se pudo registrar el anuncio');
+            }
+        } else {
+            throw new Error('SDK de Adsgram no está cargado');
+        }
+    } catch (e) {
+        // MEJORA: Log de errores en base de datos
+        try {
+            await supabase.from('errors').insert({
+                user_id: tgUser.id,
+                error: e.message,
+                component: 'adsgram_watch'
+            });
+        } catch(logErr) { console.error('Error guardando log:', logErr); }
+        
+        toast('Video cancelado o error al cargar', 'error');
+        console.error('Error en Adsgram:', e);
+    } finally {
+        // Rehabilitar botón siempre
+        adBtn.disabled = false;
+        adBtn.innerHTML = '<span style="font-size:20px;"></span> <span id="adButtonText">VER VIDEO Y GANAR TON</span>';
+    }
+};
+
+// === ADSGRAM: CARGAR CONTADOR DIARIO ===
+async function loadAdsCounter() {
+    try {
+        const result = await supabase.from('wallets')
+            .select('ads_today')
+            .eq('telegram_id', tgUser.id)
+            .single();
+        
+        if (result.data) {
+            const adsEl = document.getElementById('adsToday');
+            if (adsEl) adsEl.textContent = result.data.ads_today || 0;
+        }
+    } catch (e) {
+        console.error('Error cargando contador ads:', e);
+    }
+}
 async function dailyLogin(){
     var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
     if(result.error)throw result.error;
