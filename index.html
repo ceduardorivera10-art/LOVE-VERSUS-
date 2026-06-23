@@ -460,63 +460,67 @@ window.watchAdForTon = async function() {
     const adText = document.getElementById('adButtonText');
     if (!adBtn || !adText) return toast('Error: elementos no encontrados', 'error');
     
-    // Verificar rate-limiting local (15min entre videos)
+    // DIAGNÓSTICO: Verificar si el SDK cargó
+    console.log('=== DIAGNÓSTICO ADSGRAM ===');
+    console.log('window.AdsgramSDK:', window.AdsgramSDK);
+    console.log('window.adsgram:', window.adsgram);
+    console.log('Tipos disponibles:', Object.keys(window).filter(k => k.toLowerCase().includes('ad')));
+    
+    if (!window.AdsgramSDK && !window.adsgram) {
+        return toast(' SDK no cargado. Revisa la consola.', 'error');
+    }
+    
     const lastAd = localStorage.getItem('lastAdTime');
     if (lastAd) {
         const diff = Date.now() - parseInt(lastAd);
         const mins = Math.floor(diff / 60000);
         if (mins < 15) {
             const remaining = 15 - mins;
-            return toast(' Espera ' + remaining + ' min para el siguiente video', 'error');
+            return toast(' Espera ' + remaining + ' min', 'error');
         }
     }
     
-    // Deshabilitar botón y mostrar animación de carga
     adBtn.disabled = true;
-    adBtn.innerHTML = '<span style="font-size:16px;animation:spin 1s linear infinite;"></span> <span>Cargando anuncio...</span>';
+    adBtn.innerHTML = '<span style="font-size:16px;"></span> <span>Cargando...</span>';
     
     try {
-        // Mostrar anuncio de Adsgram
+        // Intentar con AdsgramSDK primero
         if (window.AdsgramSDK) {
+            console.log('Usando AdsgramSDK.show()');
             await window.AdsgramSDK.show();
-            
-            // Usuario completó el video
-            localStorage.setItem('lastAdTime', Date.now().toString());
-            
-            // Llamar a Supabase para registrar y recompensar
-            const result = await supabase.rpc('registrar_vista_anuncio', {
-                p_user_id: tgUser.id
-            });
-            
-            if (result.error) {
-                // MEJORA: Log de errores en base de datos
-                try {
-                    await supabase.from('errors').insert({
-                        user_id: tgUser.id,
-                        error: result.error.message,
-                        component: 'adsgram_rpc'
-                    });
-                } catch(e) { console.error('Error guardando log:', e); }
-                throw new Error(result.error.message);
-            } else if (result.data && result.data.success) {
-                toast(' +0.001 TON ganado!', 'success');
-                
-                // Actualizar contador diario
-                const adsEl = document.getElementById('adsToday');
-                if (adsEl && result.data.ads_today) {
-                    adsEl.textContent = result.data.ads_today;
-                }
-                
-                // Recargar saldos
-                loadWalletData();
-            } else {
-                throw new Error(result.data?.error || 'No se pudo registrar el anuncio');
-            }
+        } else if (window.adsgram) {
+            console.log('Usando adsgram.show()');
+            await window.adsgram.show();
         } else {
-            throw new Error('SDK de Adsgram no está cargado');
+            throw new Error('Ningún SDK disponible');
+        }
+        
+        localStorage.setItem('lastAdTime', Date.now().toString());
+        
+        const result = await supabase.rpc('registrar_vista_anuncio', {
+            p_user_id: tgUser.id
+        });
+        
+        if (result.error) {
+            try {
+                await supabase.from('errors').insert({
+                    user_id: tgUser.id,
+                    error: result.error.message,
+                    component: 'adsgram_rpc'
+                });
+            } catch(e) { console.error('Error guardando log:', e); }
+            throw new Error(result.error.message);
+        } else if (result.data && result.data.success) {
+            toast(' +0.001 TON ganado!', 'success');
+            const adsEl = document.getElementById('adsToday');
+            if (adsEl && result.data.ads_today) {
+                adsEl.textContent = result.data.ads_today;
+            }
+            loadWalletData();
+        } else {
+            throw new Error(result.data?.error || 'No se pudo registrar');
         }
     } catch (e) {
-        // MEJORA: Log de errores en base de datos
         try {
             await supabase.from('errors').insert({
                 user_id: tgUser.id,
@@ -524,11 +528,9 @@ window.watchAdForTon = async function() {
                 component: 'adsgram_watch'
             });
         } catch(logErr) { console.error('Error guardando log:', logErr); }
-        
-        toast('Video cancelado o error al cargar', 'error');
-        console.error('Error en Adsgram:', e);
+        toast('Video cancelado o error: ' + e.message, 'error');
+        console.error('Error completo:', e);
     } finally {
-        // Rehabilitar botón siempre
         adBtn.disabled = false;
         adBtn.innerHTML = '<span style="font-size:20px;"></span> <span id="adButtonText">VER VIDEO Y GANAR TON</span>';
     }
