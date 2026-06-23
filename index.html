@@ -246,7 +246,7 @@ function switchSection(id){
     $$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});
     var mainEl=$('#main');
     if(mainEl)mainEl.scrollTop=0;
-    if(id==='sectionProfile')updateBalance();
+ if(id==='sectionProfile'){loadWalletData()}
     if(id==='sectionChat')loadChatUsers();
 }
 
@@ -314,7 +314,137 @@ window.copyReferralCode=function(){
         }
     }
 };
+// === BILLETERA: CARGAR SALDOS REALES ===
+async function loadWalletData() {
+    try {
+        const result = await supabase.from('wallets')
+            .select('saldo_pendiente, saldo_disponible, fichas, energia_trivia')
+            .eq('telegram_id', tgUser.id)
+            .single();
+        
+        if (result.data) {
+            const w = result.data;
+            const total = (Number(w.saldo_pendiente || 0) + Number(w.saldo_disponible || 0)).toFixed(4);
+            
+            // Actualizar UI
+            const tEl = document.getElementById('walletTotalTon');
+            if (tEl) tEl.textContent = total;
+            
+            const pEl = document.getElementById('walletPendiente');
+            if (pEl) pEl.textContent = Number(w.saldo_pendiente || 0).toFixed(4);
+            
+            const dEl = document.getElementById('walletDisponible');
+            if (dEl) dEl.textContent = Number(w.saldo_disponible || 0).toFixed(4);
+            
+            const fEl = document.getElementById('fichasStat');
+            if (fEl) fEl.textContent = w.fichas || 0;
+            
+            const eEl = document.getElementById('triviaLeft');
+            if (eEl) eEl.textContent = w.energia_trivia || 5;
+        }
+    } catch (e) {
+        console.error('Error cargando wallet:', e);
+    }
+}
 
+// === BILLETERA: MODAL DE ACCIONES ===
+window.showWalletModal = function(action) {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
+    
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
+    
+    if (action === 'deposit') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Depositar TON</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Envía TON a tu wallet interna</p>
+            <input type="number" id="depositAmount" placeholder="Cantidad en TON" step="0.1" min="0.1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;">
+            <button onclick="processDeposit()" style="width:100%;padding:14px;background:var(--accent-blue);color:#fff;border:none;border-radius:12px;font-weight:700;">Confirmar Depósito</button>
+        `;
+    } else if (action === 'withdraw') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Retirar TON</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">Mínimo: 1 TON · Fee de red incluido</p>
+            <p style="color:var(--accent-green);font-size:12px;margin-bottom:16px;">Disponible: <span id="availDisplay">0.0000</span> TON</p>
+            <input type="number" id="withdrawAmount" placeholder="Cantidad a retirar" step="0.1" min="1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;">
+            <input type="text" id="withdrawWallet" placeholder="Tu wallet TON (EQ...)" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:14px;margin-bottom:12px;">
+            <button onclick="processWithdraw()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:700;">Solicitar Retiro</button>
+        `;
+    } else if (action === 'buyfichas') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Comprar Fichas</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Mejor tasa que la tienda</p>
+            <button onclick="buyFichasPack(50,0.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">50 Fichas · 0.5 TON</button>
+            <button onclick="buyFichasPack(100,0.9)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas · 0.9 TON (10% OFF)</button>
+            <button onclick="buyFichasPack(300,2.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;text-align:left;">300 Fichas · 2.5 TON (17% OFF)</button>
+        `;
+    }
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = ' Cerrar';
+    closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
+    closeBtn.onclick = function() { document.body.removeChild(modal); };
+    
+    box.appendChild(closeBtn);
+    modal.appendChild(box);
+    modal.onclick = function(e) { if (e.target === modal) document.body.removeChild(modal); };
+    document.body.appendChild(modal);
+    
+    if (action === 'withdraw') {
+        const availEl = document.getElementById('availDisplay');
+        const dEl = document.getElementById('walletDisponible');
+        if (availEl && dEl) availEl.textContent = dEl.textContent;
+    }
+};
+
+window.processDeposit = async function() {
+    const amount = parseFloat(document.getElementById('depositAmount').value);
+    if (!amount || amount < 0.1) return toast('Mínimo 0.1 TON', 'error');
+    toast(' Función de depósito en desarrollo', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+};
+
+window.processWithdraw = async function() {
+    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const wallet = document.getElementById('withdrawWallet').value.trim();
+    
+    if (!amount || amount < 1) return toast('Mínimo 1 TON', 'error');
+    if (!wallet || !wallet.startsWith('EQ') && !wallet.startsWith('UQ')) {
+        return toast('Wallet TON inválida (debe empezar con EQ o UQ)', 'error');
+    }
+    
+    const result = await supabase.rpc('solicitar_retiro', {
+        p_user_id: tgUser.id,
+        p_monto: amount,
+        p_wallet_destino: wallet
+    });
+    
+    if (result.error) return toast('Error: ' + result.error.message, 'error');
+    if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
+    
+    toast(' Retiro solicitado. Procesando...', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    loadWalletData();
+};
+
+window.buyFichasPack = async function(fichas, ton) {
+    const packName = 'pack_' + fichas;
+    const result = await supabase.rpc('comprar_fichas_con_ton', {
+        p_user_id: tgUser.id,
+        p_paquete: packName
+    });
+    
+    if (result.error) return toast('Error: ' + result.error.message, 'error');
+    if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
+    
+    toast(' +' + fichas + ' fichas compradas', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    loadWalletData();
+};
 async function dailyLogin(){
     var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
     if(result.error)throw result.error;
