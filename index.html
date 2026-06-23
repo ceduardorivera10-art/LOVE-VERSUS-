@@ -225,7 +225,21 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div class="loader" id="loader"><div class="spinner"></div></div>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<script src="https://plugin.adsgram.ai/sdk.js" data-block-id="35856"></script>
+<script>
+(function() {
+    var script = document.createElement('script');
+    script.src = 'https://plugin.adsgram.ai/sdk.js';
+    script.setAttribute('data-block-id', '35856');
+    script.async = true;
+    script.onload = function() {
+        console.log(' Adsgram SDK cargado');
+    };
+    script.onerror = function() {
+        console.error(' Error cargando Adsgram SDK');
+    };
+    document.head.appendChild(script);
+})();
+</script>
 <script>(function(){
 var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
