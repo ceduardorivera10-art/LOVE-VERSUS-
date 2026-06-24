@@ -504,10 +504,11 @@ window.watchAdForTon = async function() {
     
     // 3.  INICIALIZACIÓN OFICIAL (Según documentación Adsgram)
     adText.textContent = 'Cargando video...';
-    const AdController = sdk.init({
-    blockId: "35856",
-    debug: true //  MODO PRODUCCIÓN (ANUNCIOS REALES)
-});
+    const sdk = window.Adsgram || window.AdsgramSDK;
+    const AdController = sdk.init({ 
+        blockId: "35856", 
+        debug: true //  MODO PRUEBA (Quitar cuando pases a producción real)
+    });
 
     // 4.  REPRODUCCIÓN Y MANEJO DE PROMESAS OFICIAL
     AdController.show().then((result) => {
