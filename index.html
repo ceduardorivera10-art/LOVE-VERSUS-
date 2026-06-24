@@ -471,24 +471,24 @@ window.buyFichasPack = async function(fichas, ton) {
 // === ADSGRAM: VER VIDEO Y GANAR TON (VERIFICADO + MEJORAS) ===
 window.watchAdForTon = async function() {
     const adBtn = document.getElementById('adButton');
-    if (!adBtn) return toast('Error: botón no encontrado', 'error');
+    const adText = document.getElementById('adButtonText');
+    if (!adBtn || !adText) return toast('Error: UI no encontrada', 'error');
     
-    // 1.  VALIDACIÓN DE SEGURIDAD DE tgUser.id
+    // 1.  VALIDACIÓN DE SEGURIDAD (Anti-manipulación de ID)
     if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) {
         return toast(' Usuario no válido. Inicia sesión de nuevo', 'error');
     }
     
-    // 2.  MANEJO MEJORADO DE ESTADOS DEL SDK (CON ESPERA ASÍNCRONA)
-if (!window.AdsgramSDK) {
+    // 2.  SALA DE ESPERA ASÍNCRONA (Ideal para redes móviles lentas)
     adBtn.disabled = true;
-    adBtn.querySelector('#adButtonText').textContent = ' Cargando SDK...';
+    adText.textContent = ' Cargando SDK...';
+    
     let sdkReady = false;
     let attempts = 0;
-    const maxAttempts = 10; // 10 * 500ms = 5 segundos
+    const maxAttempts = 10; // 10 intentos * 500ms = 5 segundos máximo
 
-    // Esperar hasta 5 segundos a que el SDK cargue
     while (!sdkReady && attempts < maxAttempts) {
-        if (window.AdsgramSDK) {
+        if (window.Adsgram || window.AdsgramSDK) {
             sdkReady = true;
             break;
         }
@@ -498,57 +498,59 @@ if (!window.AdsgramSDK) {
 
     if (!sdkReady) {
         adBtn.disabled = false;
-        adBtn.querySelector('#adButtonText').textContent = 'VER VIDEO Y GANAR TON';
-        return toast(' SDK no cargó. Intenta de nuevo.', 'error');
+        adText.textContent = 'VER VIDEO Y GANAR TON';
+        return toast(' SDK no cargó. Revisa tu internet e intenta de nuevo.', 'error');
     }
-}
     
-    // 3.  USO DE textContent PARA EVITAR XSS
-    adBtn.disabled = true;
-    adBtn.querySelector('#adButtonText').textContent = 'Cargando video...';
-    
-    try {
-        // Inicialización con Block ID 35856 (en producción, quita debug: true)
-        const AdController = window.AdsgramSDK.init({
-            blockId: "35856",
-            debug: true  // Solo para desarrollo (quitar en producción)
-        });
-        
-        await AdController.show();
-        
-        localStorage.setItem('lastAdTime', Date.now().toString());
-        adBtn.querySelector('#adButtonText').textContent = 'Acreditando...';
-        
-        // Registro en Supabase
-        const result = await supabase.rpc('registrar_vista_anuncio', {
-            p_user_id: tgUser.id
-        });
-        
-        if (result.error) throw new Error(result.error.message);
-        
-        if (result.data && result.data.success) {
-            toast(' +0.001 TON ganado!', 'success');
-            if (document.getElementById('adsToday') && result.data.ads_today) {
-                document.getElementById('adsToday').textContent = result.data.ads_today;
-            }
-            loadWalletData();
-        } else {
-            throw new Error(result.data?.error || 'Error al acreditar');
+    // 3.  INICIALIZACIÓN OFICIAL (Según documentación Adsgram)
+    adText.textContent = 'Cargando video...';
+    const sdk = window.Adsgram || window.AdsgramSDK;
+    const AdController = sdk.init({ 
+        blockId: "35856", 
+        debug: true //  MODO PRUEBA (Quitar cuando pases a producción real)
+    });
+
+    // 4.  REPRODUCCIÓN Y MANEJO DE PROMESAS OFICIAL
+    AdController.show().then((result) => {
+        // El usuario vio el anuncio completo (o lo cerró en intersticial)
+        if (result.done) {
+            localStorage.setItem('lastAdTime', Date.now().toString());
+            adText.textContent = ' Acreditando...';
+            
+            // Llamada a Supabase para pagar
+            supabase.rpc('registrar_vista_anuncio', {
+                p_user_id: tgUser.id
+            }).then((dbResult) => {
+                if (dbResult.error) throw new Error(dbResult.error.message);
+                
+                if (dbResult.data && dbResult.data.success) {
+                    toast(' +0.001 TON ganado!', 'success');
+                    const adsEl = document.getElementById('adsToday');
+                    if (adsEl && dbResult.data.ads_today) {
+                        adsEl.textContent = dbResult.data.ads_today;
+                    }
+                    loadWalletData();
+                } else {
+                    throw new Error(dbResult.data?.error || 'Error al acreditar');
+                }
+            }).catch((dbErr) => {
+                console.error('Error Supabase:', dbErr);
+                toast('Error al guardar recompensa', 'error');
+            });
         }
-        
-    } catch (e) {
-        // 4.  MANEJO ESPECÍFICO DE ERRORES
-        if (e.description === 'user closed the ad') {
-            toast(' Video cancelado por el usuario.', 'error');
+    }).catch((error) => {
+        // El usuario cerró el video o hubo error de red/inventario
+        if (error.description === 'user closed the ad' || error.state === 'destroy') {
+            toast(' Video cancelado', 'warning');
         } else {
-            console.error('Error en Adsgram:', e);
-            toast('Error: ' + (e.message || 'No hay anuncios disponibles'), 'error');
+            toast('Error: ' + (error.description || 'No hay anuncios disponibles'), 'error');
+            console.error('Adsgram Error:', error);
         }
-    } finally {
-        // 5.  RESTAURACIÓN SEGURA CON textContent
+    }).finally(() => {
+        // 5.  RESTAURACIÓN SEGURA (Protección XSS con textContent)
         adBtn.disabled = false;
-        adBtn.querySelector('#adButtonText').textContent = 'VER VIDEO Y GANAR TON';
-    }
+        adText.textContent = 'VER VIDEO Y GANAR TON';
+    });
 };
 
 // === ADSGRAM: CARGAR CONTADOR DIARIO ===
