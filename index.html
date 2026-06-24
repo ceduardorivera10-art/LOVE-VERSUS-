@@ -1,822 +1,693 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LoveVersus</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #141414;
-            --accent-gold: #c9a84c;
-            --accent-rose: #e91e63;
-            --accent-blue: #3390ec;
-            --accent-orange: #f7931a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --success: #4caf50;
-            --error: #f44336;
-            --warning: #ff9800;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .header-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-rose);
-        }
-        .header-title span { color: var(--accent-gold); }
-        .header-user {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .header-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: #000;
-        }
-        .section { display: none; padding: 16px; padding-bottom: 80px; }
-        .section.active { display: block; }
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            background: var(--bg-secondary);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding: 8px 0;
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 10px;
-            cursor: pointer;
-            padding: 4px 8px;
-        }
-        .nav-item.active { color: var(--accent-rose); }
-        .nav-icon { font-size: 20px; }
-        .card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .card-gold {
-            background: linear-gradient(135deg, #1a1a0a, #0a0a0a);
-            border: 2px solid var(--accent-gold);
-            box-shadow: 0 0 20px rgba(201,168,76,0.2);
-        }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 8px;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-gold {
-            background: linear-gradient(135deg, var(--accent-gold), #a08030);
-            color: #000;
-        }
-        .btn-blue {
-            background: linear-gradient(135deg, var(--accent-blue), #2070b0);
-            color: #fff;
-        }
-        .btn-orange {
-            background: linear-gradient(135deg, var(--accent-orange), #ff6b00);
-            color: #fff;
-            box-shadow: 0 4px 16px rgba(247,147,26,0.4);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-primary);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .stat-box {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 16px 8px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .stat-value { font-size: 24px; font-weight: 700; }
-        .stat-label { font-size: 10px; color: var(--text-secondary); margin-top: 4px; }
-        .profile-header {
-            text-align: center;
-            padding: 20px 0;
-        }
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--accent-gold);
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 700;
-            color: #000;
-            border: 3px solid var(--accent-gold);
-        }
-        .profile-name { font-size: 22px; font-weight: 700; }
-        .profile-username { color: var(--accent-blue); font-size: 14px; margin-top: 4px; }
-        .profile-id { color: var(--text-secondary); font-size: 12px; margin-top: 8px; }
-        .referral-code {
-            background: #000;
-            border: 2px dashed var(--accent-gold);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin: 12px 0;
-        }
-        .wallet-balance {
-            text-align: center;
-            padding: 20px 0;
-        }
-        .wallet-balance-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            letter-spacing: 2px;
-        }
-        .wallet-balance-value {
-            font-size: 48px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-        .wallet-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 16px 0;
-        }
-        .wallet-sub {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-        .wallet-sub-label { font-size: 11px; color: var(--text-secondary); }
-        .wallet-sub-value { font-size: 24px; font-weight: 700; margin-top: 4px; }
-        .wallet-sub-pending { color: var(--warning); }
-        .wallet-sub-available { color: var(--success); }
-        .wallet-status {
-            display: inline-block;
-            background: rgba(76,175,80,0.2);
-            color: var(--success);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .wallet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .wallet-title { font-size: 20px; font-weight: 700; color: var(--accent-gold); }
-        .ads-info {
-            background: rgba(247,147,26,0.1);
-            border: 1px solid rgba(247,147,26,0.3);
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-        .ads-info p { font-size: 11px; color: var(--accent-orange); margin: 0; }
-        .security-info {
-            text-align: center;
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .toast.show { opacity: 1; }
-        .toast.success { border-color: var(--success); color: var(--success); }
-        .toast.error { border-color: var(--error); color: var(--error); }
-        .toast.warning { border-color: var(--warning); color: var(--warning); }
-        .loader {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: var(--accent-gold);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9998;
-            padding: 20px;
-        }
-        .modal {
-            background: var(--bg-card);
-            border: 2px solid var(--accent-gold);
-            border-radius: 20px;
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .modal h3 { color: var(--accent-gold); margin-bottom: 16px; }
-        .modal input {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-primary);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-        .rango-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        .rango-dot {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            background: #cd7f32;
-        }
-        .rango-name { font-size: 18px; font-weight: 700; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>LoveVersus</title>
+<style>
+:root{--bg-primary:#0a0a0a;--bg-secondary:#111;--bg-card:#1a1a1a;--accent-blue:#3390ec;--accent-gold:#c9a84c;--accent-rose:#e94560;--accent-green:#34c759;--text-primary:#f5f5f5;--text-secondary:#b0b0b0;--radius-lg:20px;--nav-height:64px;--safe-bottom:env(safe-area-inset-bottom,12px)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;user-select:none}
+.app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;transition:padding-bottom 0.2s ease}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg-secondary);border-bottom:1px solid #1f1f1f;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid #2a2a2a;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent-blue),#af52de);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.main{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav-height) + var(--safe-bottom) + 10px)}
+.section{display:none;min-height:100%;animation:fadeIn .3s ease;padding:16px}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg-card);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;border:1px solid #1f1f1f;cursor:pointer;transition:.2s}
+.card:active{transform:scale(.98);background:#1e1e1e}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--accent-blue);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--accent-blue);color:var(--accent-blue)}
+.btn:active{transform:scale(.97);opacity:.9}
+.dating-card{width:100%;aspect-ratio:3/4;background:var(--bg-card);border-radius:var(--radius-lg);overflow:hidden;position:relative;margin-bottom:20px;border:1px solid #1f1f1f}
+.dating-photo{width:100%;height:100%;object-fit:cover}
+.dating-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:700;background:linear-gradient(135deg,#1a1a1a,#2a2a2a)}
+.dating-info{position:absolute;bottom:0;left:0;right:0;padding:60px 20px 20px;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.dating-actions{display:flex;justify-content:center;gap:20px}
+.action-btn{width:60px;height:60px;border-radius:50%;border:2px solid #2a2a2a;background:var(--bg-card);font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.action-btn:active{transform:scale(.9)}
+.option-btn{width:100%;padding:16px;margin-bottom:10px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:15px;text-align:left;cursor:pointer;transition:.2s}
+.option-btn.correct{background:rgba(52,199,89,.2);border-color:var(--accent-green);color:var(--accent-green)}
+.option-btn.wrong{background:rgba(233,69,96,.2);border-color:var(--accent-rose);color:var(--accent-rose)}
+.timer{text-align:center;font-size:24px;font-weight:700;color:var(--accent-gold);margin:10px 0}
+.compat-circle{width:120px;height:120px;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;background:conic-gradient(var(--accent-green) 0% var(--score),#2a2a2a var(--score) 100%)}
+.profile-header{text-align:center;margin-bottom:24px}
+.profile-avatar-lg{width:90px;height:90px;border-radius:50%;margin:0 auto 12px;border:3px solid var(--accent-gold);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,var(--accent-blue),#af52de)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.stat-box{background:var(--bg-card);padding:12px;border-radius:12px;text-align:center;border:1px solid #1f1f1f}
+.stat-val{font-size:20px;font-weight:700}
+.stat-label{font-size:10px;color:var(--text-secondary);text-transform:uppercase;margin-top:4px}
+.chat-user-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;cursor:pointer}
+.chat-bubble{max-width:80%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4;word-wrap:break-word}
+.chat-bubble.me{align-self:flex-end;background:var(--accent-blue);color:#fff;border-bottom-right-radius:4px}
+.chat-bubble.other{align-self:flex-start;background:#2a2a2a;color:#fff;border-bottom-left-radius:4px}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:rgba(20,20,20,.95);backdrop-filter:blur(20px);border-top:1px solid #1f1f1f;padding:8px 0 var(--safe-bottom);z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px;position:relative}
+.nav-item.active{color:var(--accent-blue)}
+.nav-icon{font-size:22px}
+.notif-badge{position:absolute;top:2px;right:8px;background:var(--accent-rose);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;display:none}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--bg-card);border:1px solid #2a2a2a;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;transition:.3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--accent-green);color:var(--accent-green)}
+.toast.error{border-color:var(--accent-rose);color:var(--accent-rose)}
+.loader{position:fixed;inset:0;background:var(--bg-primary);display:flex;align-items:center;justify-content:center;z-index:1000;transition:.4s}
+.loader.hidden{opacity:0;pointer-events:none}
+.spinner{width:36px;height:36px;border:3px solid #2a2a2a;border-top-color:var(--accent-blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+.challenge-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s}
+.challenge-modal.show{opacity:1;pointer-events:auto}
+.challenge-box{background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;text-align:center;max-width:90%;width:320px;transform:scale(0.9);transition:.3s}
+.challenge-modal.show .challenge-box{transform:scale(1)}
+.challenge-actions{display:flex;gap:12px;margin-top:20px}
+.challenge-actions .btn{flex:1}
+.btn-accept{background:var(--accent-green);color:#fff}
+.btn-decline{background:#2a2a2a;color:var(--text-secondary)}
+.wallet-card{background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2)}
+</style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-title"> Love <span></span> Versus</div>
-        <div class="header-user">
-            <div class="header-avatar" id="headerAvatar">?</div>
-            <span id="headerName">Nn</span>
+<div class="app-container" id="appContainer">
+<header class="header">
+<div class="brand">💘 Love<span style="color:var(--accent-gold)">✦</span>Versus</div>
+<div class="user-pill" onclick="switchSection('sectionProfile')">
+<div class="avatar" id="headerAvatar">?</div>
+<span id="headerName" style="font-size:14px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Cargando...</span>
+<span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">⚡<span id="energyCount">20</span></span>
+</div>
+</header>
+<main class="main" id="main">
+<section id="sectionDating" class="section active">
+<div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">🔥 Racha de <span id="streakDays">1</span> día(s). ¡Has ganado <span id="streakFichas">5</span> fichas!</div>
+<div id="datingCardContainer">
+<div class="dating-card" id="datingCard"><img class="dating-photo" id="datingPhoto" style="display:none;"><div class="dating-placeholder" id="datingPlaceholder"></div><div class="dating-info"><div style="font-size:22px;font-weight:700;"><span id="dName"></span> <span id="dAge" style="font-size:18px;color:var(--text-secondary);"></span></div><p id="dBio" style="font-size:14px;color:var(--text-secondary);margin-top:6px;"></p></div></div>
+<div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">❌</button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">⭐</button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">💘</button></div>
+</div>
+<div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;">💔</div><h3 id="emptyTitle">No hay más perfiles</h3><p id="emptyDesc">Vuelve más tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
+</section>
+<section id="sectionChat" class="section">
+<h3 style="margin-bottom:16px;">💬 Mensajes</h3>
+<div id="chatUsersList"></div>
+<div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;display:flex;flex-direction:column;height:70vh;">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">←</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
+<div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>
+<div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">➤</button></div>
+</div>
+</section>
+<section id="sectionGames" class="section">
+<div id="gameMenu">
+<div class="card" onclick="openTrivia()"><h3>🧠 Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
+<div class="card" onclick="openCompatTest()"><h3>💞 Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
+<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🪙 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🪙 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
+</div>
+<div id="triviaFlow" class="hidden">
+<div id="triviaMenu">
+<h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()">🌐 Ver jugadores en línea</button>
+<button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()">🧪 Jugar solo (práctica)</button>
+<button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">🔙 Volver</button>
+</div>
+<div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">⏳ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
+<div id="triviaResultado" class="hidden" style="text-align:center;">
+<h3 style="margin-bottom:8px;">Resultado</h3>
+<div class="compat-circle" id="compatScore">0%</div>
+<p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()">🔄 Jugar otra vez</button>
+<button class="btn btn-outline" onclick="resetGames()">🔙 Volver al menú</button>
+</div>
+</div>
+<div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en línea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">🔙 Volver</button></div>
+<div id="compatFlow" class="hidden">
+<div id="compatPreguntas"><h3 id="cqTitle" style="margin-bottom:8px;">Pregunta 1/10</h3><p id="cqText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="cqOptions"></div></div>
+<div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
+</div>
+</section>
+<section id="sectionProfile" class="section">
+<div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
+<div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
+<div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
+
+<!-- INICIO BLOQUE REFERIDOS VISUAL -->
+<div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
+    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
+    <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
+    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar y Compartir</button>
+    <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
+</div>
+<!-- FIN BLOQUE REFERIDOS VISUAL -->
+<!-- INICIO BLOQUE BILLETERA VISUAL -->
+<div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;"> Tu Billetera</h4>
+        <span style="background:rgba(52,199,89,0.15);color:var(--accent-green);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;"> ACTIVA</span>
+    </div>
+    
+    <!-- Saldo Total (N�mero grande protagonista) -->
+    <div style="text-align:center;padding:16px 0;border-bottom:1px solid rgba(201,168,76,0.2);margin-bottom:16px;">
+        <p style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saldo Total TON</p>
+        <div style="font-size:36px;font-weight:800;color:#fff;font-family:monospace;" id="walletTotalTon">0.0000</div>
+    </div>
+    
+    <!-- Doble Balance (Pendiente vs Disponible) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div style="background:rgba(255,149,0,0.08);border:1px solid rgba(255,149,0,0.3);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:10px;color:#ff9500;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;"> Pendiente</div>
+            <div style="font-size:18px;font-weight:700;color:#fff;" id="walletPendiente">0.0000</div>
+            <div style="font-size:9px;color:var(--text-secondary);margin-top:2px;">Por liquidar</div>
+        </div>
+        <div style="background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.3);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:10px;color:var(--accent-green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;"> Disponible</div>
+            <div style="font-size:18px;font-weight:700;color:#fff;" id="walletDisponible">0.0000</div>
+            <div style="font-size:9px;color:var(--text-secondary);margin-top:2px;">Retirable</div>
         </div>
     </div>
+    
+    <!-- Botones de Acci�n (Reciclaje de Capital) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);"> Depositar TON</button>
+        <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);"> Retirar</button>
+    </div>
+    <!-- INICIO BLOQUE ADSGRAM -->
+<button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+    <span style="font-size:20px;"></span>
+    <span id="adButtonText">VER VIDEO Y GANAR TON</span>
+</button>
+<div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
+    <p style="font-size:11px;color:#f7931a;margin:0;"> 30 segundos � <b>+0.001 TON</b> � Hoy: <span id="adsToday">0</span>/20</p>
+</div>
+<!-- FIN BLOQUE ADSGRAM -->
+    <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;"> Comprar fichas con TON (mejor tasa)</button>
+    
+    <!-- Info de seguridad (Genera confianza) -->
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
+        <p style="font-size:10px;color:var(--text-secondary);"> Fondos protegidos � Retiros m�nimos 1 TON � Auditor�a blockchain</p>
+    </div>
+</div>
+<!-- FIN BLOQUE BILLETERA VISUAL -->
+</section>
+</main>
+<nav class="bottom-nav">
+<button class="nav-item active" data-section="sectionDating"><span class="nav-icon">💘</span>Citas</button>
+<button class="nav-item" data-section="sectionChat"><span class="nav-icon">💬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
+<button class="nav-item" data-section="sectionGames"><span class="nav-icon">🕹️</span>Versus</button>
+<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">👤</span>Perfil</button>
+</nav>
+</div>
+<div id="challengeModal" class="challenge-modal" onclick="if(event.target===this)declineChallenge()">
+<div class="challenge-box">
+<div style="font-size:48px;margin-bottom:10px;">⚔️</div>
+<h3 style="margin-bottom:8px;">¡Te han retado!</h3>
+<p style="color:var(--text-secondary);margin-bottom:20px;">¿Aceptas el reto de Trivia?</p>
+<div class="challenge-actions">
+<button class="btn btn-decline" onclick="declineChallenge()">Rechazar</button>
+<button class="btn btn-accept" onclick="acceptChallenge()">Aceptar</button>
+</div>
+</div>
+</div>
+<div id="matchModal" class="challenge-modal" onclick="if(event.target===this)closeMatchModal()">
+<div class="challenge-box" style="border-color: var(--accent-rose);">
+<div style="font-size:60px;margin-bottom:10px;">💘</div>
+<h2 style="color: var(--accent-rose); margin-bottom: 10px; font-size: 28px;">¡Es un Match!</h2>
+<p style="color:var(--text-secondary);margin-bottom:20px;">A <span id="matchName" style="color: #fff; font-weight: bold;"></span> también le gustas.</p>
+<div class="challenge-actions">
+<button class="btn btn-decline" onclick="closeMatchModal()">Seguir buscando</button>
+<button class="btn btn-accept" style="background: var(--accent-rose);" onclick="chatWithMatch()">💬 Chatear ahora</button>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="loader" id="loader"><div class="spinner"></div></div>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+    var script = document.createElement('script');
+    script.src = 'https://plugin.adsgram.ai/sdk.js';
+    script.setAttribute('data-block-id', '35856');
+    script.async = true;
+    script.onload = function() {
+        console.log(' Adsgram SDK cargado');
+    };
+    script.onerror = function() {
+        console.error(' Error cargando Adsgram SDK');
+    };
+    document.head.appendChild(script);
+})();
+</script>
+<script>(function(){
+var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
+var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
+var PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
+var supabase,tgUser;
+var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'🟤 Bronce'};
+var gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15;
+var datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
+var compatAnswers=[],currentChatPartner=null,chatChannel=null,triviaChannel=null;
+var pendingChallengeId=null;
+var currentMatchId=null,currentMatchName='';
+var unreadCount=0;
+var myReferralCode='';
 
-    <main id="main">
-        <!-- SECCI�N CITAS -->
-        <section id="sectionCitas" class="section active">
-            <div class="card">
-                <h3 style="margin-bottom:12px;"> Love  Versus</h3>
-                <p style="color:var(--text-secondary);font-size:13px;">Descubre, conecta y compite</p>
-            </div>
-            <div class="card">
-                <p style="text-align:center;color:var(--text-secondary);">No hay m�s perfiles</p>
-                <p style="text-align:center;color:var(--text-secondary);font-size:12px;">Vuelve m�s tarde para ver nuevos usuarios.</p>
-                <button class="btn btn-outline" onclick="toast('Buscando perfiles...','warning')">Reintentar</button>
-            </div>
-        </section>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return document.querySelectorAll(s)};
+var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
 
-        <!-- SECCI�N CHAT -->
-        <section id="sectionChat" class="section">
-            <div class="card">
-                <h3 style="margin-bottom:12px;"> Mensajes</h3>
-                <p style="color:var(--text-secondary);font-size:13px;">A�n no tienes conversaciones</p>
-            </div>
-        </section>
+if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
 
-        <!-- SECCI�N VERSUS -->
-        <section id="sectionVersus" class="section">
-            <div class="card">
-                <h3 style="margin-bottom:12px;"> Trivia Versus 1vs1</h3>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Responde preguntas, reta a amigos y descubre compatibilidad</p>
-                <button class="btn btn-blue" onclick="toast('Buscando oponente...','warning')">Nueva partida de Trivia</button>
-                <button class="btn btn-outline" onclick="toast('Jugadores en l�nea: 0','warning')"> Ver jugadores en l�nea</button>
-                <button class="btn btn-outline" onclick="toast('Modo pr�ctica','warning')"> Jugar solo (pr�ctica)</button>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom:12px;"> Test de Compatibilidad (Gratis)</h3>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">10 preguntas para conocer tu estilo de cita ideal</p>
-                <button class="btn btn-gold" onclick="toast('Abriendo test...','success')">Iniciar Test</button>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom:12px;"> Tienda de Fichas</h3>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Consigue fichas para apostar y ganar premios.</p>
-                <div class="stats-grid">
-                    <div class="stat-box"><div class="stat-value">50</div><div class="stat-label">Fichas (50 )</div></div>
-                    <div class="stat-box"><div class="stat-value">100</div><div class="stat-label">Boost Perfil</div></div>
-                    <div class="stat-box"><div class="stat-value">200</div><div class="stat-label">Entrada Torneo</div></div>
-                </div>
-                <p style="text-align:center;color:var(--text-secondary);font-size:12px;">Tu saldo: <span id="fichasTienda">0</span> fichas</p>
-            </div>
-        </section>
+function switchSection(id){
+    if(id!=='sectionChat'&&currentChatPartner)closeChat();
+    if(id==='sectionChat'){unreadCount=0;updateNotifBadge()}
+    $$('.section').forEach(function(s){s.classList.remove('active')});
+    var target=$('#'+id);
+    if(target)target.classList.add('active');
+    $$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});
+    var mainEl=$('#main');
+    if(mainEl)mainEl.scrollTop=0;
+ if(id==='sectionProfile'){loadWalletData();loadAdsCounter()}
+    if(id==='sectionChat')loadChatUsers();
+}
 
-        <!-- SECCI�N PERFIL -->
-        <section id="sectionProfile" class="section">
-            <div class="profile-header">
-                <div class="profile-avatar" id="profileAvatar">?</div>
-                <div class="profile-name" id="profileName">Usuario</div>
-                <div class="profile-username" id="profileUsername">@username</div>
-                <div class="profile-id" id="profileId">ID: 000000000</div>
-            </div>
+$$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switchSection(b.dataset.section)})});
 
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-value" id="statMatches">0</div>
-                    <div class="stat-label">MATCHES</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="statVictorias">0</div>
-                    <div class="stat-label">VICTORIAS</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="statFichas">0</div>
-                    <div class="stat-label">FICHAS</div>
-                </div>
-            </div>
+function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
 
-            <div class="rango-badge">
-                <div class="rango-dot"></div>
-                <div class="rango-name" id="rangoName">Bronce</div>
-            </div>
+async function init(){
+    if(window.Telegram&&window.Telegram.WebApp){
+        window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.ready();
+        tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'};
+    }else{tgUser={id:123456789,first_name:'Demo'}}
+    
+    $('#headerName').textContent=tgUser.first_name;
+    $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
+    $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
+    $('#profileId').textContent='ID: '+tgUser.id;
+    var initials=(tgUser.first_name||'?')[0].toUpperCase();
+    if(tgUser.photo_url){$('#headerAvatar').innerHTML='<img src="'+tgUser.photo_url+'">'}else{$('#headerAvatar').textContent=initials}
+    if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}
+    
+    try{
+        supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
+        
+        // LLAMADA A LA NUEVA WALLET (Pieza 1: Referidos)
+        var urlParams=new URLSearchParams(window.location.search);
+        var refCode=urlParams.get('ref');
+        var walletResult=await supabase.rpc('initialize_user_wallet',{p_telegram_id:tgUser.id,p_referral_code:refCode||null});
+        if(walletResult.data&&walletResult.data.wallet){
+            var w=walletResult.data.wallet;
+            energy.trivia=w.energia_trivia||5;
+            myReferralCode=w.referral_code||'';
+            var codeEl=document.getElementById('myReferralCode');
+            if(codeEl)codeEl.textContent=myReferralCode;
+            var fichasEl=document.getElementById('fichasStat');
+            if(fichasEl)fichasEl.textContent=w.fichas||0;
+        }
+        
+        await dailyLogin();
+        updateBalance();
+        loadProfiles();
+        
+        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
+    }catch(e){console.error(e);toast('Error de conexión','error');var rb=$('#retryBtn');if(rb)rb.style.display='inline-block'}
+    setTimeout(function(){$('#loader').classList.add('hidden')},600);
+}
 
-            <!-- C�DIGO DE REFERIDO -->
-            <div class="card card-gold">
-                <h3 style="text-align:center;color:var(--accent-gold);margin-bottom:12px;"> TU C�DIGO DE INVITADO</h3>
-                <div class="referral-code" id="referralCode">Cargando...</div>
-                <button class="btn btn-gold" onclick="copiarReferido()"> Copiar y Compartir</button>
-                <p style="text-align:center;color:var(--text-secondary);font-size:12px;margin-top:8px;">Gana <b>10 fichas</b> por cada amigo que se registre</p>
-            </div>
-
-            <!-- BILLETERA -->
-            <div class="card card-gold">
-                <div class="wallet-header">
-                    <div class="wallet-title">Tu Billetera</div>
-                    <div class="wallet-status">ACTIVA</div>
-                </div>
-
-                <div class="wallet-balance">
-                    <div class="wallet-balance-label">SALDO TOTAL TON</div>
-                    <div class="wallet-balance-value" id="saldoTotal">0.0000</div>
-                </div>
-
-                <div class="wallet-grid">
-                    <div class="wallet-sub">
-                        <div class="wallet-sub-label wallet-sub-pending">PENDIENTE</div>
-                        <div class="wallet-sub-value wallet-sub-pending" id="saldoPendiente">0.0000</div>
-                        <div style="font-size:10px;color:var(--text-secondary);margin-top:4px;">Por liquidar</div>
-                    </div>
-                    <div class="wallet-sub">
-                        <div class="wallet-sub-label wallet-sub-available">DISPONIBLE</div>
-                        <div class="wallet-sub-value wallet-sub-available" id="saldoDisponible">0.0000</div>
-                        <div style="font-size:10px;color:var(--text-secondary);margin-top:4px;">Retirable</div>
-                    </div>
-                </div>
-
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                    <button class="btn btn-blue" onclick="showWalletModal('deposit')">Depositar TON</button>
-                    <button class="btn btn-gold" onclick="showWalletModal('withdraw')">Retirar</button>
-                </div>
-
-                <!-- BOT�N ADSGRAM -->
-                <button class="btn btn-orange" onclick="watchAdForTon()" id="adButton">
-                    <span style="font-size:20px;"></span>
-                    <span id="adButtonText">VER VIDEO Y GANAR TON</span>
-                </button>
-                <div class="ads-info">
-                    <p> 30 segundos � <b>+0.001 TON</b> � Hoy: <span id="adsToday">0</span>/20</p>
-                </div>
-
-                <button class="btn btn-outline" onclick="showWalletModal('buyfichas')">Comprar fichas con TON (mejor tasa)</button>
-
-                <div class="security-info">
-                    Fondos protegidos  Retiros m�nimos 1 TON  Auditor�a blockchain
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- NAV BAR -->
-    <nav class="nav-bar">
-        <button class="nav-item active" data-section="sectionCitas" onclick="switchSection('sectionCitas')">
-            <span class="nav-icon"></span>Citas
-        </button>
-        <button class="nav-item" data-section="sectionChat" onclick="switchSection('sectionChat')">
-            <span class="nav-icon"></span>Chat
-        </button>
-        <button class="nav-item" data-section="sectionVersus" onclick="switchSection('sectionVersus')">
-            <span class="nav-icon"></span>Versus
-        </button>
-        <button class="nav-item" data-section="sectionProfile" onclick="switchSection('sectionProfile')">
-            <span class="nav-icon"></span>Perfil
-        </button>
-    </nav>
-
-    <!-- TOAST -->
-    <div class="toast" id="toast"></div>
-
-    <!-- LOADER -->
-    <div class="loader" id="loader"><div class="spinner"></div></div>
-
-    <!-- MODAL CONTAINER -->
-    <div id="modalContainer"></div>
-
-    <!-- SCRIPTS -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-
-    <script>
-    (function() {
-        // ===== CONFIGURACI�N =====
-        var SUPABASE_URL = 'https://qqimmkkkgjkkzyewodcf.supabase.co';
-        var SUPABASE_KEY = 'sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
-        var PAYMENTS_BOT_TOKEN = '8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
-
-        var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        var tgUser = null;
-        var energy = { swipes: 20, trivia: 5, streak: 0, victorias: 0, matches: 0, rango: 'Bronce' };
-        var myReferralCode = '';
-
-        // ===== UTILIDADES =====
-        var $ = function(s) { return document.querySelector(s); };
-        var $$ = function(s) { return document.querySelectorAll(s); };
-        var toast = function(m, t) {
-            var e = $('#toast');
-            if (!e) return;
-            e.textContent = m;
-            e.className = 'toast show ' + (t || '');
-            setTimeout(function() { e.className = 'toast'; }, 3000);
-        };
-
-        // ===== INICIALIZACI�N =====
-        async function init() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.expand();
-                window.Telegram.WebApp.ready();
-                tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-            } else {
-                tgUser = { id: 123456789, first_name: 'Demo', username: 'demo_user' };
+window.copyReferralCode=function(){
+    var c=document.getElementById('myReferralCode');
+    if(!c)return;
+    var code=c.textContent;
+    if(code&&code!=='Cargando...'){
+        var shareUrl='https://t.me/share/url?url='+encodeURIComponent('https://t.me/TU_BOT?start=ref_'+code)+'&text='+encodeURIComponent('¡Únete a LoveVersus y gana TON real! Usa mi código: '+code);
+        if(navigator.share){
+            navigator.share({title:'LoveVersus',text:'¡Gana TON real jugando! Mi código: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
+        }else{
+            if(navigator.clipboard){
+                navigator.clipboard.writeText(code);
+                toast('📋 Código '+code+' copiado','success');
+            }else{
+                toast('Tu código es: '+code,'success');
             }
+        }
+    }
+};
+// === BILLETERA: CARGAR SALDOS REALES ===
+async function loadWalletData() {
+    try {
+        const result = await supabase.from('wallets')
+            .select('saldo_pendiente, saldo_disponible, fichas, energia_trivia')
+            .eq('telegram_id', tgUser.id)
+            .single();
+        
+        if (result.data) {
+            const w = result.data;
+            const total = (Number(w.saldo_pendiente || 0) + Number(w.saldo_disponible || 0)).toFixed(4);
+            
+            // Actualizar UI
+            const tEl = document.getElementById('walletTotalTon');
+            if (tEl) tEl.textContent = total;
+            
+            const pEl = document.getElementById('walletPendiente');
+            if (pEl) pEl.textContent = Number(w.saldo_pendiente || 0).toFixed(4);
+            
+            const dEl = document.getElementById('walletDisponible');
+            if (dEl) dEl.textContent = Number(w.saldo_disponible || 0).toFixed(4);
+            
+            const fEl = document.getElementById('fichasStat');
+            if (fEl) fEl.textContent = w.fichas || 0;
+            
+            const eEl = document.getElementById('triviaLeft');
+            if (eEl) eEl.textContent = w.energia_trivia || 5;
+        }
+    } catch (e) {
+        console.error('Error cargando wallet:', e);
+    }
+}
 
-            if (tgUser) {
-                $('#headerName').textContent = tgUser.first_name || 'Usuario';
-                $('#profileName').textContent = tgUser.first_name || 'Usuario';
-                $('#profileUsername').textContent = '@' + (tgUser.username || 'usuario');
-                $('#profileId').textContent = 'ID: ' + tgUser.id;
-                var initials = (tgUser.first_name || '?')[0].toUpperCase();
-                $('#headerAvatar').textContent = initials;
-                $('#profileAvatar').textContent = initials;
+// === BILLETERA: MODAL DE ACCIONES ===
+window.showWalletModal = function(action) {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
+    
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
+    
+    if (action === 'deposit') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Depositar TON</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Env�a TON a tu wallet interna</p>
+            <input type="number" id="depositAmount" placeholder="Cantidad en TON" step="0.1" min="0.1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;">
+            <button onclick="processDeposit()" style="width:100%;padding:14px;background:var(--accent-blue);color:#fff;border:none;border-radius:12px;font-weight:700;">Confirmar Dep�sito</button>
+        `;
+    } else if (action === 'withdraw') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Retirar TON</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">M�nimo: 1 TON � Fee de red incluido</p>
+            <p style="color:var(--accent-green);font-size:12px;margin-bottom:16px;">Disponible: <span id="availDisplay">0.0000</span> TON</p>
+            <input type="number" id="withdrawAmount" placeholder="Cantidad a retirar" step="0.1" min="1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;">
+            <input type="text" id="withdrawWallet" placeholder="Tu wallet TON (EQ...)" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:14px;margin-bottom:12px;">
+            <button onclick="processWithdraw()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:700;">Solicitar Retiro</button>
+        `;
+    } else if (action === 'buyfichas') {
+        box.innerHTML = `
+            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <h3 style="color:var(--accent-gold);margin-bottom:12px;">Comprar Fichas</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Mejor tasa que la tienda</p>
+            <button onclick="buyFichasPack(50,0.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">50 Fichas � 0.5 TON</button>
+            <button onclick="buyFichasPack(100,0.9)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas � 0.9 TON (10% OFF)</button>
+            <button onclick="buyFichasPack(300,2.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;text-align:left;">300 Fichas � 2.5 TON (17% OFF)</button>
+        `;
+    }
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = ' Cerrar';
+    closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
+    closeBtn.onclick = function() { document.body.removeChild(modal); };
+    
+    box.appendChild(closeBtn);
+    modal.appendChild(box);
+    modal.onclick = function(e) { if (e.target === modal) document.body.removeChild(modal); };
+    document.body.appendChild(modal);
+    
+    if (action === 'withdraw') {
+        const availEl = document.getElementById('availDisplay');
+        const dEl = document.getElementById('walletDisponible');
+        if (availEl && dEl) availEl.textContent = dEl.textContent;
+    }
+};
 
-                // Inicializar wallet en Supabase
-                try {
-                    var result = await supabase.rpc('inicializar_wallet', { user_id: tgUser.id });
-                    if (result.data && result.data.referral_code) {
-                        myReferralCode = result.data.referral_code;
-                        $('#referralCode').textContent = myReferralCode;
+window.processDeposit = async function() {
+    const amount = parseFloat(document.getElementById('depositAmount').value);
+    if (!amount || amount < 0.1) return toast('M�nimo 0.1 TON', 'error');
+    toast(' Funci�n de dep�sito en desarrollo', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+};
+
+window.processWithdraw = async function() {
+    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const wallet = document.getElementById('withdrawWallet').value.trim();
+    
+    if (!amount || amount < 1) return toast('M�nimo 1 TON', 'error');
+    if (!wallet || !wallet.startsWith('EQ') && !wallet.startsWith('UQ')) {
+        return toast('Wallet TON inv�lida (debe empezar con EQ o UQ)', 'error');
+    }
+    
+    const result = await supabase.rpc('solicitar_retiro', {
+        p_user_id: tgUser.id,
+        p_monto: amount,
+        p_wallet_destino: wallet
+    });
+    
+    if (result.error) return toast('Error: ' + result.error.message, 'error');
+    if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
+    
+    toast(' Retiro solicitado. Procesando...', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    loadWalletData();
+};
+
+window.buyFichasPack = async function(fichas, ton) {
+    const packName = 'pack_' + fichas;
+    const result = await supabase.rpc('comprar_fichas_con_ton', {
+        p_user_id: tgUser.id,
+        p_paquete: packName
+    });
+    
+    if (result.error) return toast('Error: ' + result.error.message, 'error');
+    if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
+    
+    toast(' +' + fichas + ' fichas compradas', 'success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    loadWalletData();
+};
+// === ADSGRAM: VER VIDEO Y GANAR TON (VERIFICADO + MEJORAS) ===
+window.watchAdForTon = async function() {
+    const adBtn = document.getElementById('adButton');
+    const adText = document.getElementById('adButtonText');
+    if (!adBtn || !adText) return toast('Error: UI no encontrada', 'error');
+    
+    // 1.  VALIDACI�N DE SEGURIDAD (Anti-manipulaci�n de ID)
+    if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) {
+        return toast(' Usuario no v�lido. Inicia sesi�n de nuevo', 'error');
+    }
+    
+    // 2.  SALA DE ESPERA AS�NCRONA (Ideal para redes m�viles lentas)
+    adBtn.disabled = true;
+    adText.textContent = ' Cargando SDK...';
+    
+    let sdkReady = false;
+    let attempts = 0;
+    const maxAttempts = 10; // 10 intentos * 500ms = 5 segundos m�ximo
+
+    while (!sdkReady && attempts < maxAttempts) {
+        if (window.Adsgram || window.AdsgramSDK) {
+            sdkReady = true;
+            break;
+        }
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    if (!sdkReady) {
+        adBtn.disabled = false;
+        adText.textContent = 'VER VIDEO Y GANAR TON';
+        return toast(' SDK no carg�. Revisa tu internet e intenta de nuevo.', 'error');
+    }
+    
+    // 3.  INICIALIZACI�N OFICIAL (Seg�n documentaci�n Adsgram)
+    adText.textContent = 'Cargando video...';
+    const sdk = window.Adsgram || window.AdsgramSDK;
+    const AdController = sdk.init({ 
+        blockId: "35856", 
+        debug: true //  MODO PRUEBA (Quitar cuando pases a producci�n real)
+    });
+
+    // 4.  REPRODUCCI�N Y MANEJO DE PROMESAS OFICIAL
+    AdController.show().then((result) => {
+        // El usuario vio el anuncio completo (o lo cerr� en intersticial)
+        if (result.done) {
+            localStorage.setItem('lastAdTime', Date.now().toString());
+            adText.textContent = ' Acreditando...';
+            
+            // Llamada a Supabase para pagar
+            supabase.rpc('registrar_vista_anuncio', {
+                p_user_id: tgUser.id
+            }).then((dbResult) => {
+                if (dbResult.error) throw new Error(dbResult.error.message);
+                
+                if (dbResult.data && dbResult.data.success) {
+                    toast(' +0.001 TON ganado!', 'success');
+                    const adsEl = document.getElementById('adsToday');
+                    if (adsEl && dbResult.data.ads_today) {
+                        adsEl.textContent = dbResult.data.ads_today;
                     }
-                    if (result.data && result.data.fichas !== undefined) {
-                        $('#statFichas').textContent = result.data.fichas;
-                        $('#fichasTienda').textContent = result.data.fichas;
-                    }
-                } catch(e) {
-                    console.error('Error inicializando wallet:', e);
-                    myReferralCode = 'LV-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-                    $('#referralCode').textContent = myReferralCode;
-                }
-            }
-
-            $('#loader').style.display = 'none';
-        }
-
-        // ===== NAVEGACI�N =====
-        window.switchSection = function(id) {
-            $$('.section').forEach(function(s) { s.classList.remove('active'); });
-            var target = $('#' + id);
-            if (target) target.classList.add('active');
-            $$('.nav-item').forEach(function(b) {
-                b.classList.toggle('active', b.dataset.section === id);
-            });
-            $('#main').scrollTop = 0;
-
-            if (id === 'sectionProfile') {
-                loadWalletData();
-                loadAdsCounter();
-            }
-            if (id === 'sectionChat') {
-                // loadChatUsers();
-            }
-        };
-
-        // ===== COPIAR REFERIDO =====
-        window.copiarReferido = function() {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(myReferralCode).then(function() {
-                    toast(' C�digo copiado: ' + myReferralCode, 'success');
-                });
-            } else {
-                toast(' C�digo: ' + myReferralCode, 'success');
-            }
-        };
-
-        // ===== BILLETERA =====
-        async function loadWalletData() {
-            if (!tgUser) return;
-            try {
-                var result = await supabase.from('wallets')
-                    .select('saldo_pendiente, saldo_disponible, fichas')
-                    .eq('telegram_id', tgUser.id)
-                    .single();
-
-                if (result.data) {
-                    var pendiente = result.data.saldo_pendiente || 0;
-                    var disponible = result.data.saldo_disponible || 0;
-                    var total = pendiente + disponible;
-                    var fichas = result.data.fichas || 0;
-
-                    $('#saldoTotal').textContent = total.toFixed(4);
-                    $('#saldoPendiente').textContent = pendiente.toFixed(4);
-                    $('#saldoDisponible').textContent = disponible.toFixed(4);
-                    $('#statFichas').textContent = fichas;
-                    $('#fichasTienda').textContent = fichas;
-                }
-            } catch(e) {
-                console.error('Error cargando wallet:', e);
-            }
-        }
-
-        async function loadAdsCounter() {
-            if (!tgUser) return;
-            try {
-                var result = await supabase.from('wallets')
-                    .select('ads_today')
-                    .eq('telegram_id', tgUser.id)
-                    .single();
-
-                if (result.data) {
-                    var adsEl = document.getElementById('adsToday');
-                    if (adsEl) adsEl.textContent = result.data.ads_today || 0;
-                }
-            } catch(e) {
-                console.error('Error cargando contador ads:', e);
-            }
-        }
-
-        // ===== MODALES DE BILLETERA =====
-        window.showWalletModal = function(type) {
-            var container = $('#modalContainer');
-            var html = '';
-
-            if (type === 'deposit') {
-                html = '<div class="modal-overlay" onclick="closeModal(event)"><div class="modal" onclick="event.stopPropagation()">' +
-                    '<h3>Depositar TON</h3>' +
-                    '<p style="color:var(--text-secondary);margin-bottom:16px;">Env�a TON a tu wallet interna</p>' +
-                    '<input type="number" placeholder="Cantidad en TON" id="depositAmount" step="0.0001" min="0.1">' +
-                    '<button class="btn btn-blue" onclick="confirmDeposit()">Confirmar Dep�sito</button>' +
-                    '<button class="btn btn-outline" onclick="closeModal()">Cerrar</button>' +
-                    '</div></div>';
-            } else if (type === 'withdraw') {
-                html = '<div class="modal-overlay" onclick="closeModal(event)"><div class="modal" onclick="event.stopPropagation()">' +
-                    '<h3>Retirar TON</h3>' +
-                    '<p style="color:var(--text-secondary);margin-bottom:8px;">M�nimo: 1 TON � Fee de red incluido</p>' +
-                    '<p style="color:var(--success);margin-bottom:16px;">Disponible: <span id="withdrawAvailable">0.0000</span> TON</p>' +
-                    '<input type="number" placeholder="Cantidad a retirar" id="withdrawAmount" step="0.0001" min="1">' +
-                    '<input type="text" placeholder="Tu wallet TON (EQ...)" id="withdrawWallet">' +
-                    '<button class="btn btn-gold" onclick="confirmWithdraw()">Solicitar Retiro</button>' +
-                    '<button class="btn btn-outline" onclick="closeModal()">Cerrar</button>' +
-                    '</div></div>';
-            } else if (type === 'buyfichas') {
-                html = '<div class="modal-overlay" onclick="closeModal(event)"><div class="modal" onclick="event.stopPropagation()">' +
-                    '<h3>Comprar Fichas</h3>' +
-                    '<p style="color:var(--text-secondary);margin-bottom:16px;">Mejor tasa que la tienda</p>' +
-                    '<button class="btn btn-outline" onclick="buyFichasPack(50, 0.5)">50 Fichas � 0.5 TON</button>' +
-                    '<button class="btn btn-outline" onclick="buyFichasPack(100, 0.9)">100 Fichas � 0.9 TON (10% OFF)</button>' +
-                    '<button class="btn btn-outline" onclick="buyFichasPack(300, 2.5)">300 Fichas � 2.5 TON (17% OFF)</button>' +
-                    '<button class="btn btn-outline" onclick="closeModal()">Cerrar</button>' +
-                    '</div></div>';
-            }
-
-            container.innerHTML = html;
-
-            if (type === 'withdraw') {
-                var disp = $('#saldoDisponible');
-                var wa = $('#withdrawAvailable');
-                if (disp && wa) wa.textContent = disp.textContent;
-            }
-        };
-
-        window.closeModal = function(e) {
-            if (e && e.target !== e.currentTarget) return;
-            $('#modalContainer').innerHTML = '';
-        };
-
-        window.confirmDeposit = function() {
-            var amount = $('#depositAmount').value;
-            if (!amount || parseFloat(amount) <= 0) {
-                return toast('Ingresa una cantidad v�lida', 'error');
-            }
-            toast(' Funci�n de dep�sito en desarrollo', 'success');
-            closeModal();
-        };
-
-        window.confirmWithdraw = function() {
-            var amount = $('#withdrawAmount').value;
-            var wallet = $('#withdrawWallet').value;
-            if (!amount || parseFloat(amount) < 1) {
-                return toast('M�nimo 1 TON para retirar', 'error');
-            }
-            if (!wallet || !wallet.startsWith('EQ')) {
-                return toast('Wallet TON inv�lida (debe empezar con EQ)', 'error');
-            }
-            toast(' Retiro solicitado. Procesando...', 'success');
-            closeModal();
-            loadWalletData();
-        };
-
-        window.buyFichasPack = async function(fichas, ton) {
-            if (!tgUser) return toast('Usuario no v�lido', 'error');
-            try {
-                var packName = 'pack_' + fichas;
-                var result = await supabase.rpc('comprar_fichas_con_ton', {
-                    p_user_id: tgUser.id,
-                    p_paquete: packName
-                });
-
-                if (result.error) return toast('Error: ' + result.error.message, 'error');
-                if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
-
-                toast(' +' + fichas + ' fichas compradas', 'success');
-                closeModal();
-                loadWalletData();
-            } catch(e) {
-                toast('Error al procesar compra', 'error');
-            }
-        };
-
-        // ===== ADSGRAM: VER VIDEO Y GANAR TON =====
-        window.watchAdForTon = async function() {
-            const adBtn = document.getElementById('adButton');
-            const adText = document.getElementById('adButtonText');
-            if (!adBtn || !adText) return toast('Error: UI no encontrada', 'error');
-
-            // 1.  VALIDACI�N DE SEGURIDAD
-            if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) {
-                return toast(' Usuario no v�lido. Inicia sesi�n de nuevo', 'error');
-            }
-
-            // 2.  SALA DE ESPERA AS�NCRONA (hasta 10 segundos)
-            adBtn.disabled = true;
-            adText.textContent = ' Cargando SDK...';
-
-            let sdkReady = false;
-            let attempts = 0;
-            const maxAttempts = 20; // 20 * 500ms = 10 segundos
-
-            while (!sdkReady && attempts < maxAttempts) {
-                if (window.Adsgram || window.AdsgramSDK) {
-                    sdkReady = true;
-                    break;
-                }
-                attempts++;
-                adText.textContent = ' Cargando... ' + attempts + '/20';
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-
-            if (!sdkReady) {
-                adBtn.disabled = false;
-                adText.textContent = 'VER VIDEO Y GANAR TON';
-                console.error('SDK no carg�. Objetos disponibles:', {
-                    Adsgram: typeof window.Adsgram,
-                    AdsgramSDK: typeof window.AdsgramSDK
-                });
-                return toast(' SDK no carg�. Revisa tu internet e intenta de nuevo.', 'error');
-            }
-
-            // 3.  INICIALIZACI�N OFICIAL (Adsgram)
-            adText.textContent = 'Cargando video...';
-            const sdk = window.Adsgram || window.AdsgramSDK;
-            const AdController = sdk.init({
-                blockId: "35856",
-                debug: true // MODO PRUEBA (quitar en producci�n)
-            });
-
-            // 4.  REPRODUCCI�N CON PROMESAS OFICIALES
-            AdController.show().then((result) => {
-                if (result && result.done) {
-                    localStorage.setItem('lastAdTime', Date.now().toString());
-                    adText.textContent = ' Acreditando...';
-
-                    supabase.rpc('registrar_vista_anuncio', {
-                        p_user_id: tgUser.id
-                    }).then((dbResult) => {
-                        if (dbResult.error) throw new Error(dbResult.error.message);
-
-                        if (dbResult.data && dbResult.data.success) {
-                            toast(' +0.001 TON ganado!', 'success');
-                            const adsEl = document.getElementById('adsToday');
-                            if (adsEl && dbResult.data.ads_today) {
-                                adsEl.textContent = dbResult.data.ads_today;
-                            }
-                            loadWalletData();
-                        } else {
-                            throw new Error(dbResult.data?.error || 'Error al acreditar');
-                        }
-                    }).catch((dbErr) => {
-                        console.error('Error Supabase:', dbErr);
-                        toast('Error al guardar recompensa', 'error');
-                    });
-                }
-            }).catch((error) => {
-                if (error && (error.description === 'user closed the ad' || error.state === 'destroy')) {
-                    toast(' Video cancelado', 'warning');
+                    loadWalletData();
                 } else {
-                    toast('Error: ' + (error?.description || 'No hay anuncios disponibles'), 'error');
-                    console.error('Adsgram Error:', error);
+                    throw new Error(dbResult.data?.error || 'Error al acreditar');
                 }
-            }).finally(() => {
-                adBtn.disabled = false;
-                adText.textContent = 'VER VIDEO Y GANAR TON';
+            }).catch((dbErr) => {
+                console.error('Error Supabase:', dbErr);
+                toast('Error al guardar recompensa', 'error');
             });
-        };
-
-        // ===== INICIAR APP =====
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
         }
-    })();
-    </script>
+    }).catch((error) => {
+        // El usuario cerr� el video o hubo error de red/inventario
+        if (error.description === 'user closed the ad' || error.state === 'destroy') {
+            toast(' Video cancelado', 'warning');
+        } else {
+            toast('Error: ' + (error.description || 'No hay anuncios disponibles'), 'error');
+            console.error('Adsgram Error:', error);
+        }
+    }).finally(() => {
+        // 5.  RESTAURACI�N SEGURA (Protecci�n XSS con textContent)
+        adBtn.disabled = false;
+        adText.textContent = 'VER VIDEO Y GANAR TON';
+    });
+};
+
+// === ADSGRAM: CARGAR CONTADOR DIARIO ===
+async function loadAdsCounter() {
+    try {
+        const result = await supabase.from('wallets')
+            .select('ads_today')
+            .eq('telegram_id', tgUser.id)
+            .single();
+        
+        if (result.data) {
+            const adsEl = document.getElementById('adsToday');
+            if (adsEl) adsEl.textContent = result.data.ads_today || 0;
+        }
+    } catch (e) {
+        console.error('Error cargando contador ads:', e);
+    }
+}
+async function dailyLogin(){
+    var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
+    if(result.error)throw result.error;
+    energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};
+    if(result.data.fichas_ganadas>0){
+        var sb=$('#streakBanner');
+        if(sb){sb.style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;}
+        toast('🔥 +'+result.data.fichas_ganadas+' fichas por racha!','success');
+    }
+    updateEnergy();
+    updateProfileStats();
+}
+
+function updateEnergy(){
+    var ec=$('#energyCount');if(ec)ec.textContent=energy.swipes;
+    var eb=$('#energyBadge');if(eb)eb.style.display=energy.swipes<=5?'inline-block':'none';
+    var tl=$('#triviaLeft');if(tl)tl.textContent=energy.trivia;
+}
+
+function updateProfileStats(){
+    var vs=$('#victoriasStat');if(vs)vs.textContent=energy.victorias;
+    var ms=$('#matchesStat');if(ms)ms.textContent=energy.matches||0;
+    var p=energy.rango.split(' ');
+    var ri=$('#rangoIcon');if(ri)ri.textContent=p[0];
+    var rn=$('#rangoName');if(rn)rn.textContent=p.slice(1).join(' ');
+}
+
+async function updateBalance(){
+    var result=await supabase.rpc('get_balance',{user_id:tgUser.id});
+    var st=$('#saldoTienda');if(st)st.textContent=result.data||0;
+    var fs=$('#fichasStat');if(fs)fs.textContent=result.data||0;
+}
+
+async function loadProfiles(){
+    var result=await supabase.from('users').select('*').neq('telegram_id',tgUser.id).limit(30);
+    if(result.error||!result.data.length){
+        var et=$('#emptyTitle');if(et)et.textContent='No hay perfiles';
+        var ed=$('#emptyDating');if(ed)ed.style.display='block';
+        var dc=$('#datingCardContainer');if(dc)dc.style.display='none';
+        return;
+    }
+    var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});
+    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('🔄 ¡Nuevos perfiles disponibles!','success')}
+    datingQueue=queue;dIdx=0;showProfile();
+}
+
+function showProfile(){
+    if(dIdx>=datingQueue.length){
+        var ed=$('#emptyDating');if(ed)ed.style.display='block';
+        var dc=$('#datingCardContainer');if(dc)dc.style.display='none';
+        return;
+    }
+    var p=datingQueue[dIdx];
+    var dc=$('#datingCardContainer');if(dc)dc.style.display='block';
+    var ed=$('#emptyDating');if(ed)ed.style.display='none';
+    var dn=$('#dName');if(dn)dn.textContent=p.first_name||'';
+    var da=$('#dAge');if(da)da.textContent=p.age||'';
+    var db=$('#dBio');if(db)db.textContent=p.bio||'';
+    var dp=$('#datingPhoto');
+    var dpl=$('#datingPlaceholder');
+    if(p.photo_url){if(dp){dp.src=p.photo_url;dp.style.display='block'}if(dpl)dpl.style.display='none'}
+    else{if(dp)dp.style.display='none';if(dpl){dpl.style.display='flex';dpl.textContent=(p.first_name||'?')[0].toUpperCase()}}
+}
+
+window.handleSwipe=async function(type){
+    if(dIdx>=datingQueue.length)return;
+    if(energy.swipes<=0)return toast('⚡ Sin energía','error');
+    var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});
+    if(result.data>=0){energy.swipes=result.data;updateEnergy()}
+    var currentProfile=datingQueue[dIdx];
+    interacted.add(currentProfile.telegram_id);
+    localStorage.setItem('lv_interacted',JSON.stringify(Array.from(interacted)));
+    if(type==='like'||type==='super'){
+        var isMutual=Math.random()<0.3;
+        if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}
+        else{toast('💘 ¡Like enviado!','success');dIdx++;showProfile()}
+    }else{toast('❌ Descartado');dIdx++;showProfile()}
+};window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
+window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
+window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switchSection('sectionChat');openChatWith(currentMatchId,currentMatchName)};
+
+window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>'}$('#chatInput').parentElement.classList.add('hidden');subscribeToChat()};
+window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
+window.sendGift=async function(giftType){if(!currentChatPartner)return;var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});if(result.error||!result.data.success)return toast(result.data?result.data.error:'Saldo insuficiente','error');toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');updateBalance();$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory()};
+window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});if(result.error)return toast('Error al enviar','error');input.value=''};
+async function loadChatHistory(){var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:true}).limit(50);renderMessages(result.data||[])}
+function renderMessages(msgs){var container=$('#chatMessages');if(container.querySelector('button'))container.innerHTML='';msgs.forEach(function(m){var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');var content='';if(m.gift_type==='rose')content+='🌹 ';if(m.gift_type==='chocolate')content+='🍫 ';if(m.gift_type==='ring')content+='💍 ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
+function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
+async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
+
+window.openTrivia=function(){if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.remove('hidden');tf.style.display='block'}backToTriviaMenu()};
+window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#triviaMenu').classList.remove('hidden')};
+window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
+
+function cleanupGame(){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=null;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none'}
+window.resetGames=function(){cleanupGame();var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tp=$('#triviaPreguntas');if(tp){tp.classList.add('hidden');tp.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.add('hidden');tf.style.display='none'}var cf=$('#compatFlow');if(cf){cf.classList.add('hidden');cf.style.display='none'}var gm=$('#gameMenu');if(gm){gm.classList.remove('hidden');gm.style.display='block'}};
+window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energía','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
+async function startGameLive(currentGameId,myPlayerNum){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=currentGameId;playerNum=myPlayerNum;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tm=$('#triviaMenu');if(tm){tm.classList.add('hidden');tm.style.display='none'}var op=$('#onlinePlayers');if(op){op.classList.add('hidden');op.style.display='none'}var cf=$('#compatFlow');if(cf)cf.classList.add('hidden');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var flow=$('#triviaFlow');if(flow){flow.classList.remove('hidden');flow.style.display='block'}var preg=$('#triviaPreguntas');if(preg){preg.classList.remove('hidden');preg.style.display='block'}loadQuestions();showQuestion();if(playerNum===2){triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe()}toast('🎮 ¡Juego iniciado!','success')}
+
+function loadQuestions(){var all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
+function showQuestion(){if(qIdx>=questions.length)return submitFinalAnswers();locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var q=questions[qIdx];var qt=$('#qTitle');if(qt)qt.textContent='Pregunta '+(qIdx+1)+'/'+questions.length;var qtx=$('#qText');if(qtx)qtx.textContent=q.q;var opts=$('#qOptions');if(!opts)return;opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){selectAnswer(i)};opts.appendChild(btn)});startTimer()}
+function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(function(){timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1)}},1000)}
+function updateTimerUI(){var td=$('#timerDisplay');if(!td)return;td.textContent='⏳ '+timeLeft+'s';td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
+function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);var correct=questions[qIdx].c;var btns=$$('#qOptions .option-btn');btns.forEach(function(b){b.disabled=true});if(btns[correct])btns[correct].classList.add('correct');if(idx>=0&&idx!==correct&&btns[idx])btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(function(){qIdx++;showQuestion()},800)}
+async function submitFinalAnswers(){if(!gameId)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm){wm.style.display='block';wm.textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...'}var col=playerNum===1?'player1_responses':'player2_responses';var updateObj={};updateObj[col]=responses;await supabase.from('trivia_games').update(updateObj).eq('id',gameId);if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);var correct=0;responses.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});var score=Math.round(correct/questions.length*100);showResult(score,'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!')}}
+async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl||!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return;if(!flow||flow.style.display==='none')return;if(!questions||questions.length===0)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm)wm.style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?'🎉 ¡Ganaste!':winner===0?'🤝 Empate':'😞 Perdiste';showResult(compat,msg)}
+function showResult(score,msg){var flow=$('#triviaFlow');if(!flow)return;flow.classList.remove('hidden');flow.style.display='block';$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none'});var resultEl=$('#triviaResultado');if(!resultEl)return;resultEl.classList.remove('hidden');resultEl.style.display='block';var cs=$('#compatScore');if(cs){cs.textContent=score+'%';cs.style.setProperty('--score',score+'%')}var cm=$('#compatMsg');if(cm)cm.textContent=msg}
+
+var compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
+window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ()};
+function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
+
+window.comprarFichas=async function(productId){if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');var productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};var producto=productos[productId];if(!producto)return toast('Producto inválido','error');try{var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});var data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast('📄 Factura abierta','success');setTimeout(function(){updateBalance()},5000)}catch(e){window.Telegram.WebApp.sendData(productId);toast('🔄 Procesando pago...','success')}};
+window.invitarJugador=async function(tid,tname){if(energy.trivia<=0)return toast('Sin energía','error');var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();if(result.error)return toast('Error al enviar reto','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();toast('📨 Reto enviado a '+tname+'. Esperando...','success')};
+window.acceptChallenge=async function(){if(!pendingChallengeId){toast('❌ Error: No hay reto pendiente','error');return}$('#challengeModal').classList.remove('show');await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId)};
+window.declineChallenge=async function(){$('#challengeModal').classList.remove('show');if(!pendingChallengeId)return;await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);pendingChallengeId=null;toast('Reto rechazado','error')};
+
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+})();
+</script>
 </body>
 </html>
