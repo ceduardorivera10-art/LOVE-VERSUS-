@@ -478,22 +478,30 @@ window.watchAdForTon = async function() {
         return toast(' Usuario no válido. Inicia sesión de nuevo', 'error');
     }
     
-    // 2.  MANEJO MEJORADO DE ESTADOS DEL SDK
-    if (!window.AdsgramSDK) {
-        if (document.querySelector('script[src*="adsgram.ai"]')) {
-            // SDK está CARGANDO (no ha terminado de cargar)
-            adBtn.disabled = true;
-            adBtn.querySelector('#adButtonText').textContent = ' Cargando SDK...';
-            setTimeout(() => {
-                adBtn.disabled = false;
-                adBtn.querySelector('#adButtonText').textContent = 'VER VIDEO Y GANAR TON';
-            }, 3000);
-            return toast(' SDK cargando... Espera 3 segundos', 'warning');
-        } else {
-            // SDK NO SE CARGÓ (error de red o bloqueo)
-            return toast(' SDK no cargado. Recarga la app', 'error');
+    // 2.  MANEJO MEJORADO DE ESTADOS DEL SDK (CON ESPERA ASÍNCRONA)
+if (!window.AdsgramSDK) {
+    adBtn.disabled = true;
+    adBtn.querySelector('#adButtonText').textContent = ' Cargando SDK...';
+    let sdkReady = false;
+    let attempts = 0;
+    const maxAttempts = 10; // 10 * 500ms = 5 segundos
+
+    // Esperar hasta 5 segundos a que el SDK cargue
+    while (!sdkReady && attempts < maxAttempts) {
+        if (window.AdsgramSDK) {
+            sdkReady = true;
+            break;
         }
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
+
+    if (!sdkReady) {
+        adBtn.disabled = false;
+        adBtn.querySelector('#adButtonText').textContent = 'VER VIDEO Y GANAR TON';
+        return toast(' SDK no cargó. Intenta de nuevo.', 'error');
+    }
+}
     
     // 3.  USO DE textContent PARA EVITAR XSS
     adBtn.disabled = true;
