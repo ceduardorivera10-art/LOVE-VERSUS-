@@ -179,7 +179,7 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <span id="adButtonText">VER VIDEO Y GANAR TON</span>
 </button>
 <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-    <p style="font-size:11px;color:#f7931a;margin:0;"> 30 segundos · <b>+0.001 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+    <p style="font-size:11px;color:#f7931a;margin:0;"> 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
 </div>
 <!-- FIN BLOQUE ADSGRAM -->
     <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;"> Comprar fichas con TON (mejor tasa)</button>
@@ -524,7 +524,7 @@ window.watchAdForTon = async function() {
                 if (dbResult.error) throw new Error(dbResult.error.message);
                 
                 if (dbResult.data && dbResult.data.success) {
-                    toast(' +0.001 TON ganado!', 'success');
+                    toast(' +0.0003 TON ganado!', 'success');
                     const adsEl = document.getElementById('adsToday');
                     if (adsEl && dbResult.data.ads_today) {
                         adsEl.textContent = dbResult.data.ads_today;
