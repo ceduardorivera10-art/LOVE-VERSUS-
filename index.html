@@ -777,7 +777,47 @@ window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switch
 
 window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>'}$('#chatInput').parentElement.classList.add('hidden');subscribeToChat()};
 window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
-window.sendGift=async function(giftType){if(!currentChatPartner)return;var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});if(result.error||!result.data.success)return toast(result.data?result.data.error:'Saldo insuficiente','error');toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');updateBalance();$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory()};
+window.sendGift=async function(giftType){
+    if(!currentChatPartner)return;
+    var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};
+    
+    // Primero verificar saldo
+    var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});
+    var cost=50;
+    if(giftType==='chocolate') cost=100;
+    if(giftType==='ring') cost=300;
+    
+    if(saldoResult.data < cost){
+        return toast('Saldo insuficiente (necesitas '+cost+' fichas)','error');
+    }
+    
+    // Enviar el mensaje
+    var result=await supabase.rpc('send_chat_message',{
+        p_sender:tgUser.id,
+        p_receiver:currentChatPartner.id,
+        p_message:'🎁 ¡Te ha enviado un regalo!',
+        p_gift:giftType
+    });
+    
+    if(result.error||!result.data.success){
+        return toast(result.data?result.data.error:'Error al enviar','error');
+    }
+    
+    // Restar fichas
+    var updateResult=await supabase.rpc('update_fichas_balance',{
+        p_user_id:tgUser.id,
+        p_fichas: -cost
+    });
+    
+    if(updateResult.error||!updateResult.data.success){
+        return toast('Error al actualizar saldo','error');
+    }
+    
+    toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');
+    updateBalance();
+    $('#chatInput').parentElement.classList.remove('hidden');
+    loadChatHistory();
+};
 window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});if(result.error)return toast('Error al enviar','error');input.value=''};
 async function loadChatHistory(){var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:true}).limit(50);renderMessages(result.data||[])}
 function renderMessages(msgs){var container=$('#chatMessages');if(container.querySelector('button'))container.innerHTML='';msgs.forEach(function(m){var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');var content='';if(m.gift_type==='rose')content+='🌹 ';if(m.gift_type==='chocolate')content+='🍫 ';if(m.gift_type==='ring')content+='💍 ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
