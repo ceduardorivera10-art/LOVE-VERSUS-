@@ -775,7 +775,96 @@ window.handleSwipe=async function(type){
 window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
 window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switchSection('sectionChat');openChatWith(currentMatchId,currentMatchName)};
 
-window.openChatWith=async function(userId,userName){currentChatPartner={id:userId,name:userName};$('#chatPartnerName').textContent=userName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);if(msgsResult.data&&msgsResult.data.length>0){$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();return}var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});if(saldoResult.data<50){$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🪙</div><h4 style="margin-bottom:8px;">Necesitas fichas para iniciar</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">El costo mínimo es de 50 fichas.</p><button onclick="switchSection(\'sectionGames\')" class="btn btn-primary">Ir a la Tienda</button></div>'}else{$('#chatMessages').innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><h4 style="margin-bottom:8px;">Envía un regalo para desbloquear</h4><p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Si es un match mutuo, el chat es gratis.</p><button onclick="sendGift(\'rose\')" class="btn btn-primary" style="margin-bottom:10px;">🌹 Rosa (50🪙)</button><button onclick="sendGift(\'chocolate\')" class="btn btn-outline" style="margin-bottom:10px;">🍫 Chocolate (100🪙)</button><button onclick="sendGift(\'ring\')" class="btn btn-outline">💍 Anillo (300🪙)</button></div>'}$('#chatInput').parentElement.classList.add('hidden');subscribeToChat()};
+window.openChatWith=async function(userId,userName){
+    currentChatPartner={id:userId,name:userName};
+    $('#chatPartnerName').textContent=userName;
+    $('#chatUsersList').classList.add('hidden');
+    $('#chatWindow').classList.remove('hidden');
+    
+    // Verificar si ya tiene el chat desbloqueado
+    var unlockResult=await supabase.from('chat_unlocks').select('id').eq('user_id',tgUser.id).eq('target_user_id',userId).limit(1);
+    
+    if(unlockResult.data&&unlockResult.data.length>0){
+        // Chat ya desbloqueado, mostrar mensajes
+        $('#chatInput').parentElement.classList.remove('hidden');
+        loadChatHistory();
+        subscribeToChat();
+        return;
+    }
+    
+    // Verificar si hay historial de mensajes (match mutuo)
+    var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);
+    
+    if(msgsResult.data&&msgsResult.data.length>0){
+        $('#chatInput').parentElement.classList.remove('hidden');
+        loadChatHistory();
+        subscribeToChat();
+        return;
+    }
+    
+    // Mostrar modal de desbloqueo premium
+    showUnlockModal(userId,userName);
+};
+
+function showUnlockModal(targetId,targetName){
+    var modal=document.createElement('div');
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
+    
+    var box=document.createElement('div');
+    box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
+    
+    box.innerHTML=`
+        <div style="font-size:40px;margin-bottom:10px;"></div>
+        <h3 style="color:var(--accent-gold);margin-bottom:12px;">Desbloquear Chat con ${targetName}</h3>
+        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Elige c�mo quieres desbloquear:</p>
+        
+        <button onclick="unlockChat('${targetId}','fichas')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">
+             100 Fichas
+        </button>
+        
+        <button onclick="unlockChat('${targetId}','ton')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">
+             0.01 TON
+        </button>
+        
+        <button onclick="unlockChat('${targetId}','ads')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">
+             2 Tokens Premium (6 anuncios)
+        </button>
+        
+        <button onclick="document.body.removeChild(this.parentElement.parentElement)" style="margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;">
+             Cancelar
+        </button>
+    `;
+    
+    modal.appendChild(box);
+    modal.onclick=function(e){if(e.target===modal)document.body.removeChild(modal)};
+    document.body.appendChild(modal);
+}
+
+window.unlockChat=async function(targetId,metodo){
+    var result=await supabase.rpc('unlock_direct_chat',{
+        p_user_id:tgUser.id,
+        p_target_id:parseInt(targetId),
+        p_metodo:metodo
+    });
+    
+    if(result.error){
+        toast('Error: '+result.error.message,'error');
+        return;
+    }
+    
+    if(!result.data.success){
+        toast(result.data.error,'error');
+        return;
+    }
+    
+    toast(' Chat desbloqueado','success');
+    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    
+    // Abrir chat
+    $('#chatInput').parentElement.classList.remove('hidden');
+    loadChatHistory();
+    subscribeToChat();
+};
 window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
 window.sendGift=async function(giftType){
     if(!currentChatPartner)return;
