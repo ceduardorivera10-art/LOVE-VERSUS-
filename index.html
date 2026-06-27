@@ -141,6 +141,22 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
 </div>
 <!-- FIN BLOQUE REFERIDOS VISUAL -->
+<!-- INICIO BLOQUE MISIONES DIARIAS -->
+<div style="background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(51,144,236,0.15);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h4 style="color:var(--accent-blue);font-size:16px;font-weight:700;letter-spacing:0.5px;"> Misiones Diarias</h4>
+        <span style="background:rgba(51,144,236,0.15);color:var(--accent-blue);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;" id="missionsCompleted">0/4</span>
+    </div>
+    
+    <div id="missionsList" style="display:flex;flex-direction:column;gap:10px;">
+        <p style="color:var(--text-secondary);font-size:13px;text-align:center;">Cargando misiones...</p>
+    </div>
+    
+    <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">
+         Reclamar Recompensas
+    </button>
+</div>
+<!-- FIN BLOQUE MISIONES DIARIAS -->
 <!-- INICIO BLOQUE BILLETERA VISUAL -->
 <div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
@@ -269,7 +285,7 @@ function switchSection(id){
     $$('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.section===id)});
     var mainEl=$('#main');
     if(mainEl)mainEl.scrollTop=0;
- if(id==='sectionProfile'){loadWalletData();loadAdsCounter()}
+ if(id==='sectionProfile'){loadWalletData();loadAdsCounter();loadDailyMissions()}
     if(id==='sectionChat')loadChatUsers();
 }
 
@@ -552,7 +568,116 @@ window.watchAdForTon = async function() {
         adText.textContent = 'VER VIDEO Y GANAR TON';
     });
 };
+// === MISIONES DIARIAS ===
+async function loadDailyMissions() {
+    try {
+        const result = await supabase.rpc('check_daily_missions', { p_user_id: tgUser.id });
+        
+        if (result.data && result.data.missions) {
+            const missions = result.data.missions;
+            const missionsList = document.getElementById('missionsList');
+            const missionsCompleted = document.getElementById('missionsCompleted');
+            
+            if (missionsCompleted) {
+                missionsCompleted.textContent = 
+                    (missions.ver_5_anuncios.completed ? 1 : 0) +
+                    (missions.ganar_1_trivia.completed ? 1 : 0) +
+                    (missions.enviar_3_regalos.completed ? 1 : 0) +
+                    (missions.desbloquear_1_chat.completed ? 1 : 0) + '/4';
+            }
+            
+            if (missionsList) {
+                let html = '';
+                
+                // Misión 1: Ver 5 anuncios
+                const m1 = missions.ver_5_anuncios;
+                html += `
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                            <span style="font-size:13px;font-weight:600;">${m1.completed ? '' : ''} Ver 5 anuncios</span>
+                            <span style="font-size:11px;color:var(--accent-gold);">+${m1.reward} fichas</span>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
+                            <div style="background:${m1.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m1.progress/m1.target)*100}%;transition:width 0.3s;"></div>
+                        </div>
+                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m1.progress}/${m1.target}</p>
+                    </div>
+                `;
+                
+                // Misión 2: Ganar 1 trivia
+                const m2 = missions.ganar_1_trivia;
+                html += `
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                            <span style="font-size:13px;font-weight:600;">${m2.completed ? '' : ''} Ganar 1 trivia</span>
+                            <span style="font-size:11px;color:var(--accent-gold);">+${m2.reward} fichas</span>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
+                            <div style="background:${m2.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m2.progress/m2.target)*100}%;transition:width 0.3s;"></div>
+                        </div>
+                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m2.progress}/${m2.target}</p>
+                    </div>
+                `;
+                
+                // Misión 3: Enviar 3 regalos
+                const m3 = missions.enviar_3_regalos;
+                html += `
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                            <span style="font-size:13px;font-weight:600;">${m3.completed ? '' : ''} Enviar 3 regalos</span>
+                            <span style="font-size:11px;color:var(--accent-gold);">+${m3.reward} fichas</span>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
+                            <div style="background:${m3.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m3.progress/m3.target)*100}%;transition:width 0.3s;"></div>
+                        </div>
+                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m3.progress}/${m3.target}</p>
+                    </div>
+                `;
+                
+                // Misión 4: Desbloquear 1 chat
+                const m4 = missions.desbloquear_1_chat;
+                html += `
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                            <span style="font-size:13px;font-weight:600;">${m4.completed ? '' : ''} Desbloquear 1 chat</span>
+                            <span style="font-size:11px;color:var(--accent-gold);">+${m4.reward} fichas</span>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
+                            <div style="background:${m4.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m4.progress/m4.target)*100}%;transition:width 0.3s;"></div>
+                        </div>
+                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m4.progress}/${m4.target}</p>
+                    </div>
+                `;
+                
+                missionsList.innerHTML = html;
+            }
+        }
+    } catch (e) {
+        console.error('Error cargando misiones:', e);
+        toast('Error al cargar misiones', 'error');
+    }
+}
 
+window.claimMissionRewards = async function() {
+    try {
+        const result = await supabase.rpc('claim_mission_rewards', { p_user_id: tgUser.id });
+        
+        if (result.error) {
+            return toast('Error: ' + result.error.message, 'error');
+        }
+        
+        if (result.data && result.data.success) {
+            toast(' +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            loadWalletData();
+            loadDailyMissions();
+        } else {
+            toast(result.data.error || 'No hay recompensas disponibles', 'error');
+        }
+    } catch (e) {
+        toast('Error al reclamar recompensas', 'error');
+        console.error(e);
+    }
+};
 // === ADSGRAM: CARGAR CONTADOR DIARIO ===
 async function loadAdsCounter() {
     try {
