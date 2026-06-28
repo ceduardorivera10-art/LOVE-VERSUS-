@@ -331,8 +331,24 @@ async function init(){
         loadProfiles();
         
         supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('‚öîÔ∏è ¬°Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
-    }catch(e){console.error(e);toast('Error de conexi√≥n','error');var rb=$('#retryBtn');if(rb)rb.style.display='inline-block'}
-    setTimeout(function(){$('#loader').classList.add('hidden')},600);
+    }catch(e){
+    console.error('Error en init:', e);
+    toast('Error: '+(e.message||'Desconocido'),'error');
+    // Mostrar secciÛn de dating aunque haya error
+    $('#sectionDating').classList.add('active');
+    $('#emptyDating').style.display='block';
+    $('#emptyTitle').textContent='Error al cargar';
+    $('#emptyDesc').textContent=e.message||'Revisa tu conexiÛn';
+    var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
+}
+        // Ocultar loader SOLO cuando todo terminÛ (con tiempo mÌnimo de 1.5s para UX)
+    setTimeout(function(){
+        $('#loader').classList.add('hidden');
+        // Asegurar que al menos una secciÛn estÈ visible
+        if(!document.querySelector('.section.active')){
+            $('#sectionDating').classList.add('active');
+        }
+    }, 1500);
 }
 
 window.copyReferralCode=function(){
