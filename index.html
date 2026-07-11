@@ -75,76 +75,76 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <body>
 <div class="app-container" id="appContainer">
 <header class="header">
-<div class="brand">ðŸ’˜ Love<span style="color:var(--accent-gold)">âœ¦</span>Versus</div>
+<div class="brand">❤️ Love<span style="color:var(--accent-gold)">✦</span>Versus</div>
 <div class="user-pill" onclick="switchSection('sectionProfile')">
 <div class="avatar" id="headerAvatar">?</div>
 <span id="headerName" style="font-size:14px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Cargando...</span>
-<span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">âš¡<span id="energyCount">20</span></span>
+<span id="energyBadge" style="background:#ff9500;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;display:none;">⚡<span id="energyCount">20</span></span>
 </div>
 </header>
 <main class="main" id="main">
 <section id="sectionDating" class="section active">
-<div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">ðŸ”¥ Racha de <span id="streakDays">1</span> dÃ­a(s). Â¡Has ganado <span id="streakFichas">5</span> fichas!</div>
+<div id="streakBanner" style="display:none;background:linear-gradient(135deg,var(--accent-gold),#e0c76e);color:#000;border-radius:16px;padding:12px;text-align:center;font-weight:600;margin-bottom:16px;">🔥 Racha de <span id="streakDays">1</span> día(s). ¡Has ganado <span id="streakFichas">5</span> fichas!</div>
 <div id="datingCardContainer">
 <div class="dating-card" id="datingCard"><img class="dating-photo" id="datingPhoto" style="display:none;"><div class="dating-placeholder" id="datingPlaceholder"></div><div class="dating-info"><div style="font-size:22px;font-weight:700;"><span id="dName"></span> <span id="dAge" style="font-size:18px;color:var(--text-secondary);"></span></div><p id="dBio" style="font-size:14px;color:var(--text-secondary);margin-top:6px;"></p></div></div>
-<div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">âŒ</button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">â­</button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">ðŸ’˜</button></div>
+<div class="dating-actions" id="datingActions"><button class="action-btn" style="color:#ff3b30;border-color:#ff3b3050;" onclick="handleSwipe('dislike')">❌</button><button class="action-btn" style="color:var(--accent-gold);border-color:var(--accent-gold);width:50px;height:50px;font-size:22px;" onclick="handleSwipe('super')">⭐</button><button class="action-btn" style="color:var(--accent-green);border-color:var(--accent-green)50;" onclick="handleSwipe('like')">❤️</button></div>
 </div>
-<div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;">ðŸ’”</div><h3 id="emptyTitle">No hay mÃ¡s perfiles</h3><p id="emptyDesc">Vuelve mÃ¡s tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
+<div id="emptyDating" style="text-align:center;padding:60px 20px;color:#6e6e6e;display:none;"><div style="font-size:60px;opacity:.6;margin-bottom:16px;">🔍</div><h3 id="emptyTitle">No hay más perfiles</h3><p id="emptyDesc">Vuelve más tarde para ver nuevos usuarios.</p><button onclick="location.reload()" style="margin-top:16px;background:var(--accent-blue);color:#fff;border:none;padding:10px 24px;border-radius:20px;display:none;" id="retryBtn">Reintentar</button></div>
 </section>
 <section id="sectionChat" class="section">
-<h3 style="margin-bottom:16px;">ðŸ’¬ Mensajes</h3>
+<h3 style="margin-bottom:16px;">💬 Mensajes</h3>
 <div id="chatUsersList"></div>
 <div id="chatWindow" class="hidden" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid #1f1f1f;display:flex;flex-direction:column;height:70vh;">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">â†</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;"><button onclick="closeChat()" style="background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;">←</button><span id="chatPartnerName" style="font-weight:700;font-size:16px;"></span></div>
 <div id="chatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>
-<div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">âž¤</button></div>
+<div style="display:flex;gap:8px;"><input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;padding:12px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:14px;"><button onclick="sendMessage()" style="background:var(--accent-blue);border:none;border-radius:12px;padding:0 16px;color:#fff;font-size:18px;cursor:pointer;">➤</button></div>
 </div>
 </section>
 <section id="sectionGames" class="section">
 <div id="gameMenu">
-<div class="card" onclick="openTrivia()"><h3>ðŸ§  Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
-<div class="card" onclick="openCompatTest()"><h3>ðŸ’ž Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
-<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">ðŸª™ Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">ðŸª™ 50 Fichas (50 â­)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">ðŸš€ Boost Perfil (100 â­)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">ðŸ† Entrada Torneo (200 â­)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
+<div class="card" onclick="openTrivia()"><h3>🧠 Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
+<div class="card" onclick="openCompatTest()"><h3>💞 Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
+<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🛒 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🛒 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
 </div>
 <div id="triviaFlow" class="hidden">
 <div id="triviaMenu">
 <h3 style="margin-bottom:16px;">Nueva partida de Trivia</h3>
-<button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()">ðŸŒ Ver jugadores en lÃ­nea</button>
-<button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()">ðŸ§ª Jugar solo (prÃ¡ctica)</button>
-<button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">ðŸ”™ Volver</button>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="showOnlinePlayers()">🌐 Ver jugadores en línea</button>
+<button class="btn btn-outline" style="margin-bottom:10px;" onclick="startSoloGame()">🧪 Jugar solo (práctica)</button>
+<button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="resetGames()">🔙 Volver</button>
 </div>
-<div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">â³ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
+<div id="triviaPreguntas" class="hidden"><div class="timer" id="timerDisplay">⏳ 15s</div><h3 id="qTitle" style="margin-bottom:8px;">Pregunta 1/5</h3><p id="qText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="qOptions"></div><p id="waitingMsg" style="color:var(--accent-gold);text-align:center;margin-top:16px;display:none;">Esperando al oponente...</p></div>
 <div id="triviaResultado" class="hidden" style="text-align:center;">
 <h3 style="margin-bottom:8px;">Resultado</h3>
 <div class="compat-circle" id="compatScore">0%</div>
 <p id="compatMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p>
-<button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()">ðŸ”„ Jugar otra vez</button>
-<button class="btn btn-outline" onclick="resetGames()">ðŸ”™ Volver al menÃº</button>
+<button class="btn btn-primary" style="margin-bottom:10px;" onclick="startSoloGame()">🔄 Jugar otra vez</button>
+<button class="btn btn-outline" onclick="resetGames()">🔙 Volver al menú</button>
 </div>
 </div>
-<div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en lÃ­nea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">ðŸ”™ Volver</button></div>
+<div id="onlinePlayers" class="hidden"><h3 style="margin-bottom:16px;">Jugadores en línea</h3><div id="playersList"></div><button class="btn" style="margin-top:16px;background:#2a2a2a;color:#fff;" onclick="backToTriviaMenu()">🔙 Volver</button></div>
 <div id="compatFlow" class="hidden">
 <div id="compatPreguntas"><h3 id="cqTitle" style="margin-bottom:8px;">Pregunta 1/10</h3><p id="cqText" style="font-size:18px;margin-bottom:20px;line-height:1.4;"></p><div id="cqOptions"></div></div>
-<div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menÃº</button></div>
+<div id="compatResultado" class="hidden" style="text-align:center;"><h3 style="margin-bottom:8px;">Tu perfil de cita ideal</h3><div class="compat-circle" id="compatTestScore" style="--score:0%;background:conic-gradient(var(--accent-gold) 0% var(--score),#2a2a2a var(--score) 100%);">0%</div><p id="compatTestMsg" style="font-size:16px;line-height:1.5;margin-bottom:20px;"></p><button class="btn btn-primary" onclick="resetGames()">Volver al menú</button></div>
 </div>
 </section>
 <section id="sectionProfile" class="section">
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
-<div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">ðŸŸ¤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
+<div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
 
 <!-- INICIO BLOQUE REFERIDOS VISUAL -->
 <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
-    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">ðŸŽ Tu CÃ³digo de Invitado</h4>
+    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
     <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
-    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">ðŸ“‹ Copiar y Compartir</button>
+    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar y Compartir</button>
     <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
 </div>
 <!-- FIN BLOQUE REFERIDOS VISUAL -->
 <!-- INICIO BLOQUE MISIONES DIARIAS -->
 <div style="background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(51,144,236,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h4 style="color:var(--accent-blue);font-size:16px;font-weight:700;letter-spacing:0.5px;"> Misiones Diarias</h4>
+        <h4 style="color:var(--accent-blue);font-size:16px;font-weight:700;letter-spacing:0.5px;">⭐ Misiones Diarias</h4>
         <span style="background:rgba(51,144,236,0.15);color:var(--accent-blue);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;" id="missionsCompleted">0/4</span>
     </div>
     
@@ -153,15 +153,15 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     </div>
     
     <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">
-         Reclamar Recompensas
+        ⭐ Reclamar Recompensas
     </button>
 </div>
 <!-- FIN BLOQUE MISIONES DIARIAS -->
 <!-- INICIO BLOQUE BILLETERA VISUAL -->
 <div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;"> Tu Billetera</h4>
-        <span style="background:rgba(52,199,89,0.15);color:var(--accent-green);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;"> ACTIVA</span>
+        <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;">💰 Tu Billetera</h4>
+        <span style="background:rgba(52,199,89,0.15);color:var(--accent-green);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;">🟢 ACTIVA</span>
     </div>
     
     <!-- Saldo Total (Número grande protagonista) -->
@@ -173,12 +173,12 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <!-- Doble Balance (Pendiente vs Disponible) -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
         <div style="background:rgba(255,149,0,0.08);border:1px solid rgba(255,149,0,0.3);border-radius:12px;padding:12px;text-align:center;">
-            <div style="font-size:10px;color:#ff9500;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;"> Pendiente</div>
+            <div style="font-size:10px;color:#ff9500;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">⏳ Pendiente</div>
             <div style="font-size:18px;font-weight:700;color:#fff;" id="walletPendiente">0.0000</div>
             <div style="font-size:9px;color:var(--text-secondary);margin-top:2px;">Por liquidar</div>
         </div>
         <div style="background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.3);border-radius:12px;padding:12px;text-align:center;">
-            <div style="font-size:10px;color:var(--accent-green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;"> Disponible</div>
+            <div style="font-size:10px;color:var(--accent-green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">✅ Disponible</div>
             <div style="font-size:18px;font-weight:700;color:#fff;" id="walletDisponible">0.0000</div>
             <div style="font-size:9px;color:var(--text-secondary);margin-top:2px;">Retirable</div>
         </div>
@@ -186,40 +186,40 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     
     <!-- Botones de Acción (Reciclaje de Capital) -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);"> Depositar TON</button>
-        <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);"> Retirar</button>
+        <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);">💰 Depositar TON</button>
+        <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);">💰 Retirar</button>
     </div>
     <!-- INICIO BLOQUE ADSGRAM -->
 <button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
-    <span style="font-size:20px;"></span>
+    <span style="font-size:20px;">💰</span>
     <span id="adButtonText">VER VIDEO Y GANAR TON</span>
 </button>
 <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-    <p style="font-size:11px;color:#f7931a;margin:0;"> 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+    <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
 </div>
 <!-- FIN BLOQUE ADSGRAM -->
-    <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;"> Comprar fichas con TON (mejor tasa)</button>
+    <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
     
     <!-- Info de seguridad (Genera confianza) -->
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
-        <p style="font-size:10px;color:var(--text-secondary);"> Fondos protegidos · Retiros mínimos 1 TON · Auditoría blockchain</p>
+        <p style="font-size:10px;color:var(--text-secondary);">🛡️ Fondos protegidos · Retiros mínimos 1 TON · Auditoría blockchain</p>
     </div>
 </div>
 <!-- FIN BLOQUE BILLETERA VISUAL -->
 </section>
 </main>
 <nav class="bottom-nav">
-<button class="nav-item active" data-section="sectionDating"><span class="nav-icon">ðŸ’˜</span>Citas</button>
-<button class="nav-item" data-section="sectionChat"><span class="nav-icon">ðŸ’¬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
-<button class="nav-item" data-section="sectionGames"><span class="nav-icon">ðŸ•¹ï¸</span>Versus</button>
-<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">ðŸ‘¤</span>Perfil</button>
+<button class="nav-item active" data-section="sectionDating"><span class="nav-icon">❤️</span>Citas</button>
+<button class="nav-item" data-section="sectionChat"><span class="nav-icon">💬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
+<button class="nav-item" data-section="sectionGames"><span class="nav-icon">🕹️</span>Versus</button>
+<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">👤</span>Perfil</button>
 </nav>
 </div>
 <div id="challengeModal" class="challenge-modal" onclick="if(event.target===this)declineChallenge()">
 <div class="challenge-box">
-<div style="font-size:48px;margin-bottom:10px;">âš”ï¸</div>
-<h3 style="margin-bottom:8px;">Â¡Te han retado!</h3>
-<p style="color:var(--text-secondary);margin-bottom:20px;">Â¿Aceptas el reto de Trivia?</p>
+<div style="font-size:48px;margin-bottom:10px;">⚔️</div>
+<h3 style="margin-bottom:8px;">¡Te han retado!</h3>
+<p style="color:var(--text-secondary);margin-bottom:20px;">¿Aceptas el reto de Trivia?</p>
 <div class="challenge-actions">
 <button class="btn btn-decline" onclick="declineChallenge()">Rechazar</button>
 <button class="btn btn-accept" onclick="acceptChallenge()">Aceptar</button>
@@ -228,12 +228,12 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 </div>
 <div id="matchModal" class="challenge-modal" onclick="if(event.target===this)closeMatchModal()">
 <div class="challenge-box" style="border-color: var(--accent-rose);">
-<div style="font-size:60px;margin-bottom:10px;">ðŸ’˜</div>
-<h2 style="color: var(--accent-rose); margin-bottom: 10px; font-size: 28px;">Â¡Es un Match!</h2>
-<p style="color:var(--text-secondary);margin-bottom:20px;">A <span id="matchName" style="color: #fff; font-weight: bold;"></span> tambiÃ©n le gustas.</p>
+<div style="font-size:60px;margin-bottom:10px;">❤️</div>
+<h2 style="color: var(--accent-rose); margin-bottom: 10px; font-size: 28px;">¡Es un Match!</h2>
+<p style="color:var(--text-secondary);margin-bottom:20px;">A <span id="matchName" style="color: #fff; font-weight: bold;"></span> también le gustas.</p>
 <div class="challenge-actions">
 <button class="btn btn-decline" onclick="closeMatchModal()">Seguir buscando</button>
-<button class="btn btn-accept" style="background: var(--accent-rose);" onclick="chatWithMatch()">ðŸ’¬ Chatear ahora</button>
+<button class="btn btn-accept" style="background: var(--accent-rose);" onclick="chatWithMatch()">💬 Chatear ahora</button>
 </div>
 </div>
 </div>
@@ -248,10 +248,10 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     script.setAttribute('data-block-id', '35856');
     script.async = true;
     script.onload = function() {
-        console.log(' Adsgram SDK cargado');
+        console.log('✅ Adsgram SDK cargado');
     };
     script.onerror = function() {
-        console.error(' Error cargando Adsgram SDK');
+        console.error('❌ Error cargando Adsgram SDK');
     };
     document.head.appendChild(script);
 })();
@@ -261,7 +261,7 @@ var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
 var PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
 var supabase,tgUser;
-var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'ðŸŸ¤ Bronce'};
+var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'🟤 Bronce'};
 var gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15;
 var datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
 var compatAnswers=[],currentChatPartner=null,chatChannel=null,triviaChannel=null;
@@ -294,6 +294,13 @@ $$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switch
 function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
 
 async function init(){
+    // 🔥 FORZAR OCULTACIÓN DEL LOADER PARA EVITAR CARGA INFINITA
+    var loaderEl = document.getElementById('loader');
+    if(loaderEl) {
+        loaderEl.style.display = 'none'; // Ocultar inmediatamente
+        loaderEl.classList.add('hidden'); // Asegurar clase
+    }
+
     if(window.Telegram&&window.Telegram.WebApp){
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.ready();
@@ -312,7 +319,6 @@ async function init(){
         supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
         await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
         
-        // LLAMADA A LA NUEVA WALLET (Pieza 1: Referidos)
         var urlParams=new URLSearchParams(window.location.search);
         var refCode=urlParams.get('ref');
         var walletResult=await supabase.rpc('initialize_user_wallet',{p_telegram_id:tgUser.id,p_referral_code:refCode||null});
@@ -330,25 +336,24 @@ async function init(){
         updateBalance();
         loadProfiles();
         
-        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('âš”ï¸ Â¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
+        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
     }catch(e){
-    console.error('Error en init:', e);
-    toast('Error: '+(e.message||'Desconocido'),'error');
-    // Mostrar sección de dating aunque haya error
-    $('#sectionDating').classList.add('active');
-    $('#emptyDating').style.display='block';
-    $('#emptyTitle').textContent='Error al cargar';
-    $('#emptyDesc').textContent=e.message||'Revisa tu conexión';
-    var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
-}
-        // Ocultar loader SOLO cuando todo terminó (con tiempo mínimo de 1.5s para UX)
+        console.error('❌ Error en init:', e);
+        // Mostrar el error en pantalla también
+        alert('Error: ' + (e.message || 'Desconocido') + '\nRevisa la consola para más detalles.');
+        $('#sectionDating').classList.add('active');
+        $('#emptyDating').style.display='block';
+        $('#emptyTitle').textContent='Error al cargar';
+        $('#emptyDesc').textContent=e.message||'Revisa tu conexión a Internet (CDN bloqueado)';
+        var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
+    }
+    // Cualquier fallo en el catch ya fue manejado, pero dejamos el timeout por si acaso
     setTimeout(function(){
-        $('#loader').classList.add('hidden');
         // Asegurar que al menos una sección esté visible
         if(!document.querySelector('.section.active')){
             $('#sectionDating').classList.add('active');
         }
-    }, 1500);
+    }, 1000);
 }
 
 window.copyReferralCode=function(){
@@ -356,20 +361,19 @@ window.copyReferralCode=function(){
     if(!c)return;
     var code=c.textContent;
     if(code&&code!=='Cargando...'){
-        var shareUrl='https://t.me/share/url?url='+encodeURIComponent('https://t.me/TU_BOT?start=ref_'+code)+'&text='+encodeURIComponent('Â¡Ãšnete a LoveVersus y gana TON real! Usa mi cÃ³digo: '+code);
+        var shareUrl='https://t.me/share/url?url='+encodeURIComponent('https://t.me/TU_BOT?start=ref_'+code)+'&text='+encodeURIComponent('¡Únete a LoveVersus y gana TON real! Usa mi código: '+code);
         if(navigator.share){
-            navigator.share({title:'LoveVersus',text:'Â¡Gana TON real jugando! Mi cÃ³digo: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
+            navigator.share({title:'LoveVersus',text:'¡Gana TON real jugando! Mi código: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
         }else{
             if(navigator.clipboard){
                 navigator.clipboard.writeText(code);
-                toast('ðŸ“‹ CÃ³digo '+code+' copiado','success');
+                toast('📋 Código '+code+' copiado','success');
             }else{
-                toast('Tu cÃ³digo es: '+code,'success');
+                toast('Tu código es: '+code,'success');
             }
         }
     }
 };
-// === BILLETERA: CARGAR SALDOS REALES ===
 async function loadWalletData() {
     try {
         const result = await supabase.from('wallets')
@@ -381,7 +385,6 @@ async function loadWalletData() {
             const w = result.data;
             const total = (Number(w.saldo_pendiente || 0) + Number(w.saldo_disponible || 0)).toFixed(4);
             
-            // Actualizar UI
             const tEl = document.getElementById('walletTotalTon');
             if (tEl) tEl.textContent = total;
             
@@ -402,7 +405,6 @@ async function loadWalletData() {
     }
 }
 
-// === BILLETERA: MODAL DE ACCIONES ===
 window.showWalletModal = function(action) {
     const modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
@@ -412,7 +414,7 @@ window.showWalletModal = function(action) {
     
     if (action === 'deposit') {
         box.innerHTML = `
-            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <div style="font-size:40px;margin-bottom:10px;">💰</div>
             <h3 style="color:var(--accent-gold);margin-bottom:12px;">Depositar TON</h3>
             <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Envía TON a tu wallet interna</p>
             <input type="number" id="depositAmount" placeholder="Cantidad en TON" step="0.1" min="0.1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;">
@@ -420,7 +422,7 @@ window.showWalletModal = function(action) {
         `;
     } else if (action === 'withdraw') {
         box.innerHTML = `
-            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <div style="font-size:40px;margin-bottom:10px;">💰</div>
             <h3 style="color:var(--accent-gold);margin-bottom:12px;">Retirar TON</h3>
             <p style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">Mínimo: 1 TON · Fee de red incluido</p>
             <p style="color:var(--accent-green);font-size:12px;margin-bottom:16px;">Disponible: <span id="availDisplay">0.0000</span> TON</p>
@@ -430,7 +432,7 @@ window.showWalletModal = function(action) {
         `;
     } else if (action === 'buyfichas') {
         box.innerHTML = `
-            <div style="font-size:40px;margin-bottom:10px;"></div>
+            <div style="font-size:40px;margin-bottom:10px;">💰</div>
             <h3 style="color:var(--accent-gold);margin-bottom:12px;">Comprar Fichas</h3>
             <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Mejor tasa que la tienda</p>
             <button onclick="buyFichasPack(50,0.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">50 Fichas · 0.5 TON</button>
@@ -440,7 +442,7 @@ window.showWalletModal = function(action) {
     }
     
     const closeBtn = document.createElement('button');
-    closeBtn.textContent = ' Cerrar';
+    closeBtn.textContent = '✖️ Cerrar';
     closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
     closeBtn.onclick = function() { document.body.removeChild(modal); };
     
@@ -459,7 +461,7 @@ window.showWalletModal = function(action) {
 window.processDeposit = async function() {
     const amount = parseFloat(document.getElementById('depositAmount').value);
     if (!amount || amount < 0.1) return toast('Mínimo 0.1 TON', 'error');
-    toast(' Función de depósito en desarrollo', 'success');
+    toast('✅ Función de depósito en desarrollo', 'success');
     document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
 };
 
@@ -481,7 +483,7 @@ window.processWithdraw = async function() {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
     
-    toast(' Retiro solicitado. Procesando...', 'success');
+    toast('✅ Retiro solicitado. Procesando...', 'success');
     document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
     loadWalletData();
 };
@@ -496,28 +498,26 @@ window.buyFichasPack = async function(fichas, ton) {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
     
-    toast(' +' + fichas + ' fichas compradas', 'success');
+    toast('✅ +' + fichas + ' fichas compradas', 'success');
     document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
     loadWalletData();
 };
-// === ADSGRAM: VER VIDEO Y GANAR TON (VERIFICADO + MEJORAS) ===
+
 window.watchAdForTon = async function() {
     const adBtn = document.getElementById('adButton');
     const adText = document.getElementById('adButtonText');
     if (!adBtn || !adText) return toast('Error: UI no encontrada', 'error');
     
-    // 1.  VALIDACIÓN DE SEGURIDAD (Anti-manipulación de ID)
     if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) {
-        return toast(' Usuario no válido. Inicia sesión de nuevo', 'error');
+        return toast('❌ Usuario no válido. Inicia sesión de nuevo', 'error');
     }
     
-    // 2.  SALA DE ESPERA ASÍNCRONA (Ideal para redes móviles lentas)
     adBtn.disabled = true;
-    adText.textContent = ' Cargando SDK...';
+    adText.textContent = '⏳ Cargando SDK...';
     
     let sdkReady = false;
     let attempts = 0;
-    const maxAttempts = 10; // 10 intentos * 500ms = 5 segundos máximo
+    const maxAttempts = 10;
 
     while (!sdkReady && attempts < maxAttempts) {
         if (window.Adsgram || window.AdsgramSDK) {
@@ -531,32 +531,28 @@ window.watchAdForTon = async function() {
     if (!sdkReady) {
         adBtn.disabled = false;
         adText.textContent = 'VER VIDEO Y GANAR TON';
-        return toast(' SDK no cargó. Revisa tu internet e intenta de nuevo.', 'error');
+        return toast('❌ SDK no cargó. Revisa tu internet e intenta de nuevo.', 'error');
     }
     
-    // 3.  INICIALIZACIÓN OFICIAL (Según documentación Adsgram)
     adText.textContent = 'Cargando video...';
     const sdk = window.Adsgram || window.AdsgramSDK;
     const AdController = sdk.init({ 
         blockId: "35856", 
-        debug: false //  MODO PRUEBA (Quitar cuando pases a producción real)
+        debug: false
     });
 
-    // 4.  REPRODUCCIÓN Y MANEJO DE PROMESAS OFICIAL
     AdController.show().then((result) => {
-        // El usuario vio el anuncio completo (o lo cerró en intersticial)
         if (result.done) {
             localStorage.setItem('lastAdTime', Date.now().toString());
-            adText.textContent = ' Acreditando...';
+            adText.textContent = '✅ Acreditando...';
             
-            // Llamada a Supabase para pagar
             supabase.rpc('registrar_vista_anuncio', {
                 p_user_id: tgUser.id
             }).then((dbResult) => {
                 if (dbResult.error) throw new Error(dbResult.error.message);
                 
                 if (dbResult.data && dbResult.data.success) {
-                    toast(' +0.0003 TON ganado!', 'success');
+                    toast('✅ +0.0003 TON ganado!', 'success');
                     const adsEl = document.getElementById('adsToday');
                     if (adsEl && dbResult.data.ads_today) {
                         adsEl.textContent = dbResult.data.ads_today;
@@ -571,20 +567,18 @@ window.watchAdForTon = async function() {
             });
         }
     }).catch((error) => {
-        // El usuario cerró el video o hubo error de red/inventario
         if (error.description === 'user closed the ad' || error.state === 'destroy') {
-            toast(' Video cancelado', 'warning');
+            toast('⏹️ Video cancelado', 'warning');
         } else {
             toast('Error: ' + (error.description || 'No hay anuncios disponibles'), 'error');
             console.error('Adsgram Error:', error);
         }
     }).finally(() => {
-        // 5.  RESTAURACIÓN SEGURA (Protección XSS con textContent)
         adBtn.disabled = false;
         adText.textContent = 'VER VIDEO Y GANAR TON';
     });
 };
-// === MISIONES DIARIAS ===
+
 async function loadDailyMissions() {
     try {
         const result = await supabase.rpc('check_daily_missions', { p_user_id: tgUser.id });
@@ -605,12 +599,11 @@ async function loadDailyMissions() {
             if (missionsList) {
                 let html = '';
                 
-                // Misión 1: Ver 5 anuncios
                 const m1 = missions.ver_5_anuncios;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m1.completed ? '' : ''} Ver 5 anuncios</span>
+                            <span style="font-size:13px;font-weight:600;">${m1.completed ? '✅' : '⏳'} Ver 5 anuncios</span>
                             <span style="font-size:11px;color:var(--accent-gold);">+${m1.reward} fichas</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
@@ -620,12 +613,11 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
-                // Misión 2: Ganar 1 trivia
                 const m2 = missions.ganar_1_trivia;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m2.completed ? '' : ''} Ganar 1 trivia</span>
+                            <span style="font-size:13px;font-weight:600;">${m2.completed ? '✅' : '⏳'} Ganar 1 trivia</span>
                             <span style="font-size:11px;color:var(--accent-gold);">+${m2.reward} fichas</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
@@ -635,12 +627,11 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
-                // Misión 3: Enviar 3 regalos
                 const m3 = missions.enviar_3_regalos;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m3.completed ? '' : ''} Enviar 3 regalos</span>
+                            <span style="font-size:13px;font-weight:600;">${m3.completed ? '✅' : '⏳'} Enviar 3 regalos</span>
                             <span style="font-size:11px;color:var(--accent-gold);">+${m3.reward} fichas</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
@@ -650,12 +641,11 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
-                // Misión 4: Desbloquear 1 chat
                 const m4 = missions.desbloquear_1_chat;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m4.completed ? '' : ''} Desbloquear 1 chat</span>
+                            <span style="font-size:13px;font-weight:600;">${m4.completed ? '✅' : '⏳'} Desbloquear 1 chat</span>
                             <span style="font-size:11px;color:var(--accent-gold);">+${m4.reward} fichas</span>
                         </div>
                         <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
@@ -683,7 +673,7 @@ window.claimMissionRewards = async function() {
         }
         
         if (result.data && result.data.success) {
-            toast(' +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            toast('✅ +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
             loadWalletData();
             loadDailyMissions();
         } else {
@@ -694,7 +684,7 @@ window.claimMissionRewards = async function() {
         console.error(e);
     }
 };
-// === ADSGRAM: CARGAR CONTADOR DIARIO ===
+
 async function loadAdsCounter() {
     try {
         const result = await supabase.from('wallets')
@@ -717,7 +707,7 @@ async function dailyLogin(){
     if(result.data.fichas_ganadas>0){
         var sb=$('#streakBanner');
         if(sb){sb.style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;}
-        toast('ðŸ”¥ +'+result.data.fichas_ganadas+' fichas por racha!','success');
+        toast('🔥 +'+result.data.fichas_ganadas+' fichas por racha!','success');
     }
     updateEnergy();
     updateProfileStats();
@@ -752,7 +742,7 @@ async function loadProfiles(){
         return;
     }
     var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});
-    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('ðŸ”„ Â¡Nuevos perfiles disponibles!','success')}
+    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('🔄 ¡Nuevos perfiles disponibles!','success')}
     datingQueue=queue;dIdx=0;showProfile();
 }
 
@@ -776,7 +766,7 @@ function showProfile(){
 
 window.handleSwipe=async function(type){
     if(dIdx>=datingQueue.length)return;
-    if(energy.swipes<=0)return toast('âš¡ Sin energÃ­a','error');
+    if(energy.swipes<=0)return toast('⚡ Sin energía','error');
     var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});
     if(result.data>=0){energy.swipes=result.data;updateEnergy()}
     var currentProfile=datingQueue[dIdx];
@@ -785,8 +775,8 @@ window.handleSwipe=async function(type){
     if(type==='like'||type==='super'){
         var isMutual=Math.random()<0.3;
         if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}
-        else{toast('ðŸ’˜ Â¡Like enviado!','success');dIdx++;showProfile()}
-    }else{toast('âŒ Descartado');dIdx++;showProfile()}
+        else{toast('❤️ ¡Like enviado!','success');dIdx++;showProfile()}
+    }else{toast('❌ Descartado');dIdx++;showProfile()}
 };window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
 window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
 window.chatWithMatch=function(){$('#matchModal').classList.remove('show');switchSection('sectionChat');openChatWith(currentMatchId,currentMatchName)};
@@ -797,18 +787,15 @@ window.openChatWith=async function(userId,userName){
     $('#chatUsersList').classList.add('hidden');
     $('#chatWindow').classList.remove('hidden');
     
-    // Verificar si ya tiene el chat desbloqueado
     var unlockResult=await supabase.from('chat_unlocks').select('id').eq('user_id',tgUser.id).eq('target_user_id',userId).limit(1);
     
     if(unlockResult.data&&unlockResult.data.length>0){
-        // Chat ya desbloqueado, mostrar mensajes
         $('#chatInput').parentElement.classList.remove('hidden');
         loadChatHistory();
         subscribeToChat();
         return;
     }
     
-    // Verificar si hay historial de mensajes (match mutuo)
     var msgsResult=await supabase.from('chat_messages').select('id').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+userId+'),and(sender_id.eq.'+userId+',receiver_id.eq.'+tgUser.id+')').limit(1);
     
     if(msgsResult.data&&msgsResult.data.length>0){
@@ -818,88 +805,62 @@ window.openChatWith=async function(userId,userName){
         return;
     }
     
-    // Mostrar modal de desbloqueo premium
     showUnlockModal(userId,userName);
 };
 
-function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;"> 100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;"> 0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span> Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2 Tokens</span></button><button onclick="document.body.removeChild(this.parentElement.parentElement)" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)document.body.removeChild(modal)};document.body.appendChild(modal)})}
-window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram)return toast('SDK no cargado','error');var AdController=window.Adsgram.init({blockId:"35856"});toast(' Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var tokens=dbResult.data.premium_tokens||0;toast(' Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{var m=document.querySelector('div[style*="z-index:1000"]');if(m)document.body.removeChild(m);showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
-window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast(' Chat desbloqueado','success');var modal=document.querySelector('div[style*="z-index:1000"]');if(modal)document.body.removeChild(modal);currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
-
+function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2 Tokens</span></button><button onclick="document.body.removeChild(this.parentElement.parentElement)" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)document.body.removeChild(modal)};document.body.appendChild(modal)})}
+window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram)return toast('SDK no cargado','error');var AdController=window.Adsgram.init({blockId:"35856"});toast('✅ Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var tokens=dbResult.data.premium_tokens||0;toast('✅ Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{var m=document.querySelector('div[style*="z-index:1000"]');if(m)document.body.removeChild(m);showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
+window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('✅ Chat desbloqueado','success');var modal=document.querySelector('div[style*="z-index:1000"]');if(modal)document.body.removeChild(modal);currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
 
 window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
 window.sendGift=async function(giftType){
     if(!currentChatPartner)return;
-    var names={rose:'una rosa ðŸŒ¹',chocolate:'un chocolate ðŸ«',ring:'un anillo ðŸ’'};
-    
-    // Primero verificar saldo
+    var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};
     var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});
     var cost=50;
     if(giftType==='chocolate') cost=100;
     if(giftType==='ring') cost=300;
-    
-    if(saldoResult.data < cost){
-        return toast('Saldo insuficiente (necesitas '+cost+' fichas)','error');
-    }
-    
-    // Enviar el mensaje
-    var result=await supabase.rpc('send_chat_message',{
-        p_sender:tgUser.id,
-        p_receiver:currentChatPartner.id,
-        p_message:'ðŸŽ Â¡Te ha enviado un regalo!',
-        p_gift:giftType
-    });
-    
-    if(result.error||!result.data.success){
-        return toast(result.data?result.data.error:'Error al enviar','error');
-    }
-    
-    // Restar fichas
-    var updateResult=await supabase.rpc('update_fichas_balance',{
-        p_user_id:tgUser.id,
-        p_fichas: -cost
-    });
-    
-    if(updateResult.error||!updateResult.data.success){
-        return toast('Error al actualizar saldo','error');
-    }
-    
-    toast('âœ… '+names[giftType]+' enviada. Chat desbloqueado.','success');
+    if(saldoResult.data < cost){return toast('Saldo insuficiente (necesitas '+cost+' fichas)','error');}
+    var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});
+    if(result.error||!result.data.success){return toast(result.data?result.data.error:'Error al enviar','error');}
+    var updateResult=await supabase.rpc('update_fichas_balance',{p_user_id:tgUser.id,p_fichas: -cost});
+    if(updateResult.error||!updateResult.data.success){return toast('Error al actualizar saldo','error');}
+    toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');
     updateBalance();
     $('#chatInput').parentElement.classList.remove('hidden');
     loadChatHistory();
 };
 window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;input.disabled=true;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});input.disabled=false;if(result.error)return toast('Error al enviar','error');if(!result.data||!result.data.success)return toast(result.data.error||'Error','error');input.value='';loadChatHistory()};
-async function loadChatHistory(){try{var result=await supabase.from('chat_messages').select('*').or('sender_id.eq.'+tgUser.id+',receiver_id.eq.'+tgUser.id+',sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+currentChatPartner.id+"').order('created_at',{ascending:true}).limit(50);if(result.error){console.error('Error loadChat:',result.error);return}var filtered=(result.data||[]).filter(function(m){return(m.sender_id==tgUser.id&&m.receiver_id==currentChatPartner.id)||(m.sender_id==currentChatPartner.id&&m.receiver_id==tgUser.id)});renderMessages(filtered)}catch(e){console.error('Error:',e)}}
+async function loadChatHistory(){try{var result=await supabase.from('chat_messages').select('*').or('sender_id.eq.'+tgUser.id+',receiver_id.eq.'+tgUser.id+',sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+currentChatPartner.id+"'").order('created_at',{ascending:true}).limit(50);if(result.error){console.error('Error loadChat:',result.error);return}var filtered=(result.data||[]).filter(function(m){return(m.sender_id==tgUser.id&&m.receiver_id==currentChatPartner.id)||(m.sender_id==currentChatPartner.id&&m.receiver_id==tgUser.id)});renderMessages(filtered)}catch(e){console.error('Error:',e)}}
 function renderMessages(msgs){var container=$('#chatMessages');var existingIds=new Set();container.querySelectorAll('[data-msg-id]').forEach(function(el){existingIds.add(el.dataset.msgId)});msgs.forEach(function(m){if(!m.id)return;if(existingIds.has(String(m.id)))return;var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');div.dataset.msgId=m.id;var content='';if(m.gift_type==='rose')content+='🌹 ';if(m.gift_type==='chocolate')content+='🍫 ';if(m.gift_type==='ring')content+='💍 ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
 function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
-async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en lÃ­nea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'ðŸŸ¢ En lÃ­nea':'ðŸ•’ Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
+async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
 
-window.openTrivia=function(){if(energy.trivia<=0)return toast('ðŸŽ® Sin partidas hoy','error');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.remove('hidden');tf.style.display='block'}backToTriviaMenu()};
+window.openTrivia=function(){if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.remove('hidden');tf.style.display='block'}backToTriviaMenu()};
 window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#triviaMenu').classList.remove('hidden')};
-window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en lÃ­nea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
+window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
 
 function cleanupGame(){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=null;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none'}
 window.resetGames=function(){cleanupGame();var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tp=$('#triviaPreguntas');if(tp){tp.classList.add('hidden');tp.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.add('hidden');tf.style.display='none'}var cf=$('#compatFlow');if(cf){cf.classList.add('hidden');cf.style.display='none'}var gm=$('#gameMenu');if(gm){gm.classList.remove('hidden');gm.style.display='block'}};
-window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energÃ­a','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
-async function startGameLive(currentGameId,myPlayerNum){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=currentGameId;playerNum=myPlayerNum;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tm=$('#triviaMenu');if(tm){tm.classList.add('hidden');tm.style.display='none'}var op=$('#onlinePlayers');if(op){op.classList.add('hidden');op.style.display='none'}var cf=$('#compatFlow');if(cf)cf.classList.add('hidden');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var flow=$('#triviaFlow');if(flow){flow.classList.remove('hidden');flow.style.display='block'}var preg=$('#triviaPreguntas');if(preg){preg.classList.remove('hidden');preg.style.display='block'}loadQuestions();showQuestion();if(playerNum===2){triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe()}toast('ðŸŽ® Â¡Juego iniciado!','success')}
+window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energía','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
+async function startGameLive(currentGameId,myPlayerNum){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=currentGameId;playerNum=myPlayerNum;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tm=$('#triviaMenu');if(tm){tm.classList.add('hidden');tm.style.display='none'}var op=$('#onlinePlayers');if(op){op.classList.add('hidden');op.style.display='none'}var cf=$('#compatFlow');if(cf)cf.classList.add('hidden');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var flow=$('#triviaFlow');if(flow){flow.classList.remove('hidden');flow.style.display='block'}var preg=$('#triviaPreguntas');if(preg){preg.classList.remove('hidden');preg.style.display='block'}loadQuestions();showQuestion();if(playerNum===2){triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe()}toast('🎮 ¡Juego iniciado!','success')}
 
-function loadQuestions(){var all=[{q:"Â¿CuÃ¡l es el ocÃ©ano mÃ¡s grande?",o:["AtlÃ¡ntico","Ãndico","PacÃ­fico","Ãrtico"],c:2},{q:"Â¿QuiÃ©n escribiÃ³ 'Cien aÃ±os de soledad'?",o:["Vargas Llosa","GarcÃ­a MÃ¡rquez","Allende","Borges"],c:1},{q:"Â¿CuÃ¡ntos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"Â¿CuÃ¡l es el rÃ­o mÃ¡s largo del mundo?",o:["Nilo","Amazonas","YangtsÃ©","Misisipi"],c:1},{q:"Â¿En quÃ© aÃ±o llegÃ³ el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
+function loadQuestions(){var all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
 function showQuestion(){if(qIdx>=questions.length)return submitFinalAnswers();locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var q=questions[qIdx];var qt=$('#qTitle');if(qt)qt.textContent='Pregunta '+(qIdx+1)+'/'+questions.length;var qtx=$('#qText');if(qtx)qtx.textContent=q.q;var opts=$('#qOptions');if(!opts)return;opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){selectAnswer(i)};opts.appendChild(btn)});startTimer()}
 function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(function(){timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1)}},1000)}
-function updateTimerUI(){var td=$('#timerDisplay');if(!td)return;td.textContent='â³ '+timeLeft+'s';td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
+function updateTimerUI(){var td=$('#timerDisplay');if(!td)return;td.textContent='⏳ '+timeLeft+'s';td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
 function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);var correct=questions[qIdx].c;var btns=$$('#qOptions .option-btn');btns.forEach(function(b){b.disabled=true});if(btns[correct])btns[correct].classList.add('correct');if(idx>=0&&idx!==correct&&btns[idx])btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(function(){qIdx++;showQuestion()},800)}
-async function submitFinalAnswers(){if(!gameId)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm){wm.style.display='block';wm.textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...'}var col=playerNum===1?'player1_responses':'player2_responses';var updateObj={};updateObj[col]=responses;await supabase.from('trivia_games').update(updateObj).eq('id',gameId);if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);var correct=0;responses.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});var score=Math.round(correct/questions.length*100);showResult(score,'ðŸŽ¯ Acertaste '+correct+'/'+questions.length+'. Â¡Sigue practicando!')}}
-async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl||!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return;if(!flow||flow.style.display==='none')return;if(!questions||questions.length===0)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm)wm.style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?'ðŸŽ‰ Â¡Ganaste!':winner===0?'ðŸ¤ Empate':'ðŸ˜ž Perdiste';showResult(compat,msg)}
+async function submitFinalAnswers(){if(!gameId)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm){wm.style.display='block';wm.textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...'}var col=playerNum===1?'player1_responses':'player2_responses';var updateObj={};updateObj[col]=responses;await supabase.from('trivia_games').update(updateObj).eq('id',gameId);if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);var correct=0;responses.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});var score=Math.round(correct/questions.length*100);showResult(score,'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!')}}
+async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl||!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return;if(!flow||flow.style.display==='none')return;if(!questions||questions.length===0)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm)wm.style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?'🏆 ¡Ganaste!':winner===0?'🤝 Empate':'😢 Perdiste';showResult(compat,msg)}
 function showResult(score,msg){var flow=$('#triviaFlow');if(!flow)return;flow.classList.remove('hidden');flow.style.display='block';$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none'});var resultEl=$('#triviaResultado');if(!resultEl)return;resultEl.classList.remove('hidden');resultEl.style.display='block';var cs=$('#compatScore');if(cs){cs.textContent=score+'%';cs.style.setProperty('--score',score+'%')}var cm=$('#compatMsg');if(cm)cm.textContent=msg}
 
-var compatQ=[{q:"Â¿QuÃ© prefieres en una primera cita?",o:["Cena romÃ¡ntica","Aventura","CafÃ©","Cine en casa"]},{q:"Â¿QuÃ© cualidad valoras mÃ¡s?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"Â¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"Â¿CÃ³mo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"Â¿QuÃ© no soportas?",o:["Impuntualidad","Falta ambiciÃ³n","Mala higiene","Arrogancia"]},{q:"Â¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"Â¿MÃºsica preferida?",o:["Pop","Rock","ElectrÃ³nica","Indie"]},{q:"Â¿QuÃ© te hace reÃ­r?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"Â¿CÃ³mo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"Â¿QuÃ© esperas de una relaciÃ³n?",o:["Apoyo","DiversiÃ³n","Crecimiento","Estabilidad"]}];
+var compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
 window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ()};
-function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espÃ­ritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversaciÃ³n.':'Eres Ãºnico/a. Alguien autÃ©ntico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
+function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
 
-window.comprarFichas=async function(productId){if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');var productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};var producto=productos[productId];if(!producto)return toast('Producto invÃ¡lido','error');try{var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});var data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast('ðŸ“„ Factura abierta','success');setTimeout(function(){updateBalance()},5000)}catch(e){window.Telegram.WebApp.sendData(productId);toast('ðŸ”„ Procesando pago...','success')}};
-window.invitarJugador=async function(tid,tname){if(energy.trivia<=0)return toast('Sin energÃ­a','error');var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();if(result.error)return toast('Error al enviar reto','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();toast('ðŸ“¨ Reto enviado a '+tname+'. Esperando...','success')};
-window.acceptChallenge=async function(){if(!pendingChallengeId){toast('âŒ Error: No hay reto pendiente','error');return}$('#challengeModal').classList.remove('show');await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId)};
+window.comprarFichas=async function(productId){if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');var productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};var producto=productos[productId];if(!producto)return toast('Producto inválido','error');try{var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});var data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast('📄 Factura abierta','success');setTimeout(function(){updateBalance()},5000)}catch(e){window.Telegram.WebApp.sendData(productId);toast('🔄 Procesando pago...','success')}};
+window.invitarJugador=async function(tid,tname){if(energy.trivia<=0)return toast('Sin energía','error');var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();if(result.error)return toast('Error al enviar reto','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();toast('📨 Reto enviado a '+tname+'. Esperando...','success')};
+window.acceptChallenge=async function(){if(!pendingChallengeId){toast('❌ Error: No hay reto pendiente','error');return}$('#challengeModal').classList.remove('show');await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId)};
 window.declineChallenge=async function(){$('#challengeModal').classList.remove('show');if(!pendingChallengeId)return;await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);pendingChallengeId=null;toast('Reto rechazado','error')};
 
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
