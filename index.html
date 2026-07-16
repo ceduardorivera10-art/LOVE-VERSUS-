@@ -588,6 +588,16 @@ async function loadDailyMissions() {
             const missionsList = document.getElementById('missionsList');
             const missionsCompleted = document.getElementById('missionsCompleted');
             
+            // Verificar si ya reclamó hoy
+            const walletResult = await supabase.from('wallets')
+                .select('missions_claimed, last_claim_date')
+                .eq('telegram_id', tgUser.id)
+                .single();
+            
+            const yaReclamoHoy = walletResult.data && 
+                                walletResult.data.last_claim_date === new Date().toISOString().split('T')[0];
+            
+            // Actualizar UI
             if (missionsCompleted) {
                 missionsCompleted.textContent = 
                     (missions.ver_5_anuncios.completed ? 1 : 0) +
@@ -599,6 +609,7 @@ async function loadDailyMissions() {
             if (missionsList) {
                 let html = '';
                 
+                // Misión 1: Ver 5 anuncios
                 const m1 = missions.ver_5_anuncios;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
@@ -613,6 +624,7 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
+                // Misión 2: Ganar 1 trivia
                 const m2 = missions.ganar_1_trivia;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
@@ -627,6 +639,7 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
+                // Misión 3: Enviar 3 regalos
                 const m3 = missions.enviar_3_regalos;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
@@ -641,6 +654,7 @@ async function loadDailyMissions() {
                     </div>
                 `;
                 
+                // Misión 4: Desbloquear 1 chat
                 const m4 = missions.desbloquear_1_chat;
                 html += `
                     <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
@@ -656,6 +670,20 @@ async function loadDailyMissions() {
                 `;
                 
                 missionsList.innerHTML = html;
+            }
+            
+            // Deshabilitar botón si ya reclamó hoy
+            const claimButton = document.querySelector('button[onclick="claimMissionRewards()"]');
+            if (claimButton) {
+                if (yaReclamoHoy) {
+                    claimButton.disabled = true;
+                    claimButton.textContent = '⭐ Recompensas Reclamadas';
+                    claimButton.style.opacity = '0.5';
+                } else {
+                    claimButton.disabled = false;
+                    claimButton.textContent = '⭐ Reclamar Recompensas';
+                    claimButton.style.opacity = '1';
+                }
             }
         }
     } catch (e) {
@@ -673,11 +701,16 @@ window.claimMissionRewards = async function() {
         }
         
         if (result.data && result.data.success) {
-            toast('✅ +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
             loadWalletData();
-            loadDailyMissions();
+            loadDailyMissions(); // Recargar para deshabilitar botón
         } else {
-            toast(result.data.error || 'No hay recompensas disponibles', 'error');
+            if (result.data.error === 'Ya reclamaste recompensas hoy') {
+                toast('Ya reclamaste recompensas hoy', 'error');
+                loadDailyMissions(); // Para deshabilitar el botón
+            } else {
+                toast(result.data.error || 'No hay recompensas disponibles', 'error');
+            }
         }
     } catch (e) {
         toast('Error al reclamar recompensas', 'error');
