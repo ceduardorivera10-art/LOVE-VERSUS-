@@ -703,11 +703,11 @@ window.claimMissionRewards = async function() {
         if (result.data && result.data.success) {
             toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
             loadWalletData();
-            loadDailyMissions(); // Recargar para deshabilitar botón
+            loadDailyMissions();
         } else {
             if (result.data.error === 'Ya reclamaste recompensas hoy') {
                 toast('Ya reclamaste recompensas hoy', 'error');
-                loadDailyMissions(); // Para deshabilitar el botón
+                loadDailyMissions();
             } else {
                 toast(result.data.error || 'No hay recompensas disponibles', 'error');
             }
@@ -869,32 +869,357 @@ function renderMessages(msgs){var container=$('#chatMessages');var existingIds=n
 function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
 async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
 
-window.openTrivia=function(){if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.remove('hidden');tf.style.display='block'}backToTriviaMenu()};
-window.backToTriviaMenu=function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#triviaMenu').classList.remove('hidden')};
-window.showOnlinePlayers=async function(){$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden')});$('#onlinePlayers').classList.remove('hidden');var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#playersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';return}result.data.forEach(function(p){var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';list.appendChild(div)})};
+window.openTrivia=function(){
+    if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');
+    var gm=$('#gameMenu');
+    if(gm){gm.classList.add('hidden');gm.style.display='none';}
+    var tf=$('#triviaFlow');
+    if(tf){tf.classList.remove('hidden');tf.style.display='block';}
+    backToTriviaMenu();
+};
 
-function cleanupGame(){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=null;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none'}
-window.resetGames=function(){cleanupGame();var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tp=$('#triviaPreguntas');if(tp){tp.classList.add('hidden');tp.style.display='none'}var tf=$('#triviaFlow');if(tf){tf.classList.add('hidden');tf.style.display='none'}var cf=$('#compatFlow');if(cf){cf.classList.add('hidden');cf.style.display='none'}var gm=$('#gameMenu');if(gm){gm.classList.remove('hidden');gm.style.display='block'}};
-window.startSoloGame=async function(){if(energy.trivia<=0)return toast('Sin energía','error');cleanupGame();var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();if(result.error)return toast('Error al crear partida','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();startGameLive(result.data.id,1)};
-async function startGameLive(currentGameId,myPlayerNum){if(timer){clearInterval(timer);timer=null}if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null}gameId=currentGameId;playerNum=myPlayerNum;responses=[];qIdx=0;locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var tr=$('#triviaResultado');if(tr){tr.classList.add('hidden');tr.style.display='none'}var tm=$('#triviaMenu');if(tm){tm.classList.add('hidden');tm.style.display='none'}var op=$('#onlinePlayers');if(op){op.classList.add('hidden');op.style.display='none'}var cf=$('#compatFlow');if(cf)cf.classList.add('hidden');var gm=$('#gameMenu');if(gm){gm.classList.add('hidden');gm.style.display='none'}var flow=$('#triviaFlow');if(flow){flow.classList.remove('hidden');flow.style.display='block'}var preg=$('#triviaPreguntas');if(preg){preg.classList.remove('hidden');preg.style.display='block'}loadQuestions();showQuestion();if(playerNum===2){triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){if(payload.new.id!==gameId)return;if(payload.new.status==='completed')finishTriviaFromEvent(payload.new)}).subscribe()}toast('🎮 ¡Juego iniciado!','success')}
+window.backToTriviaMenu=function(){
+    $$('#triviaFlow > div').forEach(function(s){
+        s.classList.add('hidden');
+        s.style.display = 'none';
+    });
+    var tm=$('#triviaMenu');
+    if(tm){tm.classList.remove('hidden');tm.style.display='block';}
+};
 
-function loadQuestions(){var all=[{q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},{q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},{q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},{q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}];questions=all.sort(function(){return Math.random()-0.5}).slice(0,5)}
-function showQuestion(){if(qIdx>=questions.length)return submitFinalAnswers();locked=false;var wm=$('#waitingMsg');if(wm)wm.style.display='none';var q=questions[qIdx];var qt=$('#qTitle');if(qt)qt.textContent='Pregunta '+(qIdx+1)+'/'+questions.length;var qtx=$('#qText');if(qtx)qtx.textContent=q.q;var opts=$('#qOptions');if(!opts)return;opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){selectAnswer(i)};opts.appendChild(btn)});startTimer()}
-function startTimer(){if(timer)clearInterval(timer);timeLeft=15;updateTimerUI();timer=setInterval(function(){timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);if(!locked)selectAnswer(-1)}},1000)}
-function updateTimerUI(){var td=$('#timerDisplay');if(!td)return;td.textContent='⏳ '+timeLeft+'s';td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'}
-function selectAnswer(idx){if(locked)return;locked=true;if(timer)clearInterval(timer);var correct=questions[qIdx].c;var btns=$$('#qOptions .option-btn');btns.forEach(function(b){b.disabled=true});if(btns[correct])btns[correct].classList.add('correct');if(idx>=0&&idx!==correct&&btns[idx])btns[idx].classList.add('wrong');responses.push({questionIndex:qIdx,selectedOption:idx});setTimeout(function(){qIdx++;showQuestion()},800)}
-async function submitFinalAnswers(){if(!gameId)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm){wm.style.display='block';wm.textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...'}var col=playerNum===1?'player1_responses':'player2_responses';var updateObj={};updateObj[col]=responses;await supabase.from('trivia_games').update(updateObj).eq('id',gameId);if(playerNum===1){await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);var correct=0;responses.forEach(function(r,i){if(r.selectedOption===questions[i].c)correct++});var score=Math.round(correct/questions.length*100);showResult(score,'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!')}}
-async function finishTriviaFromEvent(gameData){if(!gameData||gameData.id!==gameId)return;var resultEl=$('#triviaResultado');if(!resultEl||!resultEl.classList.contains('hidden'))return;var flow=$('#triviaFlow');if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return;if(!flow||flow.style.display==='none')return;if(!questions||questions.length===0)return;var tp=$('#triviaPreguntas');if(tp)tp.classList.add('hidden');var wm=$('#waitingMsg');if(wm)wm.style.display='none';if(timer){clearInterval(timer);timer=null}var p1=gameData.player1_responses||[];var p2=gameData.player2_responses||[];var c1=0,c2=0,matches=0;questions.forEach(function(q,i){if(p1[i]&&p1[i].selectedOption===q.c)c1++;if(p2[i]&&p2[i].selectedOption===q.c)c2++;if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++});var compat=p1.length?Math.round(matches/p1.length*100):0;var winner=c1>c2?1:c2>c1?2:0;if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){await supabase.rpc('add_trivia_win',{user_id:tgUser.id});energy.victorias++;updateProfileStats()}var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';msg+=winner===playerNum?'🏆 ¡Ganaste!':winner===0?'🤝 Empate':'😢 Perdiste';showResult(compat,msg)}
-function showResult(score,msg){var flow=$('#triviaFlow');if(!flow)return;flow.classList.remove('hidden');flow.style.display='block';$$('#triviaFlow > div').forEach(function(s){s.classList.add('hidden');s.style.display='none'});var resultEl=$('#triviaResultado');if(!resultEl)return;resultEl.classList.remove('hidden');resultEl.style.display='block';var cs=$('#compatScore');if(cs){cs.textContent=score+'%';cs.style.setProperty('--score',score+'%')}var cm=$('#compatMsg');if(cm)cm.textContent=msg}
+window.showOnlinePlayers=async function(){
+    $$('#triviaFlow > div').forEach(function(s){
+        s.classList.add('hidden');
+        s.style.display = 'none';
+    });
+    var op=$('#onlinePlayers');
+    if(op){op.classList.remove('hidden');op.style.display='block';}
+    var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);
+    var list=$('#playersList');list.innerHTML='';
+    if(!result.data||!result.data.length){
+        list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>';
+        return;
+    }
+    result.data.forEach(function(p){
+        var div=document.createElement('div');
+        div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';
+        div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';
+        list.appendChild(div);
+    });
+};
 
-var compatQ=[{q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},{q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},{q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},{q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},{q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},{q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},{q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},{q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},{q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},{q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}];
-window.openCompatTest=function(){$('#gameMenu').classList.add('hidden');$('#compatFlow').classList.remove('hidden');$('#compatPreguntas').classList.remove('hidden');$('#compatResultado').classList.add('hidden');compatAnswers=[];qIdx=0;showCompatQ()};
-function showCompatQ(){if(qIdx>=compatQ.length){var sum=compatAnswers.reduce(function(a,b){return a+b},0);var pct=Math.round(sum/(compatQ.length*3)*100);$('#compatPreguntas').classList.add('hidden');$('#compatResultado').classList.remove('hidden');$('#compatTestScore').textContent=pct+'%';$('#compatTestScore').style.setProperty('--score',pct+'%');$('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';return}var q=compatQ[qIdx];$('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';$('#cqText').textContent=q.q;var opts=$('#cqOptions');opts.innerHTML='';q.o.forEach(function(o,i){var btn=document.createElement('button');btn.className='option-btn';btn.textContent=o;btn.onclick=function(){compatAnswers.push(i);qIdx++;showCompatQ()};opts.appendChild(btn)})}
+function cleanupGame(){
+    if(timer){clearInterval(timer);timer=null;}
+    if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null;}
+    gameId=null;responses=[];qIdx=0;locked=false;
+    var wm=$('#waitingMsg');
+    if(wm)wm.style.display='none';
+}
 
-window.comprarFichas=async function(productId){if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');var productos={buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}};var producto=productos[productId];if(!producto)return toast('Producto inválido','error');try{var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:producto.nombre,description:producto.descripcion,payload:tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:producto.nombre,amount:producto.cantidad}]})});var data=await response.json();if(!data.ok)throw new Error(data.description);window.Telegram.WebApp.openTelegramLink(data.result);toast('📄 Factura abierta','success');setTimeout(function(){updateBalance()},5000)}catch(e){window.Telegram.WebApp.sendData(productId);toast('🔄 Procesando pago...','success')}};
-window.invitarJugador=async function(tid,tname){if(energy.trivia<=0)return toast('Sin energía','error');var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();if(result.error)return toast('Error al enviar reto','error');var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});energy.trivia=newEnergy.data;updateEnergy();toast('📨 Reto enviado a '+tname+'. Esperando...','success')};
-window.acceptChallenge=async function(){if(!pendingChallengeId){toast('❌ Error: No hay reto pendiente','error');return}$('#challengeModal').classList.remove('show');await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId)};
-window.declineChallenge=async function(){$('#challengeModal').classList.remove('show');if(!pendingChallengeId)return;await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);pendingChallengeId=null;toast('Reto rechazado','error')};
+window.resetGames=function(){
+    cleanupGame();
+    var tr=$('#triviaResultado');
+    if(tr){tr.classList.add('hidden');tr.style.display='none';}
+    var tp=$('#triviaPreguntas');
+    if(tp){tp.classList.add('hidden');tp.style.display='none';}
+    var tf=$('#triviaFlow');
+    if(tf){tf.classList.add('hidden');tf.style.display='none';}
+    var cf=$('#compatFlow');
+    if(cf){cf.classList.add('hidden');cf.style.display='none';}
+    var op=$('#onlinePlayers');
+    if(op){op.classList.add('hidden');op.style.display='none';}
+    var gm=$('#gameMenu');
+    if(gm){gm.classList.remove('hidden');gm.style.display='block';}
+};
+
+window.startSoloGame=async function(){
+    if(energy.trivia<=0)return toast('Sin energía','error');
+    cleanupGame();
+    var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();
+    if(result.error)return toast('Error al crear partida','error');
+    var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
+    energy.trivia=newEnergy.data;updateEnergy();
+    startGameLive(result.data.id,1);
+};
+
+async function startGameLive(currentGameId,myPlayerNum){
+    if(timer){clearInterval(timer);timer=null;}
+    if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null;}
+    gameId=currentGameId;
+    playerNum=myPlayerNum;
+    responses=[];qIdx=0;locked=false;
+    var wm=$('#waitingMsg');
+    if(wm)wm.style.display='none';
+    var tr=$('#triviaResultado');
+    if(tr){tr.classList.add('hidden');tr.style.display='none';}
+    var tm=$('#triviaMenu');
+    if(tm){tm.classList.add('hidden');tm.style.display='none';}
+    var op=$('#onlinePlayers');
+    if(op){op.classList.add('hidden');op.style.display='none';}
+    var cf=$('#compatFlow');
+    if(cf)cf.classList.add('hidden');
+    var gm=$('#gameMenu');
+    if(gm){gm.classList.add('hidden');gm.style.display='none';}
+    var flow=$('#triviaFlow');
+    if(flow){flow.classList.remove('hidden');flow.style.display='block';}
+    var preg=$('#triviaPreguntas');
+    if(preg){preg.classList.remove('hidden');preg.style.display='block';}
+    loadQuestions();showQuestion();
+    if(playerNum===2){
+        triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){
+            if(payload.new.id!==gameId)return;
+            if(payload.new.status==='completed')finishTriviaFromEvent(payload.new);
+        }).subscribe();
+    }
+    toast('🎮 ¡Juego iniciado!','success');
+}
+
+function loadQuestions(){
+    var all=[
+        {q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},
+        {q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},
+        {q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
+        {q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},
+        {q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
+    ];
+    questions=all.sort(function(){return Math.random()-0.5}).slice(0,5);
+}
+
+function showQuestion(){
+    if(qIdx>=questions.length)return submitFinalAnswers();
+    locked=false;
+    var wm=$('#waitingMsg');
+    if(wm)wm.style.display='none';
+    var q=questions[qIdx];
+    var qt=$('#qTitle');
+    if(qt)qt.textContent='Pregunta '+(qIdx+1)+'/'+questions.length;
+    var qtx=$('#qText');
+    if(qtx)qtx.textContent=q.q;
+    var opts=$('#qOptions');
+    if(!opts)return;
+    opts.innerHTML='';
+    q.o.forEach(function(o,i){
+        var btn=document.createElement('button');
+        btn.className='option-btn';
+        btn.textContent=o;
+        btn.onclick=function(){selectAnswer(i);};
+        opts.appendChild(btn);
+    });
+    startTimer();
+}
+
+function startTimer(){
+    if(timer)clearInterval(timer);
+    timeLeft=15;
+    updateTimerUI();
+    timer=setInterval(function(){
+        timeLeft--;
+        updateTimerUI();
+        if(timeLeft<=0){
+            clearInterval(timer);
+            if(!locked)selectAnswer(-1);
+        }
+    },1000);
+}
+
+function updateTimerUI(){
+    var td=$('#timerDisplay');
+    if(!td)return;
+    td.textContent='⏳ '+timeLeft+'s';
+    td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)';
+}
+
+function selectAnswer(idx){
+    if(locked)return;
+    locked=true;
+    if(timer)clearInterval(timer);
+    var correct=questions[qIdx].c;
+    var btns=$$('#qOptions .option-btn');
+    btns.forEach(function(b){b.disabled=true;});
+    if(btns[correct])btns[correct].classList.add('correct');
+    if(idx>=0&&idx!==correct&&btns[idx])btns[idx].classList.add('wrong');
+    responses.push({questionIndex:qIdx,selectedOption:idx});
+    setTimeout(function(){qIdx++;showQuestion();},800);
+}
+
+async function submitFinalAnswers(){
+    if(!gameId)return;
+    var tp=$('#triviaPreguntas');
+    if(tp)tp.classList.add('hidden');
+    var wm=$('#waitingMsg');
+    if(wm){wm.style.display='block';wm.textContent=playerNum===1?'Calculando resultados...':'Esperando al oponente...';}
+    var col=playerNum===1?'player1_responses':'player2_responses';
+    var updateObj={};updateObj[col]=responses;
+    await supabase.from('trivia_games').update(updateObj).eq('id',gameId);
+    if(playerNum===1){
+        await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);
+        var correct=0;
+        responses.forEach(function(r,i){
+            if(r.selectedOption===questions[i].c)correct++;
+        });
+        var score=Math.round(correct/questions.length*100);
+        showResult(score,'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!');
+    }
+}
+
+async function finishTriviaFromEvent(gameData){
+    if(!gameData||gameData.id!==gameId)return;
+    var resultEl=$('#triviaResultado');
+    if(!resultEl||!resultEl.classList.contains('hidden'))return;
+    var flow=$('#triviaFlow');
+    if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return;
+    if(!flow||flow.style.display==='none')return;
+    if(!questions||questions.length===0)return;
+    var tp=$('#triviaPreguntas');
+    if(tp)tp.classList.add('hidden');
+    var wm=$('#waitingMsg');
+    if(wm)wm.style.display='none';
+    if(timer){clearInterval(timer);timer=null;}
+    var p1=gameData.player1_responses||[];
+    var p2=gameData.player2_responses||[];
+    var c1=0,c2=0,matches=0;
+    questions.forEach(function(q,i){
+        if(p1[i]&&p1[i].selectedOption===q.c)c1++;
+        if(p2[i]&&p2[i].selectedOption===q.c)c2++;
+        if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++;
+    });
+    var compat=p1.length?Math.round(matches/p1.length*100):0;
+    var winner=c1>c2?1:c2>c1?2:0;
+    if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){
+        await supabase.rpc('add_trivia_win',{user_id:tgUser.id});
+        energy.victorias++;
+        updateProfileStats();
+    }
+    var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';
+    msg+=winner===playerNum?'🏆 ¡Ganaste!':winner===0?'🤝 Empate':'😢 Perdiste';
+    showResult(compat,msg);
+}
+
+function showResult(score,msg){
+    var flow=$('#triviaFlow');
+    if(!flow)return;
+    flow.classList.remove('hidden');
+    flow.style.display='block';
+    $$('#triviaFlow > div').forEach(function(s){
+        s.classList.add('hidden');
+        s.style.display='none';
+    });
+    var resultEl=$('#triviaResultado');
+    if(!resultEl)return;
+    resultEl.classList.remove('hidden');
+    resultEl.style.display='block';
+    var cs=$('#compatScore');
+    if(cs){cs.textContent=score+'%';cs.style.setProperty('--score',score+'%');}
+    var cm=$('#compatMsg');
+    if(cm)cm.textContent=msg;
+}
+
+var compatQ=[
+    {q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},
+    {q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},
+    {q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},
+    {q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},
+    {q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},
+    {q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},
+    {q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},
+    {q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},
+    {q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},
+    {q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}
+];
+
+window.openCompatTest=function(){
+    $('#gameMenu').classList.add('hidden');
+    $('#compatFlow').classList.remove('hidden');
+    $('#compatPreguntas').classList.remove('hidden');
+    $('#compatResultado').classList.add('hidden');
+    compatAnswers=[];qIdx=0;showCompatQ();
+};
+
+function showCompatQ(){
+    if(qIdx>=compatQ.length){
+        var sum=compatAnswers.reduce(function(a,b){return a+b;},0);
+        var pct=Math.round(sum/(compatQ.length*3)*100);
+        $('#compatPreguntas').classList.add('hidden');
+        $('#compatResultado').classList.remove('hidden');
+        $('#compatTestScore').textContent=pct+'%';
+        $('#compatTestScore').style.setProperty('--score',pct+'%');
+        $('#compatTestMsg').textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';
+        return;
+    }
+    var q=compatQ[qIdx];
+    $('#cqTitle').textContent='Pregunta '+(qIdx+1)+'/10';
+    $('#cqText').textContent=q.q;
+    var opts=$('#cqOptions');
+    opts.innerHTML='';
+    q.o.forEach(function(o,i){
+        var btn=document.createElement('button');
+        btn.className='option-btn';
+        btn.textContent=o;
+        btn.onclick=function(){
+            compatAnswers.push(i);
+            qIdx++;
+            showCompatQ();
+        };
+        opts.appendChild(btn);
+    });
+}
+
+window.comprarFichas=async function(productId){
+    if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');
+    var productos={
+        buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'},
+        boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'},
+        entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'}
+    };
+    var producto=productos[productId];
+    if(!producto)return toast('Producto inválido','error');
+    try{
+        var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                title:producto.nombre,
+                description:producto.descripcion,
+                payload:tgUser.id+'_'+Date.now(),
+                provider_token:'',
+                currency:'XTR',
+                prices:[{label:producto.nombre,amount:producto.cantidad}]
+            })
+        });
+        var data=await response.json();
+        if(!data.ok)throw new Error(data.description);
+        window.Telegram.WebApp.openTelegramLink(data.result);
+        toast('📄 Factura abierta','success');
+        setTimeout(function(){updateBalance();},5000);
+    }catch(e){
+        window.Telegram.WebApp.sendData(productId);
+        toast('🔄 Procesando pago...','success');
+    }
+};
+
+window.invitarJugador=async function(tid,tname){
+    if(energy.trivia<=0)return toast('Sin energía','error');
+    var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();
+    if(result.error)return toast('Error al enviar reto','error');
+    var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
+    energy.trivia=newEnergy.data;
+    updateEnergy();
+    toast('📨 Reto enviado a '+tname+'. Esperando...','success');
+};
+
+window.acceptChallenge=async function(){
+    if(!pendingChallengeId){toast('❌ Error: No hay reto pendiente','error');return;}
+    $('#challengeModal').classList.remove('show');
+    await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId);
+};
+
+window.declineChallenge=async function(){
+    $('#challengeModal').classList.remove('show');
+    if(!pendingChallengeId)return;
+    await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);
+    pendingChallengeId=null;
+    toast('Reto rechazado','error');
+};
 
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
