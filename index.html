@@ -558,6 +558,9 @@ window.watchAdForTon = async function() {
                         adsEl.textContent = dbResult.data.ads_today;
                     }
                     loadWalletData();
+                    
+                    // 🔥 CORRECCIÓN: Actualizar la interfaz de misiones inmediatamente
+                    loadDailyMissions(); 
                 } else {
                     throw new Error(dbResult.data?.error || 'Error al acreditar');
                 }
@@ -594,8 +597,10 @@ async function loadDailyMissions() {
                 .eq('telegram_id', tgUser.id)
                 .single();
             
-            const yaReclamoHoy = walletResult.data && 
-                                walletResult.data.last_claim_date === new Date().toISOString().split('T')[0];
+            // 🔥 CORRECCIÓN: Lógica infalible para saber si reclamó hoy
+            const hoy = new Date().toISOString().split('T')[0];
+            const fechaReclamo = walletResult.data?.last_claim_date;
+            const yaReclamoHoy = (fechaReclamo === hoy);
             
             // Actualizar UI
             if (missionsCompleted) {
@@ -930,6 +935,9 @@ window.resetGames=function(){
     if(op){op.classList.add('hidden');op.style.display='none';}
     var gm=$('#gameMenu');
     if(gm){gm.classList.remove('hidden');gm.style.display='block';}
+    
+    // 🔥 CORRECCIÓN: Recargar la energía desde la base de datos al volver al menú
+    dailyLogin(); 
 };
 
 window.startSoloGame=async function(){
