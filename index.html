@@ -558,7 +558,6 @@ window.watchAdForTon = async function() {
                         adsEl.textContent = dbResult.data.ads_today;
                     }
                     loadWalletData();
-                    
                     // 🔥 CORRECCIÓN: Actualizar la interfaz de misiones inmediatamente
                     loadDailyMissions(); 
                 } else {
@@ -708,11 +707,11 @@ window.claimMissionRewards = async function() {
         if (result.data && result.data.success) {
             toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
             loadWalletData();
-            loadDailyMissions();
+            loadDailyMissions(); // Actualiza la UI inmediatamente
         } else {
             if (result.data.error === 'Ya reclamaste recompensas hoy') {
                 toast('Ya reclamaste recompensas hoy', 'error');
-                loadDailyMissions();
+                loadDailyMissions(); // Para deshabilitar el botón
             } else {
                 toast(result.data.error || 'No hay recompensas disponibles', 'error');
             }
