@@ -584,142 +584,59 @@ window.watchAdForTon = async function() {
 async function loadDailyMissions() {
     try {
         const result = await supabase.rpc('check_daily_missions', { p_user_id: tgUser.id });
-        
         if (result.data && result.data.missions) {
             const missions = result.data.missions;
             const missionsList = document.getElementById('missionsList');
             const missionsCompleted = document.getElementById('missionsCompleted');
-            
-            // Verificar si ya reclamó hoy
-            const walletResult = await supabase.from('wallets')
-                .select('missions_claimed, last_claim_date')
-                .eq('telegram_id', tgUser.id)
-                .single();
-            
-            // 🔥 CORRECCIÓN: Lógica infalible para saber si reclamó hoy
-            const hoy = new Date().toISOString().split('T')[0];
-            const fechaReclamo = walletResult.data?.last_claim_date;
-            const yaReclamoHoy = (fechaReclamo === hoy);
-            
-            // Actualizar UI
-            if (missionsCompleted) {
-                missionsCompleted.textContent = 
-                    (missions.ver_5_anuncios.completed ? 1 : 0) +
-                    (missions.ganar_1_trivia.completed ? 1 : 0) +
-                    (missions.enviar_3_regalos.completed ? 1 : 0) +
-                    (missions.desbloquear_1_chat.completed ? 1 : 0) + '/4';
-            }
-            
+            const totalCompletadas = (missions.ver_5_anuncios.completed?1:0)+(missions.ganar_1_trivia.completed?1:0)+(missions.enviar_3_regalos.completed?1:0)+(missions.desbloquear_1_chat.completed?1:0);
+            const hayNuevasRecompensas = (missions.ver_5_anuncios.completed && !missions.ver_5_anuncios.claimed) || (missions.ganar_1_trivia.completed && !missions.ganar_1_trivia.claimed) || (missions.enviar_3_regalos.completed && !missions.enviar_3_regalos.claimed) || (missions.desbloquear_1_chat.completed && !missions.desbloquear_1_chat.claimed);
+            if (missionsCompleted) missionsCompleted.textContent = totalCompletadas + '/4';
             if (missionsList) {
                 let html = '';
-                
-                // Misión 1: Ver 5 anuncios
                 const m1 = missions.ver_5_anuncios;
-                html += `
-                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m1.completed ? '✅' : '⏳'} Ver 5 anuncios</span>
-                            <span style="font-size:11px;color:var(--accent-gold);">+${m1.reward} fichas</span>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
-                            <div style="background:${m1.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m1.progress/m1.target)*100}%;transition:width 0.3s;"></div>
-                        </div>
-                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m1.progress}/${m1.target}</p>
-                    </div>
-                `;
-                
-                // Misión 2: Ganar 1 trivia
+                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m1.completed ? '✅' : '⏳'} Ver 5 anuncios</span><span style="font-size:11px;color:var(--accent-gold);">+${m1.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m1.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m1.progress/m1.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m1.progress}/${m1.target}</p></div>`;
                 const m2 = missions.ganar_1_trivia;
-                html += `
-                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m2.completed ? '✅' : '⏳'} Ganar 1 trivia</span>
-                            <span style="font-size:11px;color:var(--accent-gold);">+${m2.reward} fichas</span>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
-                            <div style="background:${m2.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m2.progress/m2.target)*100}%;transition:width 0.3s;"></div>
-                        </div>
-                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m2.progress}/${m2.target}</p>
-                    </div>
-                `;
-                
-                // Misión 3: Enviar 3 regalos
+                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m2.completed ? '✅' : '⏳'} Ganar 1 trivia</span><span style="font-size:11px;color:var(--accent-gold);">+${m2.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m2.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m2.progress/m2.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m2.progress}/${m2.target}</p></div>`;
                 const m3 = missions.enviar_3_regalos;
-                html += `
-                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m3.completed ? '✅' : '⏳'} Enviar 3 regalos</span>
-                            <span style="font-size:11px;color:var(--accent-gold);">+${m3.reward} fichas</span>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
-                            <div style="background:${m3.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m3.progress/m3.target)*100}%;transition:width 0.3s;"></div>
-                        </div>
-                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m3.progress}/${m3.target}</p>
-                    </div>
-                `;
-                
-                // Misión 4: Desbloquear 1 chat
+                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m3.completed ? '✅' : '⏳'} Enviar 3 regalos</span><span style="font-size:11px;color:var(--accent-gold);">+${m3.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m3.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m3.progress/m3.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m3.progress}/${m3.target}</p></div>`;
                 const m4 = missions.desbloquear_1_chat;
-                html += `
-                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                            <span style="font-size:13px;font-weight:600;">${m4.completed ? '✅' : '⏳'} Desbloquear 1 chat</span>
-                            <span style="font-size:11px;color:var(--accent-gold);">+${m4.reward} fichas</span>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;">
-                            <div style="background:${m4.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m4.progress/m4.target)*100}%;transition:width 0.3s;"></div>
-                        </div>
-                        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m4.progress}/${m4.target}</p>
-                    </div>
-                `;
-                
+                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m4.completed ? '✅' : '⏳'} Desbloquear 1 chat</span><span style="font-size:11px;color:var(--accent-gold);">+${m4.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m4.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m4.progress/m4.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m4.progress}/${m4.target}</p></div>`;
                 missionsList.innerHTML = html;
             }
-            
-            // Deshabilitar botón si ya reclamó hoy
             const claimButton = document.querySelector('button[onclick="claimMissionRewards()"]');
             if (claimButton) {
-                if (yaReclamoHoy) {
-                    claimButton.disabled = true;
-                    claimButton.textContent = '⭐ Recompensas Reclamadas';
-                    claimButton.style.opacity = '0.5';
-                } else {
+                if (hayNuevasRecompensas) {
                     claimButton.disabled = false;
                     claimButton.textContent = '⭐ Reclamar Recompensas';
                     claimButton.style.opacity = '1';
+                } else if (totalCompletadas > 0) {
+                    claimButton.disabled = true;
+                    claimButton.textContent = '✅ Ya reclamaste todo por hoy';
+                    claimButton.style.opacity = '0.5';
+                } else {
+                    claimButton.disabled = true;
+                    claimButton.textContent = '⏳ Completa misiones primero';
+                    claimButton.style.opacity = '0.5';
                 }
             }
         }
-    } catch (e) {
-        console.error('Error cargando misiones:', e);
-        toast('Error al cargar misiones', 'error');
-    }
+    } catch (e) { console.error('Error cargando misiones:', e); toast('Error al cargar misiones','error'); }
 }
 
 window.claimMissionRewards = async function() {
     try {
         const result = await supabase.rpc('claim_mission_rewards', { p_user_id: tgUser.id });
-        
-        if (result.error) {
-            return toast('Error: ' + result.error.message, 'error');
-        }
-        
+        if (result.error) return toast('Error: ' + result.error.message, 'error');
         if (result.data && result.data.success) {
-            toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            if (result.data.fichas_ganadas > 0) toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            else toast('Ya reclamaste estas misiones', 'error');
             loadWalletData();
-            loadDailyMissions(); // Actualiza la UI inmediatamente
+            loadDailyMissions();
         } else {
-            if (result.data.error === 'Ya reclamaste recompensas hoy') {
-                toast('Ya reclamaste recompensas hoy', 'error');
-                loadDailyMissions(); // Para deshabilitar el botón
-            } else {
-                toast(result.data.error || 'No hay recompensas disponibles', 'error');
-            }
+            toast(result.data && result.data.error ? result.data.error : 'No hay recompensas nuevas', 'error');
+            loadDailyMissions();
         }
-    } catch (e) {
-        toast('Error al reclamar recompensas', 'error');
-        console.error(e);
-    }
+    } catch (e) { toast('Error al reclamar recompensas', 'error'); console.error(e); }
 };
 
 async function loadAdsCounter() {
