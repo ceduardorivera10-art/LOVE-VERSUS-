@@ -195,7 +195,7 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <span id="adButtonText">VER VIDEO Y GANAR TON</span>
 </button>
 <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-    <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+    <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/5</p>
 </div>
 <!-- FIN BLOQUE ADSGRAM -->
     <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
@@ -272,6 +272,7 @@ var myReferralCode='';
 
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
+var hoyLocal=function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
 
 if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
@@ -583,7 +584,7 @@ window.watchAdForTon = async function() {
 
 async function loadDailyMissions() {
     try {
-        const result = await supabase.rpc('check_daily_missions', { p_user_id: tgUser.id });
+        const result = await supabase.rpc('check_daily_missions', { p_user_id: tgUser.id, p_hoy: hoyLocal() });
         if (result.data && result.data.missions) {
             const missions = result.data.missions;
             const missionsList = document.getElementById('missionsList');
@@ -655,7 +656,7 @@ async function loadAdsCounter() {
     }
 }
 async function dailyLogin(){
-    var result=await supabase.rpc('daily_login',{user_id:tgUser.id});
+    var result=await supabase.rpc('daily_login',{user_id:tgUser.id,p_hoy:hoyLocal()});
     if(result.error)throw result.error;
     energy={swipes:result.data.swipes,trivia:result.data.trivia_games,streak:result.data.streak,victorias:result.data.victorias,matches:result.data.matches||0,rango:result.data.rango};
     if(result.data.fichas_ganadas>0){
