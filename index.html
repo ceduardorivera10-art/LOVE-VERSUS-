@@ -295,11 +295,10 @@ $$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switch
 function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
 
 async function init(){
-    // 🔥 FORZAR OCULTACIÓN DEL LOADER PARA EVITAR CARGA INFINITA
     var loaderEl = document.getElementById('loader');
     if(loaderEl) {
-        loaderEl.style.display = 'none'; // Ocultar inmediatamente
-        loaderEl.classList.add('hidden'); // Asegurar clase
+        loaderEl.style.display = 'none';
+        loaderEl.classList.add('hidden');
     }
 
     if(window.Telegram&&window.Telegram.WebApp){
@@ -337,10 +336,18 @@ async function init(){
         updateBalance();
         loadProfiles();
         
-        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}if(r.status==='active'&&(p1===myId||p2===myId)&&gameId!==r.id){$('#challengeModal').classList.remove('show');var myNum=(p1===myId)?1:2;startGameLive(r.id,myNum)}}).subscribe();
+        // 🔧 OYENTE ARREGLADO: solo arranca partida en 1vs1 real (con oponente), NUNCA en modo solo
+        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
+            var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);
+            // Reto recibido (invitado)
+            if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}
+            // Invitado entra a la partida activa
+            if(r.status==='active'&&p2===myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,2)}
+            // Creador entra SOLO si hay oponente (1vs1); en modo solo p2 es null y NO entra por aquí
+            if(r.status==='active'&&p1===myId&&p2&&p2!==myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,1)}
+        }).subscribe();
     }catch(e){
         console.error('❌ Error en init:', e);
-        // Mostrar el error en pantalla también
         alert('Error: ' + (e.message || 'Desconocido') + '\nRevisa la consola para más detalles.');
         $('#sectionDating').classList.add('active');
         $('#emptyDating').style.display='block';
@@ -348,9 +355,7 @@ async function init(){
         $('#emptyDesc').textContent=e.message||'Revisa tu conexión a Internet (CDN bloqueado)';
         var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
     }
-    // Cualquier fallo en el catch ya fue manejado, pero dejamos el timeout por si acaso
     setTimeout(function(){
-        // Asegurar que al menos una sección esté visible
         if(!document.querySelector('.section.active')){
             $('#sectionDating').classList.add('active');
         }
@@ -559,7 +564,6 @@ window.watchAdForTon = async function() {
                         adsEl.textContent = dbResult.data.ads_today;
                     }
                     loadWalletData();
-                    // 🔥 CORRECCIÓN: Actualizar la interfaz de misiones inmediatamente
                     loadDailyMissions(); 
                 } else {
                     throw new Error(dbResult.data?.error || 'Error al acreditar');
@@ -853,7 +857,6 @@ window.resetGames=function(){
     var gm=$('#gameMenu');
     if(gm){gm.classList.remove('hidden');gm.style.display='block';}
     
-    // 🔥 CORRECCIÓN: Recargar la energía desde la base de datos al volver al menú
     dailyLogin(); 
 };
 
@@ -889,7 +892,7 @@ async function startGameLive(currentGameId,myPlayerNum){
     if(flow){flow.classList.remove('hidden');flow.style.display='block';}
     var preg=$('#triviaPreguntas');
     if(preg){preg.classList.remove('hidden');preg.style.display='block';}
-    loadQuestions();showQuestion();
+    await loadQuestions();showQuestion();
     if(playerNum===2){
         triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){
             if(payload.new.id!==gameId)return;
@@ -899,15 +902,23 @@ async function startGameLive(currentGameId,myPlayerNum){
     toast('🎮 ¡Juego iniciado!','success');
 }
 
-function loadQuestions(){
-    var all=[
+// 🧠 Trae 5 preguntas del banco (variadas). Si el banco falla, usa las 5 fijas (red de seguridad)
+async function loadQuestions(){
+    var fallback=[
         {q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},
         {q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},
         {q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
         {q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},
         {q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
     ];
-    questions=all.sort(function(){return Math.random()-0.5}).slice(0,5);
+    try{
+        var res=await supabase.rpc('get_trivia_questions',{p_user_id:tgUser.id});
+        if(res.data && Array.isArray(res.data) && res.data.length>0){
+            questions=res.data.map(function(x){return {q:x.pregunta,o:x.opciones,c:x.correcta};});
+            return;
+        }
+    }catch(e){console.error('Error banco trivia:',e);}
+    questions=fallback.sort(function(){return Math.random()-0.5}).slice(0,5);
 }
 
 function showQuestion(){
