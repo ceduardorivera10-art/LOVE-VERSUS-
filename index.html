@@ -5,6 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>LoveVersus</title>
+<!-- 🩺 PANEL DE DIAGNÓSTICO: script independiente. Si el JS principal falla, esto te lo muestra en pantalla. No depende de nada y no puede romper el resto. -->
+<script>
+(function(){
+  function paint(msg){
+    var d=document.getElementById('__lv_err');
+    if(!d){
+      d=document.createElement('div');
+      d.id='__lv_err';
+      d.style.cssText='position:fixed;left:10px;right:10px;top:10px;z-index:99999;background:#1a0d12;border:2px solid #e94560;color:#ffd9e0;border-radius:16px;padding:14px 16px;font:12px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;box-shadow:0 14px 50px rgba(0,0,0,.65);max-height:72vh;overflow:auto;';
+      (document.body||document.documentElement).appendChild(d);
+    }
+    d.textContent='⚠️ LoveVersus detectó un problema:\n\n'+msg+'\n\n— Haz una captura de ESTE recuadro y mándasela a tu programador. Con esto se arregla en un minuto.';
+    var l=document.getElementById('loader'); if(l) l.style.display='none';
+  }
+  window.onerror=function(m,s,l,c){ paint((m||'Error desconocido')+'   [línea '+(l||'?')+':'+(c||'?')+']'); return true; };
+  window.addEventListener('unhandledrejection',function(ev){ paint('Promesa sin capturar: '+(ev.reason&&(ev.reason.message||ev.reason)||'')); });
+  setTimeout(function(){
+    var l=document.getElementById('loader');
+    if(l && getComputedStyle(l).display!=='none' && !document.getElementById('__lv_err')){
+      paint('La app no terminó de iniciar en 7s.\nCausas típicas: (1) caché de Telegram → cierra la app del todo y reabre; (2) el index.html no se subió o el ?v= apunta a un archivo que no existe.');
+    }
+  },7000);
+})();
+</script>
 <style>
 :root{--bg-primary:#0a0a0a;--bg-secondary:#111;--bg-card:#1a1a1a;--accent-blue:#3390ec;--accent-gold:#c9a84c;--accent-rose:#e94560;--accent-green:#34c759;--text-primary:#f5f5f5;--text-secondary:#b0b0b0;--radius-lg:20px;--nav-height:64px;--safe-bottom:env(safe-area-inset-bottom,12px)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -104,7 +128,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div id="gameMenu">
 <div class="card" onclick="openTrivia()"><h3>🧠 Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
 <div class="card" onclick="openCompatTest()"><h3>💞 Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
-<!-- INICIO BLOQUE ATREVIDAS 🔥 (PASO 5) -->
 <div id="atrevidasBox" style="background:linear-gradient(135deg,#2a1018,#3f1a2a);border:2px solid var(--accent-rose);border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 16px rgba(233,69,96,0.2);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
     <h4 style="color:var(--accent-rose);font-size:15px;font-weight:700;">🔥 Modo Atrevidas</h4>
@@ -113,7 +136,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
   <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Desbloquea preguntas picantes 🔥 en tus trivias durante 24h.</p>
   <button onclick="showAtrevidasModal()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent-rose),#b8324a);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;">🔓 Desbloquear Atrevidas</button>
 </div>
-<!-- FIN BLOQUE ATREVIDAS 🔥 -->
 <div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🛒 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🛒 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
 </div>
 <div id="triviaFlow" class="hidden">
@@ -142,16 +164,12 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
 <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
-
-<!-- INICIO BLOQUE REFERIDOS VISUAL -->
 <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
     <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
     <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
     <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar y Compartir</button>
     <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
 </div>
-<!-- FIN BLOQUE REFERIDOS VISUAL -->
-<!-- INICIO BLOQUE MISIONES DIARIAS -->
 <div style="background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(51,144,236,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h4 style="color:var(--accent-blue);font-size:16px;font-weight:700;letter-spacing:0.5px;">⭐ Misiones Diarias</h4>
@@ -160,12 +178,8 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <div id="missionsList" style="display:flex;flex-direction:column;gap:10px;">
         <p style="color:var(--text-secondary);font-size:13px;text-align:center;">Cargando misiones...</p>
     </div>
-    <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">
-        ⭐ Reclamar Recompensas
-    </button>
+    <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">⭐ Reclamar Recompensas</button>
 </div>
-<!-- FIN BLOQUE MISIONES DIARIAS -->
-<!-- INICIO BLOQUE BILLETERA VISUAL -->
 <div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;">💰 Tu Billetera</h4>
@@ -191,21 +205,18 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
         <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);">💰 Depositar TON</button>
         <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);">💰 Retirar</button>
     </div>
-    <!-- INICIO BLOQUE ADSGRAM -->
-<button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
-    <span style="font-size:20px;">💰</span>
-    <span id="adButtonText">VER VIDEO Y GANAR TON</span>
-</button>
-<div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-    <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/5</p>
-</div>
-<!-- FIN BLOQUE ADSGRAM -->
+    <button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <span style="font-size:20px;">💰</span>
+        <span id="adButtonText">VER VIDEO Y GANAR TON</span>
+    </button>
+    <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
+        <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+    </div>
     <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
         <p style="font-size:10px;color:var(--text-secondary);">🛡️ Fondos protegidos · Retiros mínimos 1 TON · Auditoría blockchain</p>
     </div>
 </div>
-<!-- FIN BLOQUE BILLETERA VISUAL -->
 </section>
 </main>
 <nav class="bottom-nav">
@@ -247,8 +258,8 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     script.src = 'https://sad.adsgram.ai/js/sad.min.js';
     script.setAttribute('data-block-id', '35856');
     script.async = true;
-    script.onload = function() { console.log('✅ Adsgram SDK cargado'); };
-    script.onerror = function() { console.error('❌ Error cargando Adsgram SDK'); };
+    script.onload = function() { console.log('Adsgram SDK cargado'); };
+    script.onerror = function() { console.error('Error cargando Adsgram SDK'); };
     document.head.appendChild(script);
 })();
 </script>
@@ -257,7 +268,7 @@ var SUPABASE_URL='https://qqimmkkkgjkkzyewodcf.supabase.co';
 var SUPABASE_KEY='sb_publishable_jVwSb9ED-z2o6nOCpK6FhQ_HRXDBQqg';
 var PAYMENTS_BOT_TOKEN='8211393141:AAHEua1Q5YeN0nysbStQSvBY9QrwAntk-5Y';
 var supabase,tgUser;
-var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'🟤 Bronce'};
+var energy={swipes:20,trivia:5,streak:0,victorias:0,matches:0,rango:'Bronce'};
 var gameId=null,playerNum=1,responses=[],questions=[],qIdx=0,locked=false,timer=null,timeLeft=15;
 var datingQueue=[],dIdx=0,interacted=new Set(JSON.parse(localStorage.getItem('lv_interacted')||'[]'));
 var compatAnswers=[],currentChatPartner=null,chatChannel=null,triviaChannel=null;
@@ -265,17 +276,15 @@ var pendingChallengeId=null;
 var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
 var myReferralCode='';
-// 🔥 PASO 5: precios del Modo Atrevidas (deben coincidir con los de la función SQL)
 var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2;
 
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
 var hoyLocal=function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
-// 🔧 Cierres robustos por ID (a prueba de WebView; reemplazan el selector frágil que fallaba en móvil)
-var closeWalletModal=function(){var m=document.getElementById('walletModal');if(m)m.remove();};
-var closeChatUnlockModal=function(){var m=document.getElementById('chatUnlockModal');if(m)m.remove();};
-var closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
+window.closeWalletModal=function(){var m=document.getElementById('walletModal');if(m)m.remove();};
+window.closeChatUnlockModal=function(){var m=document.getElementById('chatUnlockModal');if(m)m.remove();};
+window.closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
 
 if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
 
@@ -300,13 +309,11 @@ function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(u
 async function init(){
     var loaderEl = document.getElementById('loader');
     if(loaderEl) { loaderEl.style.display = 'none'; loaderEl.classList.add('hidden'); }
-
     if(window.Telegram&&window.Telegram.WebApp){
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.ready();
         tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'};
     }else{tgUser={id:123456789,first_name:'Demo'}}
-
     $('#headerName').textContent=tgUser.first_name;
     $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
     $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
@@ -314,11 +321,9 @@ async function init(){
     var initials=(tgUser.first_name||'?')[0].toUpperCase();
     if(tgUser.photo_url){$('#headerAvatar').innerHTML='<img src="'+tgUser.photo_url+'">'}else{$('#headerAvatar').textContent=initials}
     if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}
-
     try{
         supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
         await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
-
         var urlParams=new URLSearchParams(window.location.search);
         var refCode=urlParams.get('ref');
         var walletResult=await supabase.rpc('initialize_user_wallet',{p_telegram_id:tgUser.id,p_referral_code:refCode||null});
@@ -331,24 +336,21 @@ async function init(){
             var fichasEl=document.getElementById('fichasStat');
             if(fichasEl)fichasEl.textContent=w.fichas||0;
         }
-
         await dailyLogin();
         updateBalance();
         loadProfiles();
-
         supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
             var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);
-            if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}
+            if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('¡Te han retado a Trivia!','success')}
             if(r.status==='active'&&p2===myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,2)}
             if(r.status==='active'&&p1===myId&&p2&&p2!==myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,1)}
         }).subscribe();
     }catch(e){
-        console.error('❌ Error en init:', e);
-        alert('Error: ' + (e.message || 'Desconocido') + '\nRevisa la consola para más detalles.');
+        console.error('Error en init:', e);
         $('#sectionDating').classList.add('active');
         $('#emptyDating').style.display='block';
         $('#emptyTitle').textContent='Error al cargar';
-        $('#emptyDesc').textContent=e.message||'Revisa tu conexión a Internet (CDN bloqueado)';
+        $('#emptyDesc').textContent=e.message||'Revisa tu conexion a Internet';
         var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
     }
     setTimeout(function(){ if(!document.querySelector('.section.active')){ $('#sectionDating').classList.add('active'); } }, 1000);
@@ -360,10 +362,10 @@ window.copyReferralCode=function(){
     var code=c.textContent;
     if(code&&code!=='Cargando...'){
         if(navigator.share){
-            navigator.share({title:'LoveVersus',text:'¡Gana TON real jugando! Mi código: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
+            navigator.share({title:'LoveVersus',text:'Gana TON real jugando! Mi codigo: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
         }else{
-            if(navigator.clipboard){ navigator.clipboard.writeText(code); toast('📋 Código '+code+' copiado','success'); }
-            else{ toast('Tu código es: '+code,'success'); }
+            if(navigator.clipboard){ navigator.clipboard.writeText(code); toast('Codigo '+code+' copiado','success'); }
+            else{ toast('Tu codigo es: '+code,'success'); }
         }
     }
 };
@@ -384,44 +386,44 @@ async function loadWalletData() {
 
 window.showWalletModal = function(action) {
     const modal = document.createElement('div');
-    modal.id='walletModal'; // 🔧 id para cierre robusto
+    modal.id='walletModal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
     const box = document.createElement('div');
     box.style.cssText = 'background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
     if (action === 'deposit') {
-        box.innerHTML = `<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Depositar TON</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Envía TON a tu wallet interna</p><input type="number" id="depositAmount" placeholder="Cantidad en TON" step="0.1" min="0.1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;"><button onclick="processDeposit()" style="width:100%;padding:14px;background:var(--accent-blue);color:#fff;border:none;border-radius:12px;font-weight:700;">Confirmar Depósito</button>`;
+        box.innerHTML = '<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Depositar TON</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Envia TON a tu wallet interna</p><input type="number" id="depositAmount" placeholder="Cantidad en TON" step="0.1" min="0.1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;"><button onclick="processDeposit()" style="width:100%;padding:14px;background:var(--accent-blue);color:#fff;border:none;border-radius:12px;font-weight:700;">Confirmar Deposito</button>';
     } else if (action === 'withdraw') {
-        box.innerHTML = `<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Retirar TON</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">Mínimo: 1 TON · Fee de red incluido</p><p style="color:var(--accent-green);font-size:12px;margin-bottom:16px;">Disponible: <span id="availDisplay">0.0000</span> TON</p><input type="number" id="withdrawAmount" placeholder="Cantidad a retirar" step="0.1" min="1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;"><input type="text" id="withdrawWallet" placeholder="Tu wallet TON (EQ...)" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:14px;margin-bottom:12px;"><button onclick="processWithdraw()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:700;">Solicitar Retiro</button>`;
+        box.innerHTML = '<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Retirar TON</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">Minimo: 1 TON</p><p style="color:var(--accent-green);font-size:12px;margin-bottom:16px;">Disponible: <span id="availDisplay">0.0000</span> TON</p><input type="number" id="withdrawAmount" placeholder="Cantidad a retirar" step="0.1" min="1" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;"><input type="text" id="withdrawWallet" placeholder="Tu wallet TON (EQ...)" style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:10px;color:#fff;font-size:14px;margin-bottom:12px;"><button onclick="processWithdraw()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:700;">Solicitar Retiro</button>';
     } else if (action === 'buyfichas') {
-        box.innerHTML = `<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Comprar Fichas</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Mejor tasa que la tienda</p><button onclick="buyFichasPack(50,0.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">50 Fichas · 0.5 TON</button><button onclick="buyFichasPack(100,0.9)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas · 0.9 TON (10% OFF)</button><button onclick="buyFichasPack(300,2.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;text-align:left;">300 Fichas · 2.5 TON (17% OFF)</button>`;
+        box.innerHTML = '<div style="font-size:40px;margin-bottom:10px;">💰</div><h3 style="color:var(--accent-gold);margin-bottom:12px;">Comprar Fichas</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Mejor tasa que la tienda</p><button onclick="buyFichasPack(50,0.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">50 Fichas - 0.5 TON</button><button onclick="buyFichasPack(100,0.9)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas - 0.9 TON</button><button onclick="buyFichasPack(300,2.5)" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;text-align:left;">300 Fichas - 2.5 TON</button>';
     }
     const closeBtn = document.createElement('button');
-    closeBtn.textContent = '✖️ Cerrar';
+    closeBtn.textContent = 'Cerrar';
     closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
-    closeBtn.onclick = function() { closeWalletModal(); };
+    closeBtn.onclick = function() { window.closeWalletModal(); };
     box.appendChild(closeBtn); modal.appendChild(box);
-    modal.onclick = function(e) { if (e.target === modal) closeWalletModal(); };
+    modal.onclick = function(e) { if (e.target === modal) window.closeWalletModal(); };
     document.body.appendChild(modal);
     if (action === 'withdraw') { const availEl = document.getElementById('availDisplay'); const dEl = document.getElementById('walletDisponible'); if (availEl && dEl) availEl.textContent = dEl.textContent; }
 };
 
 window.processDeposit = async function() {
     const amount = parseFloat(document.getElementById('depositAmount').value);
-    if (!amount || amount < 0.1) return toast('Mínimo 0.1 TON', 'error');
-    toast('✅ Función de depósito en desarrollo', 'success');
-    closeWalletModal(); // 🔧
+    if (!amount || amount < 0.1) return toast('Minimo 0.1 TON', 'error');
+    toast('Funcion de deposito en desarrollo', 'success');
+    window.closeWalletModal();
 };
 
 window.processWithdraw = async function() {
     const amount = parseFloat(document.getElementById('withdrawAmount').value);
     const wallet = document.getElementById('withdrawWallet').value.trim();
-    if (!amount || amount < 1) return toast('Mínimo 1 TON', 'error');
-    if (!wallet || !wallet.startsWith('EQ') && !wallet.startsWith('UQ')) { return toast('Wallet TON inválida (debe empezar con EQ o UQ)', 'error'); }
+    if (!amount || amount < 1) return toast('Minimo 1 TON', 'error');
+    if (!wallet || !wallet.startsWith('EQ') && !wallet.startsWith('UQ')) { return toast('Wallet TON invalida', 'error'); }
     const result = await supabase.rpc('solicitar_retiro', { p_user_id: tgUser.id, p_monto: amount, p_wallet_destino: wallet });
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
-    toast('✅ Retiro solicitado. Procesando...', 'success');
-    closeWalletModal(); // 🔧
+    toast('Retiro solicitado. Procesando...', 'success');
+    window.closeWalletModal();
     loadWalletData();
 };
 
@@ -430,8 +432,8 @@ window.buyFichasPack = async function(fichas, ton) {
     const result = await supabase.rpc('comprar_fichas_con_ton', { p_user_id: tgUser.id, p_paquete: packName });
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
-    toast('✅ +' + fichas + ' fichas compradas', 'success');
-    closeWalletModal(); // 🔧
+    toast('+' + fichas + ' fichas compradas', 'success');
+    window.closeWalletModal();
     loadWalletData();
 };
 
@@ -439,30 +441,30 @@ window.watchAdForTon = async function() {
     const adBtn = document.getElementById('adButton');
     const adText = document.getElementById('adButtonText');
     if (!adBtn || !adText) return toast('Error: UI no encontrada', 'error');
-    if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) { return toast('❌ Usuario no válido. Inicia sesión de nuevo', 'error'); }
-    adBtn.disabled = true; adText.textContent = '⏳ Cargando SDK...';
+    if (!tgUser || !tgUser.id || typeof tgUser.id !== 'number' || tgUser.id <= 0) { return toast('Usuario no valido', 'error'); }
+    adBtn.disabled = true; adText.textContent = 'Cargando SDK...';
     let sdkReady = false, attempts = 0; const maxAttempts = 10;
     while (!sdkReady && attempts < maxAttempts) { if (window.Adsgram || window.AdsgramSDK) { sdkReady = true; break; } attempts++; await new Promise(resolve => setTimeout(resolve, 500)); }
-    if (!sdkReady) { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR TON'; return toast('❌ SDK no cargó. Revisa tu internet e intenta de nuevo.', 'error'); }
+    if (!sdkReady) { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR TON'; return toast('SDK no cargo', 'error'); }
     adText.textContent = 'Cargando video...';
     const sdk = window.Adsgram || window.AdsgramSDK;
     const AdController = sdk.init({ blockId: "35856", debug: false });
     AdController.show().then((result) => {
         if (result.done) {
             localStorage.setItem('lastAdTime', Date.now().toString());
-            adText.textContent = '✅ Acreditando...';
+            adText.textContent = 'Acreditando...';
             supabase.rpc('registrar_vista_anuncio', { p_user_id: tgUser.id }).then((dbResult) => {
                 if (dbResult.error) throw new Error(dbResult.error.message);
                 if (dbResult.data && dbResult.data.success) {
-                    toast('✅ +0.0003 TON ganado!', 'success');
+                    toast('+0.0003 TON ganado!', 'success');
                     const adsEl = document.getElementById('adsToday'); if (adsEl && dbResult.data.ads_today) { adsEl.textContent = dbResult.data.ads_today; }
                     loadWalletData(); loadDailyMissions();
-                } else { throw new Error(dbResult.data?.error || 'Error al acreditar'); }
+                } else { throw new Error((dbResult.data && dbResult.data.error) || 'Error al acreditar'); }
             }).catch((dbErr) => { console.error('Error Supabase:', dbErr); toast('Error al guardar recompensa', 'error'); });
         }
     }).catch((error) => {
-        if (error.description === 'user closed the ad' || error.state === 'destroy') { toast('⏹️ Video cancelado', 'warning'); }
-        else { toast('Error: ' + (error.description || 'No hay anuncios disponibles'), 'error'); console.error('Adsgram Error:', error); }
+        if (error.description === 'user closed the ad' || error.state === 'destroy') { toast('Video cancelado', 'warning'); }
+        else { toast('Error: ' + (error.description || 'No hay anuncios'), 'error'); console.error('Adsgram Error:', error); }
     }).finally(() => { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR TON'; });
 };
 
@@ -479,20 +481,20 @@ async function loadDailyMissions() {
             if (missionsList) {
                 let html = '';
                 const m1 = missions.ver_5_anuncios;
-                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m1.completed ? '✅' : '⏳'} Ver 5 anuncios</span><span style="font-size:11px;color:var(--accent-gold);">+${m1.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m1.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m1.progress/m1.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m1.progress}/${m1.target}</p></div>`;
+                html += '<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid '+(m1.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)')+';"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">'+(m1.completed ? '✅ ' : '')+'Ver 5 anuncios</span><span style="font-size:11px;color:var(--accent-gold);">+'+m1.reward+' fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:'+(m1.completed ? 'var(--accent-green)' : 'var(--accent-blue)')+';height:100%;width:'+((m1.progress/m1.target)*100)+'%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">'+m1.progress+'/'+m1.target+'</p></div>';
                 const m2 = missions.ganar_1_trivia;
-                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m2.completed ? '✅' : '⏳'} Ganar 1 trivia</span><span style="font-size:11px;color:var(--accent-gold);">+${m2.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m2.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m2.progress/m2.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m2.progress}/${m2.target}</p></div>`;
+                html += '<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid '+(m2.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)')+';"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">'+(m2.completed ? '✅ ' : '')+'Ganar 1 trivia</span><span style="font-size:11px;color:var(--accent-gold);">+'+m2.reward+' fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:'+(m2.completed ? 'var(--accent-green)' : 'var(--accent-blue)')+';height:100%;width:'+((m2.progress/m2.target)*100)+'%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">'+m2.progress+'/'+m2.target+'</p></div>';
                 const m3 = missions.enviar_3_regalos;
-                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m3.completed ? '✅' : '⏳'} Enviar 3 regalos</span><span style="font-size:11px;color:var(--accent-gold);">+${m3.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m3.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m3.progress/m3.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m3.progress}/${m3.target}</p></div>`;
+                html += '<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid '+(m3.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)')+';"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">'+(m3.completed ? '✅ ' : '')+'Enviar 3 regalos</span><span style="font-size:11px;color:var(--accent-gold);">+'+m3.reward+' fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:'+(m3.completed ? 'var(--accent-green)' : 'var(--accent-blue)')+';height:100%;width:'+((m3.progress/m3.target)*100)+'%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">'+m3.progress+'/'+m3.target+'</p></div>';
                 const m4 = missions.desbloquear_1_chat;
-                html += `<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid ${m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)'};"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">${m4.completed ? '✅' : '⏳'} Desbloquear 1 chat</span><span style="font-size:11px;color:var(--accent-gold);">+${m4.reward} fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:${m4.completed ? 'var(--accent-green)' : 'var(--accent-blue)'};height:100%;width:${(m4.progress/m4.target)*100}%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">${m4.progress}/${m4.target}</p></div>`;
+                html += '<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;border:1px solid '+(m4.completed ? 'var(--accent-green)' : 'rgba(255,255,255,0.1)')+';"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;font-weight:600;">'+(m4.completed ? '✅ ' : '')+'Desbloquear 1 chat</span><span style="font-size:11px;color:var(--accent-gold);">+'+m4.reward+' fichas</span></div><div style="background:rgba(255,255,255,0.1);border-radius:6px;height:6px;overflow:hidden;"><div style="background:'+(m4.completed ? 'var(--accent-green)' : 'var(--accent-blue)')+';height:100%;width:'+((m4.progress/m4.target)*100)+'%;transition:width 0.3s;"></div></div><p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">'+m4.progress+'/'+m4.target+'</p></div>';
                 missionsList.innerHTML = html;
             }
             const claimButton = document.querySelector('button[onclick="claimMissionRewards()"]');
             if (claimButton) {
-                if (hayNuevasRecompensas) { claimButton.disabled = false; claimButton.textContent = '⭐ Reclamar Recompensas'; claimButton.style.opacity = '1'; }
-                else if (totalCompletadas > 0) { claimButton.disabled = true; claimButton.textContent = '✅ Ya reclamaste todo por hoy'; claimButton.style.opacity = '0.5'; }
-                else { claimButton.disabled = true; claimButton.textContent = '⏳ Completa misiones primero'; claimButton.style.opacity = '0.5'; }
+                if (hayNuevasRecompensas) { claimButton.disabled = false; claimButton.textContent = 'Reclamar Recompensas'; claimButton.style.opacity = '1'; }
+                else if (totalCompletadas > 0) { claimButton.disabled = true; claimButton.textContent = 'Ya reclamaste todo por hoy'; claimButton.style.opacity = '0.5'; }
+                else { claimButton.disabled = true; claimButton.textContent = 'Completa misiones primero'; claimButton.style.opacity = '0.5'; }
             }
         }
     } catch (e) { console.error('Error cargando misiones:', e); toast('Error al cargar misiones','error'); }
@@ -503,10 +505,10 @@ window.claimMissionRewards = async function() {
         const result = await supabase.rpc('claim_mission_rewards', { p_user_id: tgUser.id });
         if (result.error) return toast('Error: ' + result.error.message, 'error');
         if (result.data && result.data.success) {
-            if (result.data.fichas_ganadas > 0) toast('🎁 +' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
+            if (result.data.fichas_ganadas > 0) toast('+' + result.data.fichas_ganadas + ' fichas ganadas!', 'success');
             else toast('Ya reclamaste estas misiones', 'error');
             loadWalletData(); loadDailyMissions();
-        } else { toast(result.data && result.data.error ? result.data.error : 'No hay recompensas nuevas', 'error'); loadDailyMissions(); }
+        } else { toast((result.data && result.data.error) || 'No hay recompensas nuevas', 'error'); loadDailyMissions(); }
     } catch (e) { toast('Error al reclamar recompensas', 'error'); console.error(e); }
 };
 
@@ -523,7 +525,7 @@ async function dailyLogin(){
     if(result.data.fichas_ganadas>0){
         var sb=$('#streakBanner');
         if(sb){sb.style.display='block';$('#streakDays').textContent=result.data.streak;$('#streakFichas').textContent=result.data.fichas_ganadas;}
-        toast('🔥 +'+result.data.fichas_ganadas+' fichas por racha!','success');
+        toast('+'+result.data.fichas_ganadas+' fichas por racha!','success');
     }
     updateEnergy(); updateProfileStats();
 }
@@ -537,9 +539,9 @@ function updateEnergy(){
 function updateProfileStats(){
     var vs=$('#victoriasStat');if(vs)vs.textContent=energy.victorias;
     var ms=$('#matchesStat');if(ms)ms.textContent=energy.matches||0;
-    var p=energy.rango.split(' ');
+    var p=(energy.rango||'Bronce').split(' ');
     var ri=$('#rangoIcon');if(ri)ri.textContent=p[0];
-    var rn=$('#rangoName');if(rn)rn.textContent=p.slice(1).join(' ');
+    var rn=$('#rangoName');if(rn)rn.textContent=p.slice(1).join(' ')||p[0];
 }
 
 async function updateBalance(){
@@ -557,7 +559,7 @@ async function loadProfiles(){
         return;
     }
     var queue=result.data.filter(function(u){return !interacted.has(u.telegram_id)});
-    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('🔄 ¡Nuevos perfiles disponibles!','success')}
+    if(queue.length===0){interacted.clear();localStorage.removeItem('lv_interacted');queue=result.data;toast('Nuevos perfiles disponibles','success')}
     datingQueue=queue;dIdx=0;showProfile();
 }
 
@@ -576,7 +578,7 @@ function showProfile(){
 
 window.handleSwipe=async function(type){
     if(dIdx>=datingQueue.length)return;
-    if(energy.swipes<=0)return toast('⚡ Sin energía','error');
+    if(energy.swipes<=0)return toast('Sin energia','error');
     var result=await supabase.rpc('use_swipe',{user_id:tgUser.id});
     if(result.data>=0){energy.swipes=result.data;updateEnergy()}
     var currentProfile=datingQueue[dIdx];
@@ -585,8 +587,8 @@ window.handleSwipe=async function(type){
     if(type==='like'||type==='super'){
         var isMutual=Math.random()<0.3;
         if(isMutual){showMatchModal(currentProfile.first_name||'Esta persona',currentProfile.telegram_id);if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')}
-        else{toast('❤️ ¡Like enviado!','success');dIdx++;showProfile()}
-    }else{toast('❌ Descartado');dIdx++;showProfile()}
+        else{toast('Like enviado','success');dIdx++;showProfile()}
+    }else{toast('Descartado');dIdx++;showProfile()}
 };
 window.showMatchModal=function(name,id){currentMatchId=id;currentMatchName=name;$('#matchName').textContent=name;$('#matchModal').classList.add('show')};
 window.closeMatchModal=function(){$('#matchModal').classList.remove('show');dIdx++;showProfile()};
@@ -604,32 +606,32 @@ window.openChatWith=async function(userId,userName){
     showUnlockModal(userId,userName);
 };
 
-function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.id='chatUnlockModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2 Tokens</span></button><button onclick="closeChatUnlockModal()" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)closeChatUnlockModal()};document.body.appendChild(modal)})}
-window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK no cargado','error');var sdk=window.Adsgram||window.AdsgramSDK;var AdController=sdk.init({blockId:"35856"});toast('✅ Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();var tokens=w.data?(w.data.premium_tokens||0):0;toast('✅ Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{closeChatUnlockModal();showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
-window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('✅ Chat desbloqueado','success');closeChatUnlockModal();currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
+function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.id='chatUnlockModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2</span></button><button onclick="closeChatUnlockModal()" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)closeChatUnlockModal()};document.body.appendChild(modal)})}
+window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK no cargado','error');var sdk=window.Adsgram||window.AdsgramSDK;var AdController=sdk.init({blockId:"35856"});toast('Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();var tokens=w.data?(w.data.premium_tokens||0):0;toast('Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{closeChatUnlockModal();showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
+window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('Chat desbloqueado','success');closeChatUnlockModal();currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
 
 window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
 window.sendGift=async function(giftType){
     if(!currentChatPartner)return;
-    var names={rose:'una rosa 🌹',chocolate:'un chocolate 🍫',ring:'un anillo 💍'};
+    var names={rose:'una rosa',chocolate:'un chocolate',ring:'un anillo'};
     var saldoResult=await supabase.rpc('get_balance',{user_id:tgUser.id});
     var cost=50; if(giftType==='chocolate') cost=100; if(giftType==='ring') cost=300;
-    if(saldoResult.data < cost){return toast('Saldo insuficiente (necesitas '+cost+' fichas)','error');}
-    var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'🎁 ¡Te ha enviado un regalo!',p_gift:giftType});
-    if(result.error||!result.data.success){return toast(result.data?result.data.error:'Error al enviar','error');}
+    if(saldoResult.data < cost){return toast('Saldo insuficiente','error');}
+    var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'Te ha enviado un regalo!',p_gift:giftType});
+    if(result.error||!result.data.success){return toast((result.data&&result.data.error)||'Error al enviar','error');}
     var updateResult=await supabase.rpc('update_fichas_balance',{p_user_id:tgUser.id,p_fichas: -cost});
     if(updateResult.error||!updateResult.data.success){return toast('Error al actualizar saldo','error');}
-    toast('✅ '+names[giftType]+' enviada. Chat desbloqueado.','success');
+    toast(names[giftType]+' enviada','success');
     updateBalance(); $('#chatInput').parentElement.classList.remove('hidden'); loadChatHistory();
 };
 window.sendMessage=async function(){var input=$('#chatInput');var text=input.value.trim();if(!text||!currentChatPartner)return;input.disabled=true;var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:text,p_gift:null});input.disabled=false;if(result.error)return toast('Error al enviar','error');if(!result.data||!result.data.success)return toast(result.data.error||'Error','error');input.value='';loadChatHistory()};
 async function loadChatHistory(){try{var result=await supabase.from('chat_messages').select('*').or('and(sender_id.eq.'+tgUser.id+',receiver_id.eq.'+currentChatPartner.id+'),and(sender_id.eq.'+currentChatPartner.id+',receiver_id.eq.'+tgUser.id+')').order('created_at',{ascending:false}).limit(50);if(result.error){console.error('Error loadChat:',result.error);return}var filtered=(result.data||[]).filter(function(m){return(m.sender_id==tgUser.id&&m.receiver_id==currentChatPartner.id)||(m.sender_id==currentChatPartner.id&&m.receiver_id==tgUser.id)});filtered.reverse();renderMessages(filtered)}catch(e){console.error('Error:',e)}}
 function renderMessages(msgs){var container=$('#chatMessages');var existingIds=new Set();container.querySelectorAll('[data-msg-id]').forEach(function(el){existingIds.add(el.dataset.msgId)});msgs.forEach(function(m){if(!m.id)return;if(existingIds.has(String(m.id)))return;var isMe=m.sender_id==tgUser.id;var div=document.createElement('div');div.className='chat-bubble '+(isMe?'me':'other');div.dataset.msgId=m.id;var content='';if(m.gift_type==='rose')content+='🌹 ';if(m.gift_type==='chocolate')content+='🍫 ';if(m.gift_type==='ring')content+='💍 ';content+=m.message||'';div.textContent=content;container.appendChild(div)});container.scrollTop=container.scrollHeight}
 function subscribeToChat(){if(chatChannel)supabase.removeChannel(chatChannel);chatChannel=supabase.channel('chat_'+tgUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){var msg=payload.new;if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id&&currentChatPartner&&msg.sender_id==currentChatPartner.id){renderMessages([msg]);if($('#chatMessages').querySelector('button')){$('#chatInput').parentElement.classList.remove('hidden')}}else if(msg.sender_id!=tgUser.id&&msg.receiver_id==tgUser.id){unreadCount++;updateNotifBadge();if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.HapticFeedback)window.Telegram.WebApp.HapticFeedback.notificationOccurred('info')}}).subscribe()}
-async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en línea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'🟢 En línea':'🕒 Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
+async function loadChatUsers(){var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);var list=$('#chatUsersList');list.innerHTML='';if(!result.data||!result.data.length){list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay usuarios en linea</p>';return}result.data.forEach(function(p){var lastSeen=new Date(p.last_seen);var diffMins=Math.floor((Date.now()-lastSeen.getTime())/60000);var isOnline=diffMins<5;var div=document.createElement('div');div.className='chat-user-item';div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-rose);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><div style="display:flex;flex-direction:column;"><span style="font-weight:600;">'+(p.first_name||'Usuario')+'</span><span style="font-size:11px;color:'+(isOnline?'var(--accent-green)':'var(--text-secondary)')+';">'+(isOnline?'En linea':'Hace '+diffMins+' min')+'</span></div></div>';div.onclick=function(){openChatWith(p.telegram_id,p.first_name)};list.appendChild(div)})}
 
 window.openTrivia=function(){
-    if(energy.trivia<=0)return toast('🎮 Sin partidas hoy','error');
+    if(energy.trivia<=0)return toast('Sin partidas hoy','error');
     var gm=$('#gameMenu'); if(gm){gm.classList.add('hidden');gm.style.display='none';}
     var tf=$('#triviaFlow'); if(tf){tf.classList.remove('hidden');tf.style.display='block';}
     backToTriviaMenu();
@@ -646,7 +648,7 @@ window.showOnlinePlayers=async function(){
     var op=$('#onlinePlayers'); if(op){op.classList.remove('hidden');op.style.display='block';}
     var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);
     var list=$('#playersList');list.innerHTML='';
-    if(!result.data||!result.data.length){ list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en línea</p>'; return; }
+    if(!result.data||!result.data.length){ list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en linea</p>'; return; }
     result.data.forEach(function(p){
         var div=document.createElement('div');
         div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';
@@ -674,7 +676,7 @@ window.resetGames=function(){
 };
 
 window.startSoloGame=async function(){
-    if(energy.trivia<=0)return toast('Sin energía','error');
+    if(energy.trivia<=0)return toast('Sin energia','error');
     cleanupGame();
     var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();
     if(result.error)return toast('Error al crear partida','error');
@@ -702,16 +704,16 @@ async function startGameLive(currentGameId,myPlayerNum){
             if(payload.new.status==='completed')finishTriviaFromEvent(payload.new);
         }).subscribe();
     }
-    toast('🎮 ¡Juego iniciado!','success');
+    toast('Juego iniciado','success');
 }
 
 async function loadQuestions(){
     var fallback=[
-        {q:"¿Cuál es el océano más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],c:2},
-        {q:"¿Quién escribió 'Cien años de soledad'?",o:["Vargas Llosa","García Márquez","Allende","Borges"],c:1},
-        {q:"¿Cuántos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
-        {q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],c:1},
-        {q:"¿En qué año llegó el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
+        {q:"Cual es el oceano mas grande?",o:["Atlantico","Indico","Pacifico","Artico"],c:2},
+        {q:"Quien escribio Cien anos de soledad?",o:["Vargas Llosa","Garcia Marquez","Allende","Borges"],c:1},
+        {q:"Cuantos planetas hay en el sistema solar?",o:["7","8","9","10"],c:1},
+        {q:"Cual es el rio mas largo del mundo?",o:["Nilo","Amazonas","Yangtse","Misisipi"],c:1},
+        {q:"En que ano llego el hombre a la Luna?",o:["1965","1969","1971","1967"],c:1}
     ];
     try{
         var res=await supabase.rpc('get_trivia_questions',{p_user_id:tgUser.id});
@@ -742,7 +744,7 @@ function startTimer(){
     timer=setInterval(function(){ timeLeft--; updateTimerUI(); if(timeLeft<=0){ clearInterval(timer); if(!locked)selectAnswer(-1); } },1000);
 }
 
-function updateTimerUI(){ var td=$('#timerDisplay'); if(!td)return; td.textContent='⏳ '+timeLeft+'s'; td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'; }
+function updateTimerUI(){ var td=$('#timerDisplay'); if(!td)return; td.textContent=timeLeft+'s'; td.style.color=timeLeft<=5?'#ff3b30':'var(--accent-gold)'; }
 
 function selectAnswer(idx){
     if(locked)return; locked=true;
@@ -767,7 +769,7 @@ async function submitFinalAnswers(){
         await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);
         var correct=0; responses.forEach(function(r,i){ if(r.selectedOption===questions[i].c)correct++; });
         var score=Math.round(correct/questions.length*100);
-        showResult(score,'🎯 Acertaste '+correct+'/'+questions.length+'. ¡Sigue practicando!');
+        showResult(score,'Acertaste '+correct+'/'+questions.length);
     }
 }
 
@@ -784,8 +786,7 @@ async function finishTriviaFromEvent(gameData){
     var compat=p1.length?Math.round(matches/p1.length*100):0;
     var winner=c1>c2?1:c2>c1?2:0;
     if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){ await supabase.rpc('add_trivia_win',{user_id:tgUser.id}); energy.victorias++; updateProfileStats(); }
-    var msg='Compatibilidad: '+compat+'%\nTus aciertos: '+c1+' | Oponente: '+c2+'\n';
-    msg+=winner===playerNum?'🏆 ¡Ganaste!':winner===0?'🤝 Empate':'😢 Perdiste';
+    var msg='Compatibilidad: '+compat+'% · Tus aciertos: '+c1+' · Oponente: '+c2;
     showResult(compat,msg);
 }
 
@@ -800,16 +801,16 @@ function showResult(score,msg){
 }
 
 var compatQ=[
-    {q:"¿Qué prefieres en una primera cita?",o:["Cena romántica","Aventura","Café","Cine en casa"]},
-    {q:"¿Qué cualidad valoras más?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},
-    {q:"¿Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},
-    {q:"¿Cómo te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},
-    {q:"¿Qué no soportas?",o:["Impuntualidad","Falta ambición","Mala higiene","Arrogancia"]},
-    {q:"¿Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},
-    {q:"¿Música preferida?",o:["Pop","Rock","Electrónica","Indie"]},
-    {q:"¿Qué te hace reír?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},
-    {q:"¿Cómo manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},
-    {q:"¿Qué esperas de una relación?",o:["Apoyo","Diversión","Crecimiento","Estabilidad"]}
+    {q:"Que prefieres en una primera cita?",o:["Cena romantica","Aventura","Cafe","Cine en casa"]},
+    {q:"Que cualidad valoras mas?",o:["Humor","Inteligencia","Amabilidad","Espontaneidad"]},
+    {q:"Plan ideal de fin de semana?",o:["Fiesta","Viaje","Series","Leer"]},
+    {q:"Como te describes?",o:["Aventurero","Tranquilo","Sociable","Creativo"]},
+    {q:"Que no soportas?",o:["Impuntualidad","Falta ambicion","Mala higiene","Arrogancia"]},
+    {q:"Lenguaje del amor?",o:["Palabras","Servicio","Tiempo","Contacto"]},
+    {q:"Musica preferida?",o:["Pop","Rock","Electronica","Indie"]},
+    {q:"Que te hace reir?",o:["Chistes malos","Sarcasmo","Absurdo","Memes"]},
+    {q:"Como manejas conflictos?",o:["Hablando","Espacio","Compromiso","Evitando"]},
+    {q:"Que esperas de una relacion?",o:["Apoyo","Diversion","Crecimiento","Estabilidad"]}
 ];
 
 window.openCompatTest=function(){
@@ -829,7 +830,7 @@ function showCompatQ(){
         var cp=$('#compatPreguntas'); if(cp){cp.classList.add('hidden');cp.style.display='none';}
         var cr=$('#compatResultado'); if(cr){cr.classList.remove('hidden');cr.style.display='block';}
         var cts=$('#compatTestScore'); if(cts){cts.textContent=pct+'%';cts.style.setProperty('--score',pct+'%');}
-        var ctm=$('#compatTestMsg'); if(ctm)ctm.textContent=pct>80?'Eres un espíritu libre. Busca alguien que te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversación.':'Eres único/a. Alguien auténtico te conviene.';
+        var ctm=$('#compatTestMsg'); if(ctm)ctm.textContent=pct>80?'Espiritu libre: busca quien te siga el ritmo.':pct>50?'Valoras estabilidad y buena conversacion.':'Eres unico/a: alguien autentico te conviene.';
         return;
     }
     var q=compatQ[qIdx];
@@ -839,7 +840,6 @@ function showCompatQ(){
     q.o.forEach(function(o,i){ var btn=document.createElement('button'); btn.className='option-btn'; btn.textContent=o; btn.onclick=function(){ compatAnswers.push(i); qIdx++; showCompatQ(); }; opts.appendChild(btn); });
 }
 
-// 🔥 PASO 5: MODO ATREVIDAS (estado + modal con 4 opciones + desbloqueo fichas/TON/⭐/anuncios)
 async function loadAtrevidasStatus(){
     var stEl=$('#atrevidasStatus'); if(!stEl)return;
     try{
@@ -849,19 +849,18 @@ async function loadAtrevidasStatus(){
         var btn=document.querySelector('#atrevidasBox button[onclick="showAtrevidasModal()"]');
         if(activo){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
-            stEl.textContent='🔥 Activo · '+(h>0?h+'h '+m+'m':m+'m');
+            stEl.textContent='Activo '+(h>0?h+'h '+m+'m':m+'m');
             stEl.style.background='rgba(233,69,96,0.2)'; stEl.style.color='var(--accent-rose)';
-            if(btn)btn.textContent='➕ Añadir 24h más';
+            if(btn)btn.textContent='Anadir 24h mas';
         }else{
-            stEl.textContent='🔒 Bloqueado';
+            stEl.textContent='Bloqueado';
             stEl.style.background='rgba(255,255,255,0.08)'; stEl.style.color='var(--text-secondary)';
-            if(btn)btn.textContent='🔓 Desbloquear Atrevidas';
+            if(btn)btn.textContent='Desbloquear Atrevidas';
         }
     }catch(e){console.error('Error estado atrevidas:',e);}
 }
 
 window.showAtrevidasModal=function(){
-    // 🔧 lee tokens + estado activo para pintar el modal correcto (y cerrar por id)
     supabase.from('wallets').select('premium_tokens, atrevidas_unlocked_until').eq('telegram_id',tgUser.id).single().then(function(res){
         var tokens=res.data?(res.data.premium_tokens||0):0;
         var until=res.data&&res.data.atrevidas_unlocked_until?new Date(res.data.atrevidas_unlocked_until):null;
@@ -869,24 +868,23 @@ window.showAtrevidasModal=function(){
         var estadoHtml='';
         if(activo){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
-            estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">🔥 Ya activo · '+(h>0?h+'h '+m+'m':m+'m')+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumará 24h más.</span></div>';
+            estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">Ya activo '+(h>0?h+'h '+m+'m':m+'m')+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumara 24h mas.</span></div>';
         }
-        // 🔧 si ya tiene tokens suficientes, le deja desbloquear YA sin ver otro anuncio (adiós al "4/2" confuso)
         var adBtnHtml;
         if(tokens>=ATREVIDAS_ADS){
-            adBtnHtml='<button onclick="unlockAtrevidas(\'ads\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid var(--accent-green);border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>🔓 Usar mis tokens</span><span style="background:var(--accent-green);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+'</span></button>';
+            adBtnHtml='<button onclick="unlockAtrevidas(\'ads\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid var(--accent-green);border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>Usar mis tokens</span><span style="background:var(--accent-green);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+'</span></button>';
         }else{
-            adBtnHtml='<button onclick="verAnuncioParaAtrevidas()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+' Tokens</span></button>';
+            adBtnHtml='<button onclick="verAnuncioParaAtrevidas()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>Ver Anuncio</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+'</span></button>';
         }
         var modal=document.createElement('div');
-        modal.id='atrevidasModal'; // 🔧 id para cierre robusto
+        modal.id='atrevidasModal';
         modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
         var box=document.createElement('div');
         box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-rose);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
         box.innerHTML='<div style="font-size:40px;margin-bottom:8px;">🔥</div><h3 style="color:var(--accent-rose);margin-bottom:6px;">Desbloquear Atrevidas</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Preguntas picantes en tus trivias durante <b style="color:#fff;">24 horas</b>.</p>'+estadoHtml+
-            '<button onclick="unlockAtrevidas(\'fichas\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">🪙 '+ATREVIDAS_FICHAS+' Fichas</button>'+
-            '<button onclick="unlockAtrevidas(\'ton\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💎 '+ATREVIDAS_TON+' TON</button>'+
-            '<button onclick="buyAtrevidasStars()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">⭐ '+ATREVIDAS_STARS+' Estrellas</button>'+
+            '<button onclick="unlockAtrevidas(\'fichas\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">'+ATREVIDAS_FICHAS+' Fichas</button>'+
+            '<button onclick="unlockAtrevidas(\'ton\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">'+ATREVIDAS_TON+' TON</button>'+
+            '<button onclick="buyAtrevidasStars()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">'+ATREVIDAS_STARS+' Estrellas</button>'+
             adBtnHtml+
             '<button onclick="closeAtrevidasModal()" style="margin-top:8px;color:#888;background:none;border:none;">Cancelar</button>';
         modal.appendChild(box);
@@ -900,21 +898,20 @@ window.unlockAtrevidas=async function(metodo){
         var r=await supabase.rpc('unlock_atrevidas',{p_user_id:tgUser.id,p_metodo:metodo});
         if(r.error)return toast('Error: '+r.error.message,'error');
         if(r.data&&r.data.success){
-            toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');
-            closeAtrevidasModal(); // 🔧 ahora SÍ se cierra y se ve el banner "Activo"
+            toast('Atrevidas desbloqueadas 24h!','success');
+            closeAtrevidasModal();
             loadAtrevidasStatus(); loadWalletData();
         }else{
-            toast(r.data&&r.data.error?r.data.error:'No se pudo desbloquear','error');
+            toast((r.data&&r.data.error)||'No se pudo desbloquear','error');
         }
     }catch(e){toast('Error al desbloquear','error');console.error(e);}
 };
 
-// 📺 Desbloqueo por anuncios: ve 1 anuncio = +1 token; con ATREVIDAS_ADS tokens desbloquea
 window.verAnuncioParaAtrevidas=async function(){
     if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK de anuncios no cargado','error');
     var sdk=window.Adsgram||window.AdsgramSDK;
     var AdController=sdk.init({blockId:"35856"});
-    toast('✅ Cargando anuncio...','success');
+    toast('Cargando anuncio...','success');
     AdController.show().then(async function(result){
         if(result.done){
             var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});
@@ -922,11 +919,11 @@ window.verAnuncioParaAtrevidas=async function(){
             var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();
             var tokens=w.data?(w.data.premium_tokens||0):0;
             if(tokens>=ATREVIDAS_ADS){
-                await window.unlockAtrevidas('ads'); // unlockAtrevidas cierra el modal por id
+                await window.unlockAtrevidas('ads');
             }else{
-                toast('📺 +1 token. Te faltan '+(ATREVIDAS_ADS-tokens)+' anuncio(s)','success');
-                closeAtrevidasModal();      // 🔧 cierra el viejo por id
-                window.showAtrevidasModal(); // abre uno nuevo con el contador fresco
+                toast('+1 token. Te faltan '+(ATREVIDAS_ADS-tokens)+' anuncio(s)','success');
+                closeAtrevidasModal();
+                window.showAtrevidasModal();
             }
         }
     }).catch(function(e){toast('Anuncio cancelado o no disponible','error');console.error(e);});
@@ -937,7 +934,7 @@ window.buyAtrevidasStars=async function(){
     try{
         var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{
             method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({title:'🔥 Modo Atrevidas 24h',description:'Preguntas picantes en tus trivias durante 24 horas',payload:'atrevidas_'+tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:'Modo Atrevidas 24h',amount:ATREVIDAS_STARS}]})
+            body:JSON.stringify({title:'Modo Atrevidas 24h',description:'Preguntas picantes en tus trivias durante 24 horas',payload:'atrevidas_'+tgUser.id+'_'+Date.now(),provider_token:'',currency:'XTR',prices:[{label:'Modo Atrevidas 24h',amount:ATREVIDAS_STARS}]})
         });
         var data=await response.json();
         if(!data.ok)throw new Error(data.description);
@@ -946,14 +943,14 @@ window.buyAtrevidasStars=async function(){
             window.Telegram.WebApp.openInvoice(url,function(status){
                 if(status==='paid'){
                     supabase.rpc('unlock_atrevidas',{p_user_id:tgUser.id,p_metodo:'stars'}).then(function(rr){
-                        if(rr.data&&rr.data.success){toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');closeAtrevidasModal();loadAtrevidasStatus();}
+                        if(rr.data&&rr.data.success){toast('Atrevidas desbloqueadas 24h!','success');closeAtrevidasModal();loadAtrevidasStatus();}
                         else toast('Error al aplicar desbloqueo','error');
                     });
                 }else{toast('Pago cancelado','error');}
             });
         }else{
             window.Telegram.WebApp.openTelegramLink(url);
-            toast('⚠️ Telegram antiguo: el desbloqueo por ⭐ requiere actualizar Telegram','warning');
+            toast('Telegram antiguo: el desbloqueo por estrellas requiere actualizar','warning');
         }
     }catch(e){toast('Error: '+(e.message||'pago'),'error');console.error(e);}
 };
@@ -961,7 +958,7 @@ window.buyAtrevidasStars=async function(){
 window.comprarFichas=async function(productId){
     if(!window.Telegram||!window.Telegram.WebApp)return toast('Abre desde Telegram','error');
     var productos={ buy_stars_50:{nombre:'50 Fichas',cantidad:50,descripcion:'Para apostar'}, boost_perfil:{nombre:'Boost Perfil',cantidad:100,descripcion:'24h destacado'}, entrada_torneo:{nombre:'Entrada Torneo',cantidad:200,descripcion:'Acceso total'} };
-    var producto=productos[productId]; if(!producto)return toast('Producto inválido','error');
+    var producto=productos[productId]; if(!producto)return toast('Producto invalido','error');
     try{
         var response=await fetch('https://api.telegram.org/bot'+PAYMENTS_BOT_TOKEN+'/createInvoiceLink',{
             method:'POST', headers:{'Content-Type':'application/json'},
@@ -970,22 +967,22 @@ window.comprarFichas=async function(productId){
         var data=await response.json();
         if(!data.ok)throw new Error(data.description);
         window.Telegram.WebApp.openTelegramLink(data.result);
-        toast('📄 Factura abierta','success');
+        toast('Factura abierta','success');
         setTimeout(function(){updateBalance();},5000);
-    }catch(e){ window.Telegram.WebApp.sendData(productId); toast('🔄 Procesando pago...','success'); }
+    }catch(e){ window.Telegram.WebApp.sendData(productId); toast('Procesando pago...','success'); }
 };
 
 window.invitarJugador=async function(tid,tname){
-    if(energy.trivia<=0)return toast('Sin energía','error');
+    if(energy.trivia<=0)return toast('Sin energia','error');
     var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();
     if(result.error)return toast('Error al enviar reto','error');
     var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
     energy.trivia=newEnergy.data; updateEnergy();
-    toast('📨 Reto enviado a '+tname+'. Esperando...','success');
+    toast('Reto enviado a '+tname,'success');
 };
 
 window.acceptChallenge=async function(){
-    if(!pendingChallengeId){toast('❌ Error: No hay reto pendiente','error');return;}
+    if(!pendingChallengeId){toast('No hay reto pendiente','error');return;}
     $('#challengeModal').classList.remove('show');
     await supabase.from('trivia_games').update({status:'active'}).eq('id',pendingChallengeId);
 };
