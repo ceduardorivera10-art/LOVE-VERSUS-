@@ -266,12 +266,16 @@ var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
 var myReferralCode='';
 // 🔥 PASO 5: precios del Modo Atrevidas (deben coincidir con los de la función SQL)
-var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2; // 🔧 ATREVIDAS_ADS = tokens de anuncio necesarios
+var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2;
 
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
 var hoyLocal=function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
+// 🔧 Cierres robustos por ID (a prueba de WebView; reemplazan el selector frágil que fallaba en móvil)
+var closeWalletModal=function(){var m=document.getElementById('walletModal');if(m)m.remove();};
+var closeChatUnlockModal=function(){var m=document.getElementById('chatUnlockModal');if(m)m.remove();};
+var closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
 
 if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
 
@@ -380,6 +384,7 @@ async function loadWalletData() {
 
 window.showWalletModal = function(action) {
     const modal = document.createElement('div');
+    modal.id='walletModal'; // 🔧 id para cierre robusto
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
     const box = document.createElement('div');
     box.style.cssText = 'background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
@@ -393,9 +398,9 @@ window.showWalletModal = function(action) {
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✖️ Cerrar';
     closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
-    closeBtn.onclick = function() { document.body.removeChild(modal); };
+    closeBtn.onclick = function() { closeWalletModal(); };
     box.appendChild(closeBtn); modal.appendChild(box);
-    modal.onclick = function(e) { if (e.target === modal) document.body.removeChild(modal); };
+    modal.onclick = function(e) { if (e.target === modal) closeWalletModal(); };
     document.body.appendChild(modal);
     if (action === 'withdraw') { const availEl = document.getElementById('availDisplay'); const dEl = document.getElementById('walletDisponible'); if (availEl && dEl) availEl.textContent = dEl.textContent; }
 };
@@ -404,7 +409,7 @@ window.processDeposit = async function() {
     const amount = parseFloat(document.getElementById('depositAmount').value);
     if (!amount || amount < 0.1) return toast('Mínimo 0.1 TON', 'error');
     toast('✅ Función de depósito en desarrollo', 'success');
-    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    closeWalletModal(); // 🔧
 };
 
 window.processWithdraw = async function() {
@@ -416,7 +421,7 @@ window.processWithdraw = async function() {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
     toast('✅ Retiro solicitado. Procesando...', 'success');
-    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    closeWalletModal(); // 🔧
     loadWalletData();
 };
 
@@ -426,7 +431,7 @@ window.buyFichasPack = async function(fichas, ton) {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
     toast('✅ +' + fichas + ' fichas compradas', 'success');
-    document.body.removeChild(document.querySelector('div[style*="z-index:1000"]'));
+    closeWalletModal(); // 🔧
     loadWalletData();
 };
 
@@ -599,9 +604,9 @@ window.openChatWith=async function(userId,userName){
     showUnlockModal(userId,userName);
 };
 
-function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2 Tokens</span></button><button onclick="document.body.removeChild(this.parentElement.parentElement)" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)document.body.removeChild(modal)};document.body.appendChild(modal)})}
-window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK no cargado','error');var sdk=window.Adsgram||window.AdsgramSDK;var AdController=sdk.init({blockId:"35856"});toast('✅ Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();var tokens=w.data?(w.data.premium_tokens||0):0;toast('✅ Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{var m=document.querySelector('div[style*="z-index:1000"]');if(m)document.body.removeChild(m);showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
-window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('✅ Chat desbloqueado','success');var modal=document.querySelector('div[style*="z-index:1000"]');if(modal)document.body.removeChild(modal);currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
+function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.id='chatUnlockModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💰 0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2 Tokens</span></button><button onclick="closeChatUnlockModal()" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)closeChatUnlockModal()};document.body.appendChild(modal)})}
+window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK no cargado','error');var sdk=window.Adsgram||window.AdsgramSDK;var AdController=sdk.init({blockId:"35856"});toast('✅ Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();var tokens=w.data?(w.data.premium_tokens||0):0;toast('✅ Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{closeChatUnlockModal();showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
+window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('✅ Chat desbloqueado','success');closeChatUnlockModal();currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
 
 window.closeChat=function(){currentChatPartner=null;$('#chatWindow').classList.add('hidden');$('#chatUsersList').classList.remove('hidden');if(chatChannel){supabase.removeChannel(chatChannel);chatChannel=null}};
 window.sendGift=async function(giftType){
@@ -856,21 +861,36 @@ async function loadAtrevidasStatus(){
 }
 
 window.showAtrevidasModal=function(){
-    // lee los tokens de anuncio actuales para mostrar el contador (igual que el chat)
-    supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(res){
+    // 🔧 lee tokens + estado activo para pintar el modal correcto (y cerrar por id)
+    supabase.from('wallets').select('premium_tokens, atrevidas_unlocked_until').eq('telegram_id',tgUser.id).single().then(function(res){
         var tokens=res.data?(res.data.premium_tokens||0):0;
+        var until=res.data&&res.data.atrevidas_unlocked_until?new Date(res.data.atrevidas_unlocked_until):null;
+        var activo=until&&until.getTime()>Date.now();
+        var estadoHtml='';
+        if(activo){
+            var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
+            estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">🔥 Ya activo · '+(h>0?h+'h '+m+'m':m+'m')+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumará 24h más.</span></div>';
+        }
+        // 🔧 si ya tiene tokens suficientes, le deja desbloquear YA sin ver otro anuncio (adiós al "4/2" confuso)
+        var adBtnHtml;
+        if(tokens>=ATREVIDAS_ADS){
+            adBtnHtml='<button onclick="unlockAtrevidas(\'ads\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid var(--accent-green);border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>🔓 Usar mis tokens</span><span style="background:var(--accent-green);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+'</span></button>';
+        }else{
+            adBtnHtml='<button onclick="verAnuncioParaAtrevidas()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+' Tokens</span></button>';
+        }
         var modal=document.createElement('div');
+        modal.id='atrevidasModal'; // 🔧 id para cierre robusto
         modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
         var box=document.createElement('div');
         box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-rose);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
-        box.innerHTML='<div style="font-size:40px;margin-bottom:8px;">🔥</div><h3 style="color:var(--accent-rose);margin-bottom:6px;">Desbloquear Atrevidas</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Preguntas picantes en tus trivias durante <b style="color:#fff;">24 horas</b>.</p>'+
+        box.innerHTML='<div style="font-size:40px;margin-bottom:8px;">🔥</div><h3 style="color:var(--accent-rose);margin-bottom:6px;">Desbloquear Atrevidas</h3><p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Preguntas picantes en tus trivias durante <b style="color:#fff;">24 horas</b>.</p>'+estadoHtml+
             '<button onclick="unlockAtrevidas(\'fichas\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">🪙 '+ATREVIDAS_FICHAS+' Fichas</button>'+
             '<button onclick="unlockAtrevidas(\'ton\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">💎 '+ATREVIDAS_TON+' TON</button>'+
             '<button onclick="buyAtrevidasStars()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">⭐ '+ATREVIDAS_STARS+' Estrellas</button>'+
-            '<button onclick="verAnuncioParaAtrevidas()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+' Tokens</span></button>'+
-            '<button onclick="document.body.removeChild(this.parentElement.parentElement)" style="margin-top:8px;color:#888;background:none;border:none;">Cancelar</button>';
+            adBtnHtml+
+            '<button onclick="closeAtrevidasModal()" style="margin-top:8px;color:#888;background:none;border:none;">Cancelar</button>';
         modal.appendChild(box);
-        modal.onclick=function(e){if(e.target===modal)document.body.removeChild(modal);};
+        modal.onclick=function(e){if(e.target===modal)closeAtrevidasModal();};
         document.body.appendChild(modal);
     });
 };
@@ -881,7 +901,7 @@ window.unlockAtrevidas=async function(metodo){
         if(r.error)return toast('Error: '+r.error.message,'error');
         if(r.data&&r.data.success){
             toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');
-            var m=document.querySelector('div[style*="z-index:1000"]'); if(m)document.body.removeChild(m);
+            closeAtrevidasModal(); // 🔧 ahora SÍ se cierra y se ve el banner "Activo"
             loadAtrevidasStatus(); loadWalletData();
         }else{
             toast(r.data&&r.data.error?r.data.error:'No se pudo desbloquear','error');
@@ -889,7 +909,7 @@ window.unlockAtrevidas=async function(metodo){
     }catch(e){toast('Error al desbloquear','error');console.error(e);}
 };
 
-// 📺 Desbloqueo por anuncios: ve 1 anuncio = +1 token; con ATREVIDAS_ADS tokens desbloquea (igual que el chat)
+// 📺 Desbloqueo por anuncios: ve 1 anuncio = +1 token; con ATREVIDAS_ADS tokens desbloquea
 window.verAnuncioParaAtrevidas=async function(){
     if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK de anuncios no cargado','error');
     var sdk=window.Adsgram||window.AdsgramSDK;
@@ -902,11 +922,11 @@ window.verAnuncioParaAtrevidas=async function(){
             var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();
             var tokens=w.data?(w.data.premium_tokens||0):0;
             if(tokens>=ATREVIDAS_ADS){
-                await window.unlockAtrevidas('ads');
+                await window.unlockAtrevidas('ads'); // unlockAtrevidas cierra el modal por id
             }else{
                 toast('📺 +1 token. Te faltan '+(ATREVIDAS_ADS-tokens)+' anuncio(s)','success');
-                var m=document.querySelector('div[style*="z-index:1000"]'); if(m)document.body.removeChild(m);
-                window.showAtrevidasModal();
+                closeAtrevidasModal();      // 🔧 cierra el viejo por id
+                window.showAtrevidasModal(); // abre uno nuevo con el contador fresco
             }
         }
     }).catch(function(e){toast('Anuncio cancelado o no disponible','error');console.error(e);});
@@ -926,7 +946,7 @@ window.buyAtrevidasStars=async function(){
             window.Telegram.WebApp.openInvoice(url,function(status){
                 if(status==='paid'){
                     supabase.rpc('unlock_atrevidas',{p_user_id:tgUser.id,p_metodo:'stars'}).then(function(rr){
-                        if(rr.data&&rr.data.success){toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');var m=document.querySelector('div[style*="z-index:1000"]');if(m)document.body.removeChild(m);loadAtrevidasStatus();}
+                        if(rr.data&&rr.data.success){toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');closeAtrevidasModal();loadAtrevidasStatus();}
                         else toast('Error al aplicar desbloqueo','error');
                     });
                 }else{toast('Pago cancelado','error');}
