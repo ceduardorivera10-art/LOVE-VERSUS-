@@ -104,7 +104,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div id="gameMenu">
 <div class="card" onclick="openTrivia()"><h3>🧠 Trivia Versus 1vs1 <span style="font-size:13px;color:#ff9500;">(Quedan <span id="triviaLeft">5</span>)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Responde preguntas, reta a amigos y descubre compatibilidad</p></div>
 <div class="card" onclick="openCompatTest()"><h3>💞 Test de Compatibilidad <span style="font-size:13px;color:var(--accent-green);">(Gratis)</span></h3><p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">10 preguntas para conocer tu estilo de cita ideal</p></div>
-<!-- INICIO BLOQUE ATREVIDAS 🔥 (PASO 5) -->
 <div id="atrevidasBox" style="background:linear-gradient(135deg,#2a1018,#3f1a2a);border:2px solid var(--accent-rose);border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 16px rgba(233,69,96,0.2);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
     <h4 style="color:var(--accent-rose);font-size:15px;font-weight:700;">🔥 Modo Atrevidas</h4>
@@ -113,7 +112,6 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
   <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Desbloquea preguntas picantes 🔥 en tus trivias durante 24h.</p>
   <button onclick="showAtrevidasModal()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent-rose),#b8324a);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;">🔓 Desbloquear Atrevidas</button>
 </div>
-<!-- FIN BLOQUE ATREVIDAS 🔥 -->
 <div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🛒 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🛒 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
 </div>
 <div id="triviaFlow" class="hidden">
@@ -142,16 +140,12 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
 <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
-
-<!-- INICIO BLOQUE REFERIDOS VISUAL -->
 <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
     <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
     <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
     <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar y Compartir</button>
     <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
 </div>
-<!-- FIN BLOQUE REFERIDOS VISUAL -->
-<!-- INICIO BLOQUE MISIONES DIARIAS -->
 <div style="background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(51,144,236,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h4 style="color:var(--accent-blue);font-size:16px;font-weight:700;letter-spacing:0.5px;">⭐ Misiones Diarias</h4>
@@ -160,12 +154,8 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
     <div id="missionsList" style="display:flex;flex-direction:column;gap:10px;">
         <p style="color:var(--text-secondary);font-size:13px;text-align:center;">Cargando misiones...</p>
     </div>
-    <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">
-        ⭐ Reclamar Recompensas
-    </button>
+    <button onclick="claimMissionRewards()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-top:16px;box-shadow:0 4px 12px rgba(52,199,89,0.3);">⭐ Reclamar Recompensas</button>
 </div>
-<!-- FIN BLOQUE MISIONES DIARIAS -->
-<!-- INICIO BLOQUE BILLETERA VISUAL -->
 <div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;">💰 Tu Billetera</h4>
@@ -191,21 +181,18 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
         <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);">💰 Depositar TON</button>
         <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);">💰 Retirar</button>
     </div>
-    <!-- INICIO BLOQUE ADSGRAM -->
-<button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
-    <span style="font-size:20px;">💰</span>
-    <span id="adButtonText">VER VIDEO Y GANAR TON</span>
-</button>
-<div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-    <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/5</p>
-</div>
-<!-- FIN BLOQUE ADSGRAM -->
+    <button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <span style="font-size:20px;">💰</span>
+        <span id="adButtonText">VER VIDEO Y GANAR TON</span>
+    </button>
+    <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
+        <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/5</p>
+    </div>
     <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
         <p style="font-size:10px;color:var(--text-secondary);">🛡️ Fondos protegidos · Retiros mínimos 1 TON · Auditoría blockchain</p>
     </div>
 </div>
-<!-- FIN BLOQUE BILLETERA VISUAL -->
 </section>
 </main>
 <nav class="bottom-nav">
@@ -265,17 +252,16 @@ var pendingChallengeId=null;
 var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
 var myReferralCode='';
-// 🔥 PASO 5: precios del Modo Atrevidas (deben coincidir con los de la función SQL)
 var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2;
 
 var $=function(s){return document.querySelector(s)};
 var $$=function(s){return document.querySelectorAll(s)};
 var hoyLocal=function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 var toast=function(m,t){var e=$('#toast');if(!e)return;e.textContent=m;e.className='toast '+(t||'')+' show';setTimeout(function(){e.classList.remove('show')},3000)};
-// 🔧 Cierres robustos por ID (a prueba de WebView; reemplazan el selector frágil que fallaba en móvil)
-var closeWalletModal=function(){var m=document.getElementById('walletModal');if(m)m.remove();};
-var closeChatUnlockModal=function(){var m=document.getElementById('chatUnlockModal');if(m)m.remove();};
-var closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
+// 🔧 FIX SCOPE: en window para que los onclick="..." (que evalúan en global) las encuentren. Antes eran 'var' y el botón Cancelar fallaba en móvil.
+window.closeWalletModal=function(){var m=document.getElementById('walletModal');if(m)m.remove();};
+window.closeChatUnlockModal=function(){var m=document.getElementById('chatUnlockModal');if(m)m.remove();};
+window.closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
 
 if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
 
@@ -300,13 +286,11 @@ function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(u
 async function init(){
     var loaderEl = document.getElementById('loader');
     if(loaderEl) { loaderEl.style.display = 'none'; loaderEl.classList.add('hidden'); }
-
     if(window.Telegram&&window.Telegram.WebApp){
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.ready();
         tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'};
     }else{tgUser={id:123456789,first_name:'Demo'}}
-
     $('#headerName').textContent=tgUser.first_name;
     $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
     $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
@@ -314,11 +298,9 @@ async function init(){
     var initials=(tgUser.first_name||'?')[0].toUpperCase();
     if(tgUser.photo_url){$('#headerAvatar').innerHTML='<img src="'+tgUser.photo_url+'">'}else{$('#headerAvatar').textContent=initials}
     if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}
-
     try{
         supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
         await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
-
         var urlParams=new URLSearchParams(window.location.search);
         var refCode=urlParams.get('ref');
         var walletResult=await supabase.rpc('initialize_user_wallet',{p_telegram_id:tgUser.id,p_referral_code:refCode||null});
@@ -331,11 +313,9 @@ async function init(){
             var fichasEl=document.getElementById('fichasStat');
             if(fichasEl)fichasEl.textContent=w.fichas||0;
         }
-
         await dailyLogin();
         updateBalance();
         loadProfiles();
-
         supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
             var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);
             if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('⚔️ ¡Te han retado a Trivia!','success')}
@@ -384,7 +364,7 @@ async function loadWalletData() {
 
 window.showWalletModal = function(action) {
     const modal = document.createElement('div');
-    modal.id='walletModal'; // 🔧 id para cierre robusto
+    modal.id='walletModal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
     const box = document.createElement('div');
     box.style.cssText = 'background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
@@ -398,9 +378,9 @@ window.showWalletModal = function(action) {
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✖️ Cerrar';
     closeBtn.style.cssText = 'margin-top:16px;background:none;border:none;color:var(--text-secondary);font-size:14px;cursor:pointer;';
-    closeBtn.onclick = function() { closeWalletModal(); };
+    closeBtn.onclick = function() { window.closeWalletModal(); };
     box.appendChild(closeBtn); modal.appendChild(box);
-    modal.onclick = function(e) { if (e.target === modal) closeWalletModal(); };
+    modal.onclick = function(e) { if (e.target === modal) window.closeWalletModal(); };
     document.body.appendChild(modal);
     if (action === 'withdraw') { const availEl = document.getElementById('availDisplay'); const dEl = document.getElementById('walletDisponible'); if (availEl && dEl) availEl.textContent = dEl.textContent; }
 };
@@ -409,7 +389,7 @@ window.processDeposit = async function() {
     const amount = parseFloat(document.getElementById('depositAmount').value);
     if (!amount || amount < 0.1) return toast('Mínimo 0.1 TON', 'error');
     toast('✅ Función de depósito en desarrollo', 'success');
-    closeWalletModal(); // 🔧
+    window.closeWalletModal();
 };
 
 window.processWithdraw = async function() {
@@ -421,7 +401,7 @@ window.processWithdraw = async function() {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Error al solicitar', 'error');
     toast('✅ Retiro solicitado. Procesando...', 'success');
-    closeWalletModal(); // 🔧
+    window.closeWalletModal();
     loadWalletData();
 };
 
@@ -431,7 +411,7 @@ window.buyFichasPack = async function(fichas, ton) {
     if (result.error) return toast('Error: ' + result.error.message, 'error');
     if (!result.data.success) return toast(result.data.error || 'Saldo insuficiente', 'error');
     toast('✅ +' + fichas + ' fichas compradas', 'success');
-    closeWalletModal(); // 🔧
+    window.closeWalletModal();
     loadWalletData();
 };
 
@@ -839,7 +819,6 @@ function showCompatQ(){
     q.o.forEach(function(o,i){ var btn=document.createElement('button'); btn.className='option-btn'; btn.textContent=o; btn.onclick=function(){ compatAnswers.push(i); qIdx++; showCompatQ(); }; opts.appendChild(btn); });
 }
 
-// 🔥 PASO 5: MODO ATREVIDAS (estado + modal con 4 opciones + desbloqueo fichas/TON/⭐/anuncios)
 async function loadAtrevidasStatus(){
     var stEl=$('#atrevidasStatus'); if(!stEl)return;
     try{
@@ -861,7 +840,6 @@ async function loadAtrevidasStatus(){
 }
 
 window.showAtrevidasModal=function(){
-    // 🔧 lee tokens + estado activo para pintar el modal correcto (y cerrar por id)
     supabase.from('wallets').select('premium_tokens, atrevidas_unlocked_until').eq('telegram_id',tgUser.id).single().then(function(res){
         var tokens=res.data?(res.data.premium_tokens||0):0;
         var until=res.data&&res.data.atrevidas_unlocked_until?new Date(res.data.atrevidas_unlocked_until):null;
@@ -871,7 +849,6 @@ window.showAtrevidasModal=function(){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
             estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">🔥 Ya activo · '+(h>0?h+'h '+m+'m':m+'m')+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumará 24h más.</span></div>';
         }
-        // 🔧 si ya tiene tokens suficientes, le deja desbloquear YA sin ver otro anuncio (adiós al "4/2" confuso)
         var adBtnHtml;
         if(tokens>=ATREVIDAS_ADS){
             adBtnHtml='<button onclick="unlockAtrevidas(\'ads\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid var(--accent-green);border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>🔓 Usar mis tokens</span><span style="background:var(--accent-green);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+'</span></button>';
@@ -879,7 +856,7 @@ window.showAtrevidasModal=function(){
             adBtnHtml='<button onclick="verAnuncioParaAtrevidas()" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>📺 Ver Anuncio</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokens+'/'+ATREVIDAS_ADS+' Tokens</span></button>';
         }
         var modal=document.createElement('div');
-        modal.id='atrevidasModal'; // 🔧 id para cierre robusto
+        modal.id='atrevidasModal';
         modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';
         var box=document.createElement('div');
         box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-rose);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';
@@ -901,7 +878,7 @@ window.unlockAtrevidas=async function(metodo){
         if(r.error)return toast('Error: '+r.error.message,'error');
         if(r.data&&r.data.success){
             toast('🔥 ¡Atrevidas desbloqueadas 24h!','success');
-            closeAtrevidasModal(); // 🔧 ahora SÍ se cierra y se ve el banner "Activo"
+            closeAtrevidasModal();
             loadAtrevidasStatus(); loadWalletData();
         }else{
             toast(r.data&&r.data.error?r.data.error:'No se pudo desbloquear','error');
@@ -909,7 +886,6 @@ window.unlockAtrevidas=async function(metodo){
     }catch(e){toast('Error al desbloquear','error');console.error(e);}
 };
 
-// 📺 Desbloqueo por anuncios: ve 1 anuncio = +1 token; con ATREVIDAS_ADS tokens desbloquea
 window.verAnuncioParaAtrevidas=async function(){
     if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK de anuncios no cargado','error');
     var sdk=window.Adsgram||window.AdsgramSDK;
@@ -922,11 +898,11 @@ window.verAnuncioParaAtrevidas=async function(){
             var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();
             var tokens=w.data?(w.data.premium_tokens||0):0;
             if(tokens>=ATREVIDAS_ADS){
-                await window.unlockAtrevidas('ads'); // unlockAtrevidas cierra el modal por id
+                await window.unlockAtrevidas('ads');
             }else{
                 toast('📺 +1 token. Te faltan '+(ATREVIDAS_ADS-tokens)+' anuncio(s)','success');
-                closeAtrevidasModal();      // 🔧 cierra el viejo por id
-                window.showAtrevidasModal(); // abre uno nuevo con el contador fresco
+                closeAtrevidasModal();
+                window.showAtrevidasModal();
             }
         }
     }).catch(function(e){toast('Anuncio cancelado o no disponible','error');console.error(e);});
