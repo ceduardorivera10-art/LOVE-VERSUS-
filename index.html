@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>LoveVersus</title>
-<!-- 🩺 PANEL DE DIAGNÓSTICO: script independiente. Si el JS principal falla, esto te lo muestra en pantalla. No depende de nada y no puede romper el resto. -->
+<!-- Panel de diagnostico: script independiente. Si el JS principal falla, te lo muestra en pantalla. No depende de nada y no puede romper el resto. -->
 <script>
 (function(){
   function paint(msg){
@@ -16,15 +16,15 @@
       d.style.cssText='position:fixed;left:10px;right:10px;top:10px;z-index:99999;background:#1a0d12;border:2px solid #e94560;color:#ffd9e0;border-radius:16px;padding:14px 16px;font:12px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;box-shadow:0 14px 50px rgba(0,0,0,.65);max-height:72vh;overflow:auto;';
       (document.body||document.documentElement).appendChild(d);
     }
-    d.textContent='⚠️ LoveVersus detectó un problema:\n\n'+msg+'\n\n— Haz una captura de ESTE recuadro y mándasela a tu programador. Con esto se arregla en un minuto.';
+    d.textContent='LoveVersus detecto un problema:\n\n'+msg+'\n\n- Haz una captura de ESTE recuadro y mandasela a tu programador. Con esto se arregla en un minuto.';
     var l=document.getElementById('loader'); if(l) l.style.display='none';
   }
-  window.onerror=function(m,s,l,c){ paint((m||'Error desconocido')+'   [línea '+(l||'?')+':'+(c||'?')+']'); return true; };
+  window.onerror=function(m,s,l,c){ paint((m||'Error desconocido')+'   [linea '+(l||'?')+':'+(c||'?')+']'); return true; };
   window.addEventListener('unhandledrejection',function(ev){ paint('Promesa sin capturar: '+(ev.reason&&(ev.reason.message||ev.reason)||'')); });
   setTimeout(function(){
     var l=document.getElementById('loader');
     if(l && getComputedStyle(l).display!=='none' && !document.getElementById('__lv_err')){
-      paint('La app no terminó de iniciar en 7s.\nCausas típicas: (1) caché de Telegram → cierra la app del todo y reabre; (2) el index.html no se subió o el ?v= apunta a un archivo que no existe.');
+      paint('La app no termino de iniciar en 7s.\nCausas tipicas: (1) cache de Telegram -> cierra la app del todo y reabre; (2) el index.html no se subio o el ?v= apunta a un archivo que no existe.');
     }
   },7000);
 })();
@@ -33,29 +33,36 @@
 :root{--bg-primary:#0a0a0a;--bg-secondary:#111;--bg-card:#1a1a1a;--accent-blue:#3390ec;--accent-gold:#c9a84c;--accent-rose:#e94560;--accent-green:#34c759;--text-primary:#f5f5f5;--text-secondary:#b0b0b0;--radius-lg:20px;--nav-height:64px;--safe-bottom:env(safe-area-inset-bottom,12px)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;user-select:none}
-.app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;transition:padding-bottom 0.2s ease}
+/* Fondo ambiente en capas: da profundidad y un parallax sutil al hacer scroll. Fijo, no intercepta clics. */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(120% 80% at 15% -10%, rgba(51,144,236,0.10), transparent 55%), radial-gradient(120% 80% at 90% 0%, rgba(233,69,96,0.08), transparent 50%), radial-gradient(140% 120% at 50% 120%, rgba(201,168,76,0.05), transparent 60%)}
+.app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;z-index:1;transition:padding-bottom 0.2s ease}
 .header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg-secondary);border-bottom:1px solid #1f1f1f;z-index:100}
-.brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700}
-.user-pill{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid #2a2a2a;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer}
+.brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700;letter-spacing:.2px}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid #2a2a2a;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer;transition:border-color .2s ease, transform .12s ease}
+.user-pill:hover{border-color:#3a3a3a}
+.user-pill:active{transform:scale(.97)}
 .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent-blue),#af52de);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .main{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav-height) + var(--safe-bottom) + 10px)}
 .section{display:none;min-height:100%;animation:fadeIn .3s ease;padding:16px}
 .section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{background:var(--bg-card);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;border:1px solid #1f1f1f;cursor:pointer;transition:.2s}
+.card{background:var(--bg-card);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;border:1px solid #1f1f1f;cursor:pointer;transition:transform .15s ease, background .2s ease, border-color .2s ease}
 .card:active{transform:scale(.98);background:#1e1e1e}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.card:hover{border-color:#2c2c2c}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:transform .12s ease, filter .2s ease, opacity .2s ease;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-primary{background:var(--accent-blue);color:#fff}
 .btn-outline{background:transparent;border:2px solid var(--accent-blue);color:var(--accent-blue)}
 .btn:active{transform:scale(.97);opacity:.9}
+.btn:hover{filter:brightness(1.06)}
 .dating-card{width:100%;aspect-ratio:3/4;background:var(--bg-card);border-radius:var(--radius-lg);overflow:hidden;position:relative;margin-bottom:20px;border:1px solid #1f1f1f}
 .dating-photo{width:100%;height:100%;object-fit:cover}
 .dating-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;font-weight:700;background:linear-gradient(135deg,#1a1a1a,#2a2a2a)}
 .dating-info{position:absolute;bottom:0;left:0;right:0;padding:60px 20px 20px;background:linear-gradient(transparent,rgba(0,0,0,.9))}
 .dating-actions{display:flex;justify-content:center;gap:20px}
-.action-btn{width:60px;height:60px;border-radius:50%;border:2px solid #2a2a2a;background:var(--bg-card);font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s}
+.action-btn{width:60px;height:60px;border-radius:50%;border:2px solid #2a2a2a;background:var(--bg-card);font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s ease, box-shadow .2s ease}
 .action-btn:active{transform:scale(.9)}
+.action-btn:hover{box-shadow:0 0 0 4px rgba(255,255,255,0.04)}
 .option-btn{width:100%;padding:16px;margin-bottom:10px;background:#1c1c1e;border:2px solid #2a2a2a;border-radius:12px;color:#fff;font-size:15px;text-align:left;cursor:pointer;transition:.2s}
 .option-btn.correct{background:rgba(52,199,89,.2);border-color:var(--accent-green);color:var(--accent-green)}
 .option-btn.wrong{background:rgba(233,69,96,.2);border-color:var(--accent-rose);color:var(--accent-rose)}
@@ -67,14 +74,17 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 .stat-box{background:var(--bg-card);padding:12px;border-radius:12px;text-align:center;border:1px solid #1f1f1f}
 .stat-val{font-size:20px;font-weight:700}
 .stat-label{font-size:10px;color:var(--text-secondary);text-transform:uppercase;margin-top:4px}
-.chat-user-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;cursor:pointer}
+.chat-user-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;cursor:pointer;transition:border-color .2s ease, transform .12s ease}
+.chat-user-item:hover{border-color:#2c2c2c}
+.chat-user-item:active{transform:scale(.99)}
 .chat-bubble{max-width:80%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4;word-wrap:break-word}
 .chat-bubble.me{align-self:flex-end;background:var(--accent-blue);color:#fff;border-bottom-right-radius:4px}
 .chat-bubble.other{align-self:flex-start;background:#2a2a2a;color:#fff;border-bottom-left-radius:4px}
 .bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:rgba(20,20,20,.95);backdrop-filter:blur(20px);border-top:1px solid #1f1f1f;padding:8px 0 var(--safe-bottom);z-index:100}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px;position:relative}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:#6e6e6e;font-size:10px;font-weight:600;cursor:pointer;padding:6px 16px;position:relative;transition:color .2s ease}
 .nav-item.active{color:var(--accent-blue)}
-.nav-icon{font-size:22px}
+.nav-icon{font-size:22px;transition:transform .2s ease, filter .2s ease}
+.nav-item.active .nav-icon{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 2px 6px rgba(51,144,236,0.5))}
 .notif-badge{position:absolute;top:2px;right:8px;background:var(--accent-rose);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;display:none}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--bg-card);border:1px solid #2a2a2a;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;transition:.3s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
@@ -94,6 +104,15 @@ body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-s
 .btn-accept{background:var(--accent-green);color:#fff}
 .btn-decline{background:#2a2a2a;color:var(--text-secondary)}
 .wallet-card{background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2)}
+/* Latido de estado: la caja de atrevidas "respira" cuando esta activa */
+#atrevidasBox{transition:box-shadow .3s ease, border-color .3s ease}
+#atrevidasBox.unlocked{animation:atrevidasGlow 2.6s ease-in-out infinite}
+@keyframes atrevidasGlow{0%,100%{box-shadow:0 4px 16px rgba(233,69,96,0.25)}50%{box-shadow:0 6px 26px rgba(233,69,96,0.55)}}
+@media (prefers-reduced-motion: reduce){
+  #atrevidasBox.unlocked{animation:none}
+  .nav-icon,.card,.btn,.action-btn,.user-pill,.chat-user-item{transition:none}
+  .section{animation:none}
+}
 </style>
 </head>
 <body>
@@ -301,6 +320,8 @@ function switchSection(id){
     if(id==='sectionChat')loadChatUsers();
     if(id==='sectionGames')loadAtrevidasStatus();
 }
+// FIX: exponer switchSection al ambito global para que el onclick de la foto del header la encuentre.
+window.switchSection=switchSection;
 
 $$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switchSection(b.dataset.section)})});
 
@@ -846,6 +867,7 @@ async function loadAtrevidasStatus(){
         var r=await supabase.from('wallets').select('atrevidas_unlocked_until').eq('telegram_id',tgUser.id).single();
         var until=r.data&&r.data.atrevidas_unlocked_until?new Date(r.data.atrevidas_unlocked_until):null;
         var activo=until&&until.getTime()>Date.now();
+        var abx=document.getElementById('atrevidasBox'); if(abx){ if(activo) abx.classList.add('unlocked'); else abx.classList.remove('unlocked'); }
         var btn=document.querySelector('#atrevidasBox button[onclick="showAtrevidasModal()"]');
         if(activo){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
