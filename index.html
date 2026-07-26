@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>LoveVersus</title>
-<!-- Panel de diagnostico: script independiente. Si el JS principal falla, te lo muestra en pantalla. No depende de nada y no puede romper el resto. -->
+<!-- Panel de diagnostico: script independiente. Solo se muestra si entras con ?debug=1. En produccion los errores van a consola. -->
 <script>
 (function(){
+  var DEBUG=/[?&]debug=1\b/.test(location.search);
+  if(!DEBUG){ return; }
   function paint(msg){
     var d=document.getElementById('__lv_err');
     if(!d){
@@ -180,6 +182,11 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 </section>
 <section id="sectionProfile" class="section">
+<div id="onboardBanner" style="display:none;background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:16px;padding:14px 16px;margin-bottom:16px;text-align:left;">
+  <div style="font-size:14px;font-weight:700;color:var(--accent-blue);margin-bottom:6px;">👋 Bienvenido/a a LoveVersus</div>
+  <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:10px;">1️⃣ Desliza perfiles en <b style="color:#fff;">Citas</b>. 2️⃣ Juega una <b style="color:#fff;">Trivia</b> en Versus. 3️⃣ Baja aquí a <b style="color:#fff;">Misiones Diarias</b> y reclama tus fichas gratis 👇</p>
+  <button onclick="dismissOnboard()" style="width:100%;padding:12px;background:var(--accent-blue);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;">¡Entendido!</button>
+</div>
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
 <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
@@ -201,14 +208,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 <div style="background:linear-gradient(135deg,#0f1419,#1a1f2e);border:2px solid var(--accent-gold);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(201,168,76,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;">💰 Tu Billetera</h4>
-        <span style="background:rgba(52,199,89,0.15);color:var(--accent-green);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;">🟢 ACTIVA</span>
+        <h4 style="color:var(--accent-gold);font-size:16px;font-weight:700;letter-spacing:0.5px;">🎬 Recompensas por anuncios</h4>
+        <span style="background:rgba(52,199,89,0.15);color:var(--accent-green);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:700;">🟢 GRATIS</span>
     </div>
-    <div style="text-align:center;padding:16px 0;border-bottom:1px solid rgba(201,168,76,0.2);margin-bottom:16px;">
+    <div style="display:none;text-align:center;padding:16px 0;border-bottom:1px solid rgba(201,168,76,0.2);margin-bottom:16px;">
         <p style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Saldo Total TON</p>
         <div style="font-size:36px;font-weight:800;color:#fff;font-family:monospace;" id="walletTotalTon">0.0000</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
         <div style="background:rgba(255,149,0,0.08);border:1px solid rgba(255,149,0,0.3);border-radius:12px;padding:12px;text-align:center;">
             <div style="font-size:10px;color:#ff9500;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">⏳ Pendiente</div>
             <div style="font-size:18px;font-weight:700;color:#fff;" id="walletPendiente">0.0000</div>
@@ -220,19 +227,19 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
             <div style="font-size:9px;color:var(--text-secondary);margin-top:2px;">Retirable</div>
         </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <button onclick="showWalletModal('deposit')" style="padding:14px;background:linear-gradient(135deg,var(--accent-blue),#2563eb);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(51,144,236,0.3);">💰 Depositar TON</button>
         <button onclick="showWalletModal('withdraw')" style="padding:14px;background:linear-gradient(135deg,var(--accent-gold),#b8943f);color:#000;border:none;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 4px 12px rgba(201,168,76,0.3);">💰 Retirar</button>
     </div>
     <button onclick="watchAdForTon()" id="adButton" style="width:100%;padding:16px;background:linear-gradient(135deg,#f7931a,#ff6b00);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(247,147,26,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
-        <span style="font-size:20px;">💰</span>
-        <span id="adButtonText">VER VIDEO Y GANAR TON</span>
+        <span style="font-size:20px;">🎬</span>
+        <span id="adButtonText">VER VIDEO Y GANAR RECOMPENSAS</span>
     </button>
     <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;">
-        <p style="font-size:11px;color:#f7931a;margin:0;">💰💰 30 segundos · <b>+0.0003 TON</b> · Hoy: <span id="adsToday">0</span>/20</p>
+        <p style="font-size:11px;color:#f7931a;margin:0;">🎬 30 segundos · <b>+1 token premium</b> · Hoy: <span id="adsToday">0</span>/20</p>
     </div>
-    <button onclick="showWalletModal('buyfichas')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
+    <button onclick="showWalletModal('buyfichas')" style="display:none;width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:12px;font-weight:600;">💰 Comprar fichas con TON (mejor tasa)</button>
+    <div style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
         <p style="font-size:10px;color:var(--text-secondary);">🛡️ Fondos protegidos · Retiros mínimos 1 TON · Auditoría blockchain</p>
     </div>
 </div>
@@ -242,7 +249,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <button class="nav-item active" data-section="sectionDating"><span class="nav-icon">❤️</span>Citas</button>
 <button class="nav-item" data-section="sectionChat"><span class="nav-icon">💬</span>Chat<span class="notif-badge" id="chatNotifBadge">0</span></button>
 <button class="nav-item" data-section="sectionGames"><span class="nav-icon">🕹️</span>Versus</button>
-<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">👤</span>Perfil</button>
+<button class="nav-item" data-section="sectionProfile"><span class="nav-icon">👤</span>Perfil<span class="notif-badge" id="profileDot" style="background:var(--accent-gold);display:none;">!</span></button>
 </nav>
 </div>
 <div id="challengeModal" class="challenge-modal" onclick="if(event.target===this)declineChallenge()">
@@ -295,6 +302,7 @@ var pendingChallengeId=null;
 var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
 var myReferralCode='';
+var isDemo=false;
 var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2;
 
 var $=function(s){return document.querySelector(s)};
@@ -323,6 +331,19 @@ function switchSection(id){
 // FIX: exponer switchSection al ambito global para que el onclick de la foto del header la encuentre.
 window.switchSection=switchSection;
 
+// Onboarding: pista unica vez para que el usuario no se pierda (guardado en localStorage).
+function applyOnboard(){
+  var done=localStorage.getItem('lv_onboarded')==='1';
+  var banner=document.getElementById('onboardBanner');
+  var dot=document.getElementById('profileDot');
+  if(!done){ if(banner)banner.style.display='block'; if(dot)dot.style.display='flex'; }
+}
+window.dismissOnboard=function(){
+  localStorage.setItem('lv_onboarded','1');
+  var banner=document.getElementById('onboardBanner'); if(banner)banner.style.display='none';
+  var dot=document.getElementById('profileDot'); if(dot)dot.style.display='none';
+};
+
 $$('.nav-item').forEach(function(b){b.addEventListener('click',function(){switchSection(b.dataset.section)})});
 
 function updateNotifBadge(){var badge=$('#chatNotifBadge');if(!badge)return;if(unreadCount>0){badge.style.display='flex';badge.textContent=unreadCount>9?'9+':unreadCount}else{badge.style.display='none'}}
@@ -333,8 +354,9 @@ async function init(){
     if(window.Telegram&&window.Telegram.WebApp){
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.ready();
-        tgUser=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:{id:123456789,first_name:'Demo'};
-    }else{tgUser={id:123456789,first_name:'Demo'}}
+        var _tu=window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?window.Telegram.WebApp.initDataUnsafe.user:null;
+        if(_tu){ tgUser=_tu; } else { tgUser={id:123456789,first_name:'Invitado'}; isDemo=true; }
+    }else{ tgUser={id:123456789,first_name:'Invitado'}; isDemo=true; }
     $('#headerName').textContent=tgUser.first_name;
     $('#profileName').textContent=tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'');
     $('#profileUsername').textContent='@'+(tgUser.username||'usuario');
@@ -344,6 +366,7 @@ async function init(){
     if(tgUser.photo_url){$('#profileAvatarLg').innerHTML='<img src="'+tgUser.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'}else{$('#profileAvatarLg').textContent=initials}
     try{
         supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        if(!isDemo){
         await supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''});
         var urlParams=new URLSearchParams(window.location.search);
         var refCode=urlParams.get('ref');
@@ -359,13 +382,14 @@ async function init(){
         }
         await dailyLogin();
         updateBalance();
+        }
         loadProfiles();
-        supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
+        if(!isDemo){ supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
             var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);
             if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('¡Te han retado a Trivia!','success')}
             if(r.status==='active'&&p2===myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,2)}
             if(r.status==='active'&&p1===myId&&p2&&p2!==myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,1)}
-        }).subscribe();
+        }).subscribe(); }
     }catch(e){
         console.error('Error en init:', e);
         $('#sectionDating').classList.add('active');
@@ -374,6 +398,7 @@ async function init(){
         $('#emptyDesc').textContent=e.message||'Revisa tu conexion a Internet';
         var rb=$('#retryBtn');if(rb)rb.style.display='inline-block';
     }
+    applyOnboard();
     setTimeout(function(){ if(!document.querySelector('.section.active')){ $('#sectionDating').classList.add('active'); } }, 1000);
 }
 
@@ -383,7 +408,7 @@ window.copyReferralCode=function(){
     var code=c.textContent;
     if(code&&code!=='Cargando...'){
         if(navigator.share){
-            navigator.share({title:'LoveVersus',text:'Gana TON real jugando! Mi codigo: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
+            navigator.share({title:'LoveVersus',text:'Juega trivia 1vs1 y conoce gente en LoveVersus! Mi codigo: '+code,url:'https://t.me/TU_BOT?start=ref_'+code}).catch(function(){});
         }else{
             if(navigator.clipboard){ navigator.clipboard.writeText(code); toast('Codigo '+code+' copiado','success'); }
             else{ toast('Tu codigo es: '+code,'success'); }
@@ -466,7 +491,7 @@ window.watchAdForTon = async function() {
     adBtn.disabled = true; adText.textContent = 'Cargando SDK...';
     let sdkReady = false, attempts = 0; const maxAttempts = 10;
     while (!sdkReady && attempts < maxAttempts) { if (window.Adsgram || window.AdsgramSDK) { sdkReady = true; break; } attempts++; await new Promise(resolve => setTimeout(resolve, 500)); }
-    if (!sdkReady) { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR TON'; return toast('SDK no cargo', 'error'); }
+    if (!sdkReady) { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR RECOMPENSAS'; return toast('SDK no cargo', 'error'); }
     adText.textContent = 'Cargando video...';
     const sdk = window.Adsgram || window.AdsgramSDK;
     const AdController = sdk.init({ blockId: "35856", debug: false });
@@ -477,7 +502,7 @@ window.watchAdForTon = async function() {
             supabase.rpc('registrar_vista_anuncio', { p_user_id: tgUser.id }).then((dbResult) => {
                 if (dbResult.error) throw new Error(dbResult.error.message);
                 if (dbResult.data && dbResult.data.success) {
-                    toast('+0.0003 TON ganado!', 'success');
+                    toast('¡Recompensa acreditada! +1 token', 'success');
                     const adsEl = document.getElementById('adsToday'); if (adsEl && dbResult.data.ads_today) { adsEl.textContent = dbResult.data.ads_today; }
                     loadWalletData(); loadDailyMissions();
                 } else { throw new Error((dbResult.data && dbResult.data.error) || 'Error al acreditar'); }
@@ -486,7 +511,7 @@ window.watchAdForTon = async function() {
     }).catch((error) => {
         if (error.description === 'user closed the ad' || error.state === 'destroy') { toast('Video cancelado', 'warning'); }
         else { toast('Error: ' + (error.description || 'No hay anuncios'), 'error'); console.error('Adsgram Error:', error); }
-    }).finally(() => { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR TON'; });
+    }).finally(() => { adBtn.disabled = false; adText.textContent = 'VER VIDEO Y GANAR RECOMPENSAS'; });
 };
 
 async function loadDailyMissions() {
@@ -871,7 +896,8 @@ async function loadAtrevidasStatus(){
         var btn=document.querySelector('#atrevidasBox button[onclick="showAtrevidasModal()"]');
         if(activo){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
-            stEl.textContent='Activo '+(h>0?h+'h '+m+'m':m+'m');
+            var d=Math.floor(h/24); h=h%24;
+            stEl.textContent='Activo '+(d>0?(d+'d '+(h>0?h+'h':'')):(h>0?h+'h '+m+'m':m+'m'));
             stEl.style.background='rgba(233,69,96,0.2)'; stEl.style.color='var(--accent-rose)';
             if(btn)btn.textContent='Anadir 24h mas';
         }else{
@@ -890,7 +916,8 @@ window.showAtrevidasModal=function(){
         var estadoHtml='';
         if(activo){
             var ms=until.getTime()-Date.now(); var h=Math.floor(ms/3600000); var m=Math.floor((ms%3600000)/60000);
-            estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">Ya activo '+(h>0?h+'h '+m+'m':m+'m')+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumara 24h mas.</span></div>';
+            var d=Math.floor(h/24); h=h%24; var _lbl=(d>0?(d+'d '+(h>0?h+'h':'')):(h>0?h+'h '+m+'m':m+'m'));
+            estadoHtml='<div style="background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:var(--accent-rose);font-weight:700;">Ya activo '+_lbl+' restantes<br><span style="font-weight:400;color:var(--text-secondary);">Cualquier compra o uso de tokens sumara 24h mas.</span></div>';
         }
         var adBtnHtml;
         if(tokens>=ATREVIDAS_ADS){
