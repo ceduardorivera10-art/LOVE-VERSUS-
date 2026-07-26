@@ -108,8 +108,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 #atrevidasBox{transition:box-shadow .3s ease, border-color .3s ease}
 #atrevidasBox.unlocked{animation:atrevidasGlow 2.6s ease-in-out infinite}
 @keyframes atrevidasGlow{0%,100%{box-shadow:0 4px 16px rgba(233,69,96,0.25)}50%{box-shadow:0 6px 26px rgba(233,69,96,0.55)}}
+/* Tarjeta viva de Tokens Premium en el perfil */
+.lv-token-card{transition:transform .12s ease}
+.lv-token-card:active{transform:scale(.98)}
+.lv-token-ico{animation:lvTokenPulse 2.8s ease-in-out infinite}
+@keyframes lvTokenPulse{0%,100%{box-shadow:0 4px 14px rgba(233,69,96,0.18)}50%{box-shadow:0 0 0 4px rgba(233,69,96,0.10),0 6px 22px rgba(233,69,96,0.34)}}
 @media (prefers-reduced-motion: reduce){
   #atrevidasBox.unlocked{animation:none}
+  .lv-token-ico{animation:none}
   .nav-icon,.card,.btn,.action-btn,.user-pill,.chat-user-item{transition:none}
   .section{animation:none}
 }
@@ -155,7 +161,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
   <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Desbloquea preguntas picantes 🔥 en tus trivias durante 24h.</p>
   <button onclick="showAtrevidasModal()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent-rose),#b8324a);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;">🔓 Desbloquear Atrevidas</button>
 </div>
-<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🛒 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🛒 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p></div>
+<div style="margin-top:24px;"><h3 style="margin-bottom:12px;">🛒 Tienda de Fichas</h3><p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;">Consigue fichas para apostar y ganar premios.</p><button class="btn btn-primary" style="margin-bottom:10px;" onclick="comprarFichas('buy_stars_50')">🛒 50 Fichas (50 ⭐)</button><button class="btn btn-outline" style="margin-bottom:10px;" onclick="comprarFichas('boost_perfil')">🚀 Boost Perfil (100 ⭐)</button><button class="btn btn-outline" onclick="comprarFichas('entrada_torneo')">🏆 Entrada Torneo (200 ⭐)</button><p style="margin-top:14px;color:var(--text-secondary);font-size:14px;">Tu saldo: <b id="saldoTienda" style="color:#fff;">0</b> fichas</p><p style="margin-top:8px;color:var(--text-secondary);font-size:11px;line-height:1.45;">⭐ = Estrellas de Telegram: es lo que <b style="color:#fff;">pagas</b> a Telegram para comprar fichas o desbloqueos (no es saldo de la app). 🎟️ Los tokens premium los ganas viendo anuncios y los gastas en chat y atrevidas.</p></div>
 </div>
 <div id="triviaFlow" class="hidden">
 <div id="triviaMenu">
@@ -187,6 +193,14 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 <div class="profile-header"><div class="profile-avatar-lg" id="profileAvatarLg">?</div><h2 id="profileName" style="font-size:22px;font-weight:700;">Usuario</h2><p id="profileUsername" style="color:var(--accent-blue);font-size:14px;">@username</p><p id="profileId" style="font-size:11px;color:#6e6e6e;font-family:monospace;background:#1c1c1e;display:inline-block;padding:4px 10px;border-radius:6px;margin-top:8px;">ID: 000000000</p></div>
 <div class="stats-grid"><div class="stat-box"><div class="stat-val" id="matchesStat">0</div><div class="stat-label">Matches</div></div><div class="stat-box"><div class="stat-val" id="victoriasStat">0</div><div class="stat-label">Victorias</div></div><div class="stat-box"><div class="stat-val" id="fichasStat">0</div><div class="stat-label">Fichas</div></div></div>
+<div class="lv-token-card" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#241019,#1a1320);border:1.5px solid rgba(233,69,96,0.45);border-radius:16px;padding:14px 16px;margin-top:14px;">
+  <div class="lv-token-ico" style="width:46px;height:46px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#ff6b85,#b8324a);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🎟️</div>
+  <div style="flex:1;min-width:0;">
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent-rose);font-weight:700;">Tokens Premium</div>
+    <div style="font-size:26px;font-weight:800;font-family:ui-monospace,Menlo,Consolas,monospace;color:#fff;line-height:1.1;" id="premiumTokensStat">0</div>
+  </div>
+  <div style="font-size:10.5px;color:var(--text-secondary);line-height:1.35;text-align:right;max-width:108px;">Gánalos con<br>anuncios 🎬<br>Úsalos en chat<br>y atrevidas 🔥</div>
+</div>
 <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
 <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
     <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
@@ -375,6 +389,7 @@ async function init(){
             if(codeEl)codeEl.textContent=myReferralCode;
             var fichasEl=document.getElementById('fichasStat');
             if(fichasEl)fichasEl.textContent=w.fichas||0;
+            var pkEl0=document.getElementById('premiumTokensStat'); if(pkEl0)pkEl0.textContent=w.premium_tokens||0;
         }
         await dailyLogin();
         updateBalance();
@@ -413,7 +428,7 @@ window.copyReferralCode=function(){
 };
 async function loadWalletData() {
     try {
-        const result = await supabase.from('wallets').select('saldo_pendiente, saldo_disponible, fichas, energia_trivia').eq('telegram_id', tgUser.id).single();
+        const result = await supabase.from('wallets').select('saldo_pendiente, saldo_disponible, fichas, energia_trivia, premium_tokens').eq('telegram_id', tgUser.id).single();
         if (result.data) {
             const w = result.data;
             const total = (Number(w.saldo_pendiente || 0) + Number(w.saldo_disponible || 0)).toFixed(4);
@@ -422,6 +437,7 @@ async function loadWalletData() {
             const dEl = document.getElementById('walletDisponible'); if (dEl) dEl.textContent = Number(w.saldo_disponible || 0).toFixed(4);
             const fEl = document.getElementById('fichasStat'); if (fEl) fEl.textContent = w.fichas || 0;
             const eEl = document.getElementById('triviaLeft'); if (eEl) eEl.textContent = w.energia_trivia || 5;
+            const pkEl = document.getElementById('premiumTokensStat'); if (pkEl) pkEl.textContent = w.premium_tokens || 0;
         }
     } catch (e) { console.error('Error cargando wallet:', e); }
 }
@@ -648,7 +664,7 @@ window.openChatWith=async function(userId,userName){
     showUnlockModal(userId,userName);
 };
 
-function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.id='chatUnlockModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2</span></button><button onclick="closeChatUnlockModal()" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)closeChatUnlockModal()};document.body.appendChild(modal)})}
+function showUnlockModal(targetId,targetName){supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single().then(function(result){var tokensActuales=result.data?(result.data.premium_tokens||0):0;var modal=document.createElement('div');modal.id='chatUnlockModal';modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;';var box=document.createElement('div');box.style.cssText='background:var(--bg-card);border:2px solid var(--accent-gold);border-radius:20px;padding:24px;max-width:90%;width:320px;text-align:center;';box.innerHTML='<h3 style="color:var(--accent-gold);margin-bottom:15px;">Desbloquear Chat con '+targetName+'</h3><button onclick="unlockChat(\''+targetId+'\',\'fichas\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">100 Fichas</button><button onclick="unlockChat(\''+targetId+'\',\'ton\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;text-align:left;">0.01 TON</button><button onclick="verAnuncioParaChat(\''+targetId+'\',\''+targetName+'\')" style="width:100%;padding:12px;background:#1c1c1e;border:1px solid #333;border-radius:10px;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span>Ver Anuncio Premium</span><span style="background:var(--accent-gold);color:#000;padding:2px 6px;border-radius:6px;font-weight:bold;">'+tokensActuales+'/2</span></button><button onclick="closeChatUnlockModal()" style="margin-top:10px;color:#888;background:none;border:none;">Cancelar</button>';modal.appendChild(box);modal.onclick=function(e){if(e.target===modal)closeChatUnlockModal()};document.body.appendChild(modal);var _tC=modal.querySelector('button[onclick*=",\'ton\',"]');if(_tC)_tC.style.display='none';})}
 window.verAnuncioParaChat=async function(targetId,targetName){if(!window.Adsgram&&!window.AdsgramSDK)return toast('SDK no cargado','error');var sdk=window.Adsgram||window.AdsgramSDK;var AdController=sdk.init({blockId:"35856"});toast('Cargando...','success');AdController.show().then(async function(result){if(result.done){var dbResult=await supabase.rpc('registrar_vista_anuncio',{p_user_id:tgUser.id});if(dbResult.error)return toast('Error','error');var w=await supabase.from('wallets').select('premium_tokens').eq('telegram_id',tgUser.id).single();var tokens=w.data?(w.data.premium_tokens||0):0;toast('Anuncio visto','success');if(tokens>=2){window.unlockChat(targetId,'ads',targetName)}else{closeChatUnlockModal();showUnlockModal(targetId,targetName)}}}).catch(function(e){toast('Error al cargar anuncio','error')})};
 window.unlockChat=async function(targetId,metodo,targetName){var result=await supabase.rpc('unlock_direct_chat',{p_user_id:tgUser.id,p_target_id:parseInt(targetId),p_metodo:metodo});if(result.error)return toast('Error: '+result.error.message,'error');if(!result.data.success)return toast(result.data.error,'error');toast('Chat desbloqueado','success');closeChatUnlockModal();currentChatPartner={id:parseInt(targetId),name:targetName};$('#chatPartnerName').textContent=targetName;$('#chatUsersList').classList.add('hidden');$('#chatWindow').classList.remove('hidden');$('#chatInput').parentElement.classList.remove('hidden');loadChatHistory();subscribeToChat();if(typeof loadWalletData==='function')loadWalletData();if(typeof loadDailyMissions==='function')loadDailyMissions()};
 
@@ -933,6 +949,7 @@ window.showAtrevidasModal=function(){
         modal.appendChild(box);
         modal.onclick=function(e){if(e.target===modal)closeAtrevidasModal();};
         document.body.appendChild(modal);
+        var _tA=modal.querySelector('button[onclick*="unlockAtrevidas(\'ton\'")]' ); if(_tA)_tA.style.display='none';
     });
 };
 
