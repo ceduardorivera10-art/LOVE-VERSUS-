@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>LoveVersus</title>
-<!-- Panel de diagnostico: script independiente. Solo se muestra si entras con ?debug=1. En produccion los errores van a consola. -->
+<!-- Panel de diagnostico: solo se muestra si entras con ?debug=1. En produccion los errores van a consola. -->
 <script>
 (function(){
   var DEBUG=/[?&]debug=1\b/.test(location.search);
@@ -35,7 +35,6 @@
 :root{--bg-primary:#0a0a0a;--bg-secondary:#111;--bg-card:#1a1a1a;--accent-blue:#3390ec;--accent-gold:#c9a84c;--accent-rose:#e94560;--accent-green:#34c759;--text-primary:#f5f5f5;--text-secondary:#b0b0b0;--radius-lg:20px;--nav-height:64px;--safe-bottom:env(safe-area-inset-bottom,12px)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg-primary);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;user-select:none}
-/* Fondo ambiente en capas: da profundidad y un parallax sutil al hacer scroll. Fijo, no intercepta clics. */
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(120% 80% at 15% -10%, rgba(51,144,236,0.10), transparent 55%), radial-gradient(120% 80% at 90% 0%, rgba(233,69,96,0.08), transparent 50%), radial-gradient(140% 120% at 50% 120%, rgba(201,168,76,0.05), transparent 60%)}
 .app-container{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;z-index:1;transition:padding-bottom 0.2s ease}
 .header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg-secondary);border-bottom:1px solid #1f1f1f;z-index:100}
@@ -106,7 +105,6 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .btn-accept{background:var(--accent-green);color:#fff}
 .btn-decline{background:#2a2a2a;color:var(--text-secondary)}
 .wallet-card{background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2)}
-/* Latido de estado: la caja de atrevidas "respira" cuando esta activa */
 #atrevidasBox{transition:box-shadow .3s ease, border-color .3s ease}
 #atrevidasBox.unlocked{animation:atrevidasGlow 2.6s ease-in-out infinite}
 @keyframes atrevidasGlow{0%,100%{box-shadow:0 4px 16px rgba(233,69,96,0.25)}50%{box-shadow:0 6px 26px rgba(233,69,96,0.55)}}
@@ -328,10 +326,8 @@ function switchSection(id){
     if(id==='sectionChat')loadChatUsers();
     if(id==='sectionGames')loadAtrevidasStatus();
 }
-// FIX: exponer switchSection al ambito global para que el onclick de la foto del header la encuentre.
 window.switchSection=switchSection;
 
-// Onboarding: pista unica vez para que el usuario no se pierda (guardado en localStorage).
 function applyOnboard(){
   var done=localStorage.getItem('lv_onboarded')==='1';
   var banner=document.getElementById('onboardBanner');
@@ -665,8 +661,6 @@ window.sendGift=async function(giftType){
     if(saldoResult.data < cost){return toast('Saldo insuficiente','error');}
     var result=await supabase.rpc('send_chat_message',{p_sender:tgUser.id,p_receiver:currentChatPartner.id,p_message:'Te ha enviado un regalo!',p_gift:giftType});
     if(result.error||!result.data.success){return toast((result.data&&result.data.error)||'Error al enviar','error');}
-    var updateResult=await supabase.rpc('update_fichas_balance',{p_user_id:tgUser.id,p_fichas: -cost});
-    if(updateResult.error||!updateResult.data.success){return toast('Error al actualizar saldo','error');}
     toast(names[giftType]+' enviada','success');
     updateBalance(); $('#chatInput').parentElement.classList.remove('hidden'); loadChatHistory();
 };
