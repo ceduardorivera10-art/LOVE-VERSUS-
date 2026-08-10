@@ -117,6 +117,16 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 @keyframes lvChampGlow{0%,100%{box-shadow:0 4px 14px rgba(201,168,76,.25)}50%{box-shadow:0 0 0 5px rgba(201,168,76,.12),0 6px 22px rgba(201,168,76,.45)}}
 .lv-pod{transition:transform .12s ease}
 .lv-pod:active{transform:scale(.97)}
+/* Gate de edad 18+ (solo primera vez) */
+#ageGateModal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px);animation:fadeIn .4s ease;}
+#ageGateBox{background:linear-gradient(135deg,#1a1025,#141020);border:2px solid var(--accent-rose);border-radius:24px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(233,69,96,0.3);}
+.ageGateTitle{font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:.3px;}
+.ageGateSub{font-size:13px;color:var(--text-secondary);line-height:1.55;margin-bottom:22px;}
+.ageGateBtn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;transition:transform .12s ease, filter .2s ease;}
+.ageGateBtn:active{transform:scale(.97)}
+.ageGateBtn.yes{background:linear-gradient(135deg,var(--accent-green),#2d9e4f);color:#fff;box-shadow:0 6px 18px rgba(52,199,89,0.35);}
+.ageGateBtn.no{background:transparent;border:2px solid #3a3a3a;color:var(--text-secondary);}
+.ageGateDenied{display:none;background:rgba(233,69,96,0.08);border:1.5px solid rgba(233,69,96,0.4);border-radius:14px;padding:16px;margin-top:14px;}
 @media (prefers-reduced-motion: reduce){
   #atrevidasBox.unlocked{animation:none}
   .lv-token-ico{animation:none}
@@ -300,6 +310,19 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 <div class="toast" id="toast"></div>
 <div class="loader" id="loader"><div class="spinner"></div></div>
+<div id="ageGateModal" style="display:none;">
+  <div id="ageGateBox">
+    <div style="font-size:48px;margin-bottom:12px;">🔞</div>
+    <div class="ageGateTitle">Contenido para adultos</div>
+    <div class="ageGateSub">Esta aplicación contiene preguntas picantes 🔥 y funciones de citas.<br>Debes tener <b style="color:#fff;">18 años o más</b> para usarla.<br><br>¿Confirmas que eres mayor de 18 años?</div>
+    <button class="ageGateBtn yes" onclick="confirmAge(true)">Sí, soy mayor de 18</button>
+    <button class="ageGateBtn no" onclick="confirmAge(false)">No, soy menor</button>
+    <div id="ageGateDenied" class="ageGateDenied">
+      <div style="font-size:13px;color:var(--accent-rose);font-weight:700;margin-bottom:6px;">Acceso denegado</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Lo sentimos, esta aplicación es exclusiva para mayores de 18 años. No puedes continuar.</div>
+    </div>
+  </div>
+</div>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 <script>
@@ -1110,7 +1133,40 @@ window.declineChallenge=async function(){
     toast('Reto rechazado','error');
 };
 
-document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+// Gate de edad 18+ (solo primera vez por usuario)
+var _initRan=false;
+function checkAgeGate(){
+  var confirmed=localStorage.getItem('lv_age_confirmed')==='1';
+  var modal=document.getElementById('ageGateModal');
+  if(!confirmed && modal){
+    modal.style.display='flex';
+    return false;
+  }
+  return true;
+}
+window.confirmAge=function(isAdult){
+  var denied=document.getElementById('ageGateDenied');
+  var modal=document.getElementById('ageGateModal');
+  if(isAdult){
+    localStorage.setItem('lv_age_confirmed','1');
+    if(modal)modal.style.display='none';
+    runInit();
+  }else{
+    if(denied)denied.style.display='block';
+    var btns=document.querySelectorAll('.ageGateBtn');
+    btns.forEach(function(b){b.style.display='none';});
+    var loader=document.getElementById('loader');
+    if(loader)loader.classList.add('hidden');
+  }
+};
+function runInit(){
+  if(_initRan)return;
+  _initRan=true;
+  init();
+}
+document.readyState==='loading'
+  ?document.addEventListener('DOMContentLoaded',function(){ if(checkAgeGate()) runInit(); })
+  :(function(){ if(checkAgeGate()) runInit(); })();
 })();
 </script>
 </body>
