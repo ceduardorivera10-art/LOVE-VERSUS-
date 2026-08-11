@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>LoveVersus</title>
-<!-- Panel de diagnostico: solo se muestra si entras con ?debug=1. En produccion los errores van a consola. -->
 <script>
 (function(){
   var DEBUG=/[?&]debug=1\b/.test(location.search);
@@ -108,16 +107,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 #atrevidasBox{transition:box-shadow .3s ease, border-color .3s ease}
 #atrevidasBox.unlocked{animation:atrevidasGlow 2.6s ease-in-out infinite}
 @keyframes atrevidasGlow{0%,100%{box-shadow:0 4px 16px rgba(233,69,96,0.25)}50%{box-shadow:0 6px 26px rgba(233,69,96,0.55)}}
-/* Tarjeta viva de Tokens Premium en el perfil */
 .lv-token-card{transition:transform .12s ease}
 .lv-token-card:active{transform:scale(.98)}
 .lv-token-ico{animation:lvTokenPulse 2.8s ease-in-out infinite}
 @keyframes lvTokenPulse{0%,100%{box-shadow:0 4px 14px rgba(233,69,96,0.18)}50%{box-shadow:0 0 0 4px rgba(233,69,96,0.10),0 6px 22px rgba(233,69,96,0.34)}}
-/* Podio del ranking */
 @keyframes lvChampGlow{0%,100%{box-shadow:0 4px 14px rgba(201,168,76,.25)}50%{box-shadow:0 0 0 5px rgba(201,168,76,.12),0 6px 22px rgba(201,168,76,.45)}}
 .lv-pod{transition:transform .12s ease}
 .lv-pod:active{transform:scale(.97)}
-/* Gate de edad 18+ (solo primera vez) */
 #ageGateModal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px);animation:fadeIn .4s ease;}
 #ageGateBox{background:linear-gradient(135deg,#1a1025,#141020);border:2px solid var(--accent-rose);border-radius:24px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(233,69,96,0.3);}
 .ageGateTitle{font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:.3px;}
@@ -297,6 +293,17 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 </div>
 </div>
+<div id="challengeWaitModal" class="challenge-modal">
+<div class="challenge-box">
+<div style="font-size:48px;margin-bottom:10px;">⏳</div>
+<h3 style="margin-bottom:8px;">Reto enviado</h3>
+<p style="color:var(--text-secondary);margin-bottom:8px;">Esperando a que <b id="waitName" style="color:#fff;"></b> acepte…</p>
+<div class="timer" id="waitTimer" style="font-size:28px;">60s</div>
+<div class="challenge-actions">
+<button class="btn btn-decline" onclick="cancelInvitation()">Cancelar reto</button>
+</div>
+</div>
+</div>
 <div id="matchModal" class="challenge-modal" onclick="if(event.target===this)closeMatchModal()">
 <div class="challenge-box" style="border-color: var(--accent-rose);">
 <div style="font-size:60px;margin-bottom:10px;">❤️</div>
@@ -428,13 +435,16 @@ async function init(){
         }
         await dailyLogin();
         updateBalance();
+        setInterval(function(){ supabase.rpc('update_online_status',{user_id:tgUser.id,u_name:tgUser.first_name,u_photo:tgUser.photo_url||''}); }, 60000);
         }
         loadProfiles();
         if(!isDemo){ supabase.channel('trivia_live_global').on('postgres_changes',{event:'*',schema:'public',table:'trivia_games'},function(payload){
             var r=payload.new;var myId=Number(tgUser.id);var p1=Number(r.player1_telegram_id);var p2=Number(r.player2_telegram_id);
             if(p2===myId&&r.status==='invited'){pendingChallengeId=r.id;$('#challengeModal').classList.add('show');toast('¡Te han retado a Trivia!','success')}
+            if(p2===myId&&(r.status==='expired'||r.status==='declined')){ $('#challengeModal').classList.remove('show'); }
             if(r.status==='active'&&p2===myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,2)}
-            if(r.status==='active'&&p1===myId&&p2&&p2!==myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');startGameLive(r.id,1)}
+            if(r.status==='active'&&p1===myId&&p2&&p2!==myId&&gameId!==r.id){$('#challengeModal').classList.remove('show');closeWaitModal();startGameLive(r.id,1)}
+            if(p1===myId&&r.status==='declined'){ closeWaitModal(); supabase.rpc('refund_trivia_game',{user_id:myId}).then(function(rr){ if(rr.data!=null){energy.trivia=rr.data;updateEnergy();} toast('Tu rival rechazo el reto. Energia devuelta.','error'); }); }
         }).subscribe(); }
     }catch(e){
         console.error('Error en init:', e);
@@ -779,10 +789,12 @@ window.backToTriviaMenu=function(){
 window.showOnlinePlayers=async function(){
     $$('#triviaFlow > div').forEach(function(s){ s.classList.add('hidden'); s.style.display = 'none'; });
     var op=$('#onlinePlayers'); if(op){op.classList.remove('hidden');op.style.display='block';}
-    var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(20);
+    var result=await supabase.from('online_players').select('*').neq('telegram_id',tgUser.id).order('last_seen',{ascending:false}).limit(50);
     var list=$('#playersList');list.innerHTML='';
-    if(!result.data||!result.data.length){ list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en linea</p>'; return; }
-    result.data.forEach(function(p){
+    var ahora=Date.now();
+    var enLinea=(result.data||[]).filter(function(p){ return (ahora-new Date(p.last_seen).getTime())<5*60*1000; });
+    if(!enLinea.length){ list.innerHTML='<p style="color:#6e6e6e;text-align:center;padding:20px;">No hay jugadores en linea ahora mismo.<br><small>Entra en unos minutos o avisa a un amigo para que abra el bot.</small></p>'; return; }
+    enLinea.forEach(function(p){
         var div=document.createElement('div');
         div.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #1f1f1f;';
         div.innerHTML='<div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;">':(p.first_name||'?')[0].toUpperCase())+'</div><span style="font-weight:600;">'+(p.first_name||'Jugador')+'</span></div><button class="btn" style="width:auto;padding:8px 16px;font-size:12px;background:var(--accent-blue);color:#fff;" onclick="invitarJugador('+p.telegram_id+',\''+p.first_name+'\')">Desafiar</button>';
@@ -1113,13 +1125,32 @@ window.comprarFichas=async function(productId){
     }catch(e){ window.Telegram.WebApp.sendData(productId); toast('Procesando pago...','success'); }
 };
 
+var invitedGameId=null, waitInterval=null;
+function closeWaitModal(){ var m=$('#challengeWaitModal'); if(m)m.classList.remove('show'); if(waitInterval){clearInterval(waitInterval);waitInterval=null;} }
+window.cancelInvitation=async function(){
+    if(!invitedGameId)return;
+    var gid=invitedGameId; invitedGameId=null; closeWaitModal();
+    var up=await supabase.from('trivia_games').update({status:'expired'}).eq('id',gid).eq('status','invited').select('id');
+    if(up.data&&up.data.length){
+        var r=await supabase.rpc('refund_trivia_game',{user_id:tgUser.id});
+        if(r.data!=null){energy.trivia=r.data;updateEnergy();}
+        toast('Reto cancelado. Energia devuelta.','success');
+    }else{ toast('El reto ya no estaba pendiente.',''); }
+};
 window.invitarJugador=async function(tid,tname){
     if(energy.trivia<=0)return toast('Sin energia','error');
     var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,player2_telegram_id:tid,status:'invited'}).select('id').single();
     if(result.error)return toast('Error al enviar reto','error');
     var newEnergy=await supabase.rpc('use_trivia_game',{user_id:tgUser.id});
     energy.trivia=newEnergy.data; updateEnergy();
-    toast('Reto enviado a '+tname,'success');
+    invitedGameId=result.data.id;
+    $('#waitName').textContent=tname;
+    $('#challengeWaitModal').classList.add('show');
+    var t=60; $('#waitTimer').textContent=t+'s';
+    waitInterval=setInterval(function(){
+        t--; if($('#waitTimer'))$('#waitTimer').textContent=t+'s';
+        if(t<=0){ window.cancelInvitation(); }
+    },1000);
 };
 
 window.acceptChallenge=async function(){
