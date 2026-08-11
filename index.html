@@ -918,7 +918,10 @@ async function finishTriviaFromEvent(gameData){
     questions.forEach(function(q,i){ if(p1[i]&&p1[i].selectedOption===q.c)c1++; if(p2[i]&&p2[i].selectedOption===q.c)c2++; if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++; });
     var compat=p1.length?Math.round(matches/p1.length*100):0;
     var winner=c1>c2?1:c2>c1?2:0;
-    if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){ await supabase.rpc('add_trivia_win',{user_id:tgUser.id}); energy.victorias++; updateProfileStats(); }
+    var p1id=gameData.player1_telegram_id, p2id=gameData.player2_telegram_id;
+    if(winner===1&&p1id){ await supabase.rpc('add_trivia_win',{user_id:p1id}); }
+    if(winner===2&&p2id){ await supabase.rpc('add_trivia_win',{user_id:p2id}); }
+    if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){ energy.victorias++; updateProfileStats(); }
     var msg='Compatibilidad: '+compat+'% · Tus aciertos: '+c1+' · Oponente: '+c2;
     showResult(compat,msg);
 }
