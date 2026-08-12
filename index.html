@@ -221,10 +221,10 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;bac
 </div>
 <div style="background:var(--bg-card);border-radius:12px;padding:16px;text-align:center;margin-top:20px;border:1px solid #1f1f1f;"><span id="rangoIcon" style="font-size:28px;">🟤</span><span id="rangoName" style="font-size:16px;font-weight:600;margin-left:8px;">Bronce</span></div>
 <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:2px solid var(--accent-gold);border-radius:16px;padding:16px;margin-top:20px;text-align:center;box-shadow:0 4px 12px rgba(201,168,76,0.2);">
-    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu Código de Invitado</h4>
-    <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:20px;font-weight:bold;color:#fff;letter-spacing:3px;margin-bottom:14px;border:1px dashed #333;" id="myReferralCode">Cargando...</div>
-    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar y Compartir</button>
-    <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre</p>
+    <h4 style="color:var(--accent-gold);margin-bottom:8px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">🎁 Tu link de invitado</h4>
+    <div style="background:#0a0a0a;padding:12px;border-radius:10px;font-family:monospace;font-size:13px;font-weight:bold;color:#fff;letter-spacing:0;margin-bottom:14px;border:1px dashed #333;word-break:break-all;line-height:1.5;" id="myReferralCode">Cargando...</div>
+    <button onclick="copyReferralCode()" style="width:100%;padding:14px;background:var(--accent-gold);color:#000;border:none;border-radius:12px;font-weight:bold;font-size:15px;box-shadow:0 2px 8px rgba(201,168,76,0.4);">📋 Copiar link y Compartir</button>
+    <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Gana <b style="color:#fff;">10 fichas</b> por cada amigo que se registre con tu link</p>
 </div>
 <div style="background:linear-gradient(135deg,#1a2332,#2a3f5f);border:2px solid var(--accent-blue);border-radius:20px;padding:20px;margin-top:20px;box-shadow:0 8px 24px rgba(51,144,236,0.15);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
@@ -427,9 +427,9 @@ async function init(){
         if(walletResult.data&&walletResult.data.wallet){
             var w=walletResult.data.wallet;
             energy.trivia=w.energia_trivia||5;
-            myReferralCode=w.referral_code||'';
+            myReferralCode=w.referral_code?('https://t.me/LoveVersus_bot/Play?startapp=ref_'+w.referral_code):'';
             var codeEl=document.getElementById('myReferralCode');
-            if(codeEl)codeEl.textContent=myReferralCode;
+            if(codeEl)codeEl.textContent=myReferralCode||'Cargando...';
             var fichasEl=document.getElementById('fichasStat');
             if(fichasEl)fichasEl.textContent=w.fichas||0;
             var pkEl0=document.getElementById('premiumTokensStat'); if(pkEl0)pkEl0.textContent=w.premium_tokens||0;
@@ -466,10 +466,10 @@ window.copyReferralCode=function(){
     var code=c.textContent;
     if(code&&code!=='Cargando...'){
         if(navigator.share){
-            navigator.share({title:'LoveVersus',text:'Juega trivia 1vs1 y conoce gente en LoveVersus! Mi codigo: '+code,url:'https://t.me/LoveVersus_bot/Play?startapp=ref_'+code}).catch(function(){});
+            navigator.share({title:'LoveVersus',text:'Juega trivia 1vs1 y conoce gente en LoveVersus!',url:code}).catch(function(){});
         }else{
-            if(navigator.clipboard){ navigator.clipboard.writeText(code); toast('Codigo '+code+' copiado','success'); }
-            else{ toast('Tu codigo es: '+code,'success'); }
+            if(navigator.clipboard){ navigator.clipboard.writeText(code); toast('Link copiado','success'); }
+            else{ toast('Tu link: '+code,'success'); }
         }
     }
 };
