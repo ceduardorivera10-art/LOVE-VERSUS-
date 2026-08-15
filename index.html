@@ -357,6 +357,7 @@ var currentMatchId=null,currentMatchName='';
 var unreadCount=0;
 var myReferralCode='';
 var isDemo=false;
+var recordedWinFor=null;
 var ATREVIDAS_FICHAS=100, ATREVIDAS_TON=0.05, ATREVIDAS_STARS=50, ATREVIDAS_ADS=2;
 
 var $=function(s){return document.querySelector(s)};
@@ -368,7 +369,6 @@ window.closeChatUnlockModal=function(){var m=document.getElementById('chatUnlock
 window.closeAtrevidasModal=function(){var m=document.getElementById('atrevidasModal');if(m)m.remove();};
 
 if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var vh=window.innerHeight;var vvh=window.visualViewport.height;var diff=vh-vvh;var c=$('#appContainer');if(c)c.style.paddingBottom=diff>0?diff+'px':'0px'})}
-// Renueva energia y misiones al volver a la app, aunque Telegram no la recargue
 document.addEventListener('visibilitychange',function(){ if(!document.hidden && supabase && !isDemo){ markChatActive(); refreshUnreadFromServer(); dailyLogin().catch(function(){}); } });
 
 function switchSection(id){
@@ -847,7 +847,7 @@ window.startSoloGame=async function(){
 async function startGameLive(currentGameId,myPlayerNum){
     if(timer){clearInterval(timer);timer=null;}
     if(triviaChannel){supabase.removeChannel(triviaChannel);triviaChannel=null;}
-    gameId=currentGameId; playerNum=myPlayerNum; responses=[];qIdx=0;locked=false;
+    gameId=currentGameId; playerNum=myPlayerNum; responses=[];qIdx=0;locked=false; recordedWinFor=null;
     var wm=$('#waitingMsg'); if(wm)wm.style.display='none';
     var tr=$('#triviaResultado'); if(tr){tr.classList.add('hidden');tr.style.display='none';}
     var tm=$('#triviaMenu'); if(tm){tm.classList.add('hidden');tm.style.display='none';}
@@ -857,12 +857,10 @@ async function startGameLive(currentGameId,myPlayerNum){
     var flow=$('#triviaFlow'); if(flow){flow.classList.remove('hidden');flow.style.display='block';}
     var preg=$('#triviaPreguntas'); if(preg){preg.classList.remove('hidden');preg.style.display='block';}
     await loadQuestions();showQuestion();
-    if(playerNum===2){
-        triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){
-            if(payload.new.id!==gameId)return;
-            if(payload.new.status==='completed')finishTriviaFromEvent(payload.new);
-        }).subscribe();
-    }
+    triviaChannel=supabase.channel('game_'+gameId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'trivia_games',filter:'id=eq.'+gameId},function(payload){
+        if(payload.new.id!==gameId)return;
+        if(payload.new.status==='completed')finishTriviaFromEvent(payload.new);
+    }).subscribe();
     toast('Juego iniciado','success');
 }
 
@@ -926,29 +924,24 @@ async function submitFinalAnswers(){
     await supabase.from('trivia_games').update(updateObj).eq('id',gameId);
     if(playerNum===1){
         await supabase.from('trivia_games').update({status:'completed'}).eq('id',gameId);
-        var correct=0; responses.forEach(function(r,i){ if(r.selectedOption===questions[i].c)correct++; });
-        var score=Math.round(correct/questions.length*100);
-        showResult(score,'Acertaste '+correct+'/'+questions.length);
     }
 }
 
 async function finishTriviaFromEvent(gameData){
     if(!gameData||gameData.id!==gameId)return;
-    var resultEl=$('#triviaResultado'); if(!resultEl||!resultEl.classList.contains('hidden'))return;
+    var resultEl=$('#triviaResultado'); if(!resultEl)return;
     var flow=$('#triviaFlow'); if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return; if(!flow||flow.style.display==='none')return; if(!questions||questions.length===0)return;
     var tp=$('#triviaPreguntas'); if(tp)tp.classList.add('hidden');
     var wm=$('#waitingMsg'); if(wm)wm.style.display='none';
     if(timer){clearInterval(timer);timer=null;}
     var p1=gameData.player1_responses||[]; var p2=gameData.player2_responses||[];
+    if(p1.length===0||p2.length===0){ var wm2=$('#waitingMsg'); if(wm2){wm2.style.display='block';wm2.textContent='Esperando respuestas del rival...';} return; }
     var c1=0,c2=0,matches=0;
     questions.forEach(function(q,i){ if(p1[i]&&p1[i].selectedOption===q.c)c1++; if(p2[i]&&p2[i].selectedOption===q.c)c2++; if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++; });
     var compat=p1.length?Math.round(matches/p1.length*100):0;
     var winner=c1>c2?1:c2>c1?2:0;
-    var p1id=gameData.player1_telegram_id, p2id=gameData.player2_telegram_id;
-    if(winner===1&&p1id){ await supabase.rpc('add_trivia_win',{user_id:p1id}); }
-    if(winner===2&&p2id){ await supabase.rpc('add_trivia_win',{user_id:p2id}); }
-    if((winner===1&&playerNum===1)||(winner===2&&playerNum===2)){ energy.victorias++; updateProfileStats(); }
-    var msg='Compatibilidad: '+compat+'% · Tus aciertos: '+c1+' · Oponente: '+c2;
+    if(winner===playerNum && recordedWinFor!==gameData.id){ recordedWinFor=gameData.id; await supabase.rpc('add_trivia_win',{user_id:tgUser.id}); energy.victorias++; updateProfileStats(); }
+    var msg=(winner===0?'🤝 Empate. ':winner===playerNum?'🏆 ¡Ganaste! ':'😢 Ganó tu rival. ')+'Compatibilidad: '+compat+'% · Tus aciertos: '+(playerNum===1?c1:c2)+' · Rival: '+(playerNum===1?c2:c1);
     showResult(compat,msg);
 }
 
