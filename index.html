@@ -1189,7 +1189,7 @@ window.acceptChallenge=async function(){
 window.declineChallenge=async function(){
     $('#challengeModal').classList.remove('show');
     if(!pendingChallengeId)return;
-    await supabase.from('trivia_games').update({status:'declined').eq('id',pendingChallengeId);
+    await supabase.from('trivia_games').update({status:'declined'}).eq('id',pendingChallengeId);
     pendingChallengeId=null;
     toast('Reto rechazado','error');
 };
