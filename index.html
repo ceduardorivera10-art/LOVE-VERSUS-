@@ -384,7 +384,7 @@ function switchSection(id){
     if(mainEl)mainEl.scrollTop=0;
     if(id==='sectionProfile'){loadWalletData();loadAdsCounter();loadDailyMissions()}
     if(id==='sectionChat')loadChatUsers();
-    if(id==='sectionGames'){loadAtrevidasStatus();loadRanking();}
+    if(id==='sectionGames'){loadAtrevidasStatus();loadRanking(); if(!gameId) showGameMenu();}
 }
 window.switchSection=switchSection;
 
@@ -813,7 +813,7 @@ async function loadRanking(){
 }
 
 window.openTrivia=function(){
-    if(energy.trivia<=0)return toast('Sin partidas hoy','error');
+    if(energy.trivia<=0){ showGameMenu(); return toast('Sin partidas hoy','error'); }
     var gm=$('#gameMenu'); if(gm){gm.classList.add('hidden');gm.style.display='none';}
     var tf=$('#triviaFlow'); if(tf){tf.classList.remove('hidden');tf.style.display='block';}
     backToTriviaMenu();
@@ -824,6 +824,12 @@ window.backToTriviaMenu=function(){
     var tm=$('#triviaMenu'); if(tm){tm.classList.remove('hidden');tm.style.display='block';}
     loadAtrevidasStatus();
 };
+function showGameMenu(){
+    var tf=$('#triviaFlow'); if(tf){tf.classList.add('hidden');tf.style.display='none';}
+    var cf=$('#compatFlow'); if(cf){cf.classList.add('hidden');cf.style.display='none';}
+    var op=$('#onlinePlayers'); if(op){op.classList.add('hidden');op.style.display='none';}
+    var gm=$('#gameMenu'); if(gm){gm.classList.remove('hidden');gm.style.display='block';}
+}
 
 window.showOnlinePlayers=async function(){
     $$('#triviaFlow > div').forEach(function(s){ s.classList.add('hidden'); s.style.display = 'none'; });
@@ -860,7 +866,7 @@ window.resetGames=function(){
 };
 
 window.startSoloGame=async function(){
-    if(energy.trivia<=0)return toast('Sin energia','error');
+    if(energy.trivia<=0){ showGameMenu(); return toast('Sin energia','error'); }
     cleanupGame();
     var result=await supabase.from('trivia_games').insert({player1_telegram_id:tgUser.id,status:'active'}).select('id').single();
     if(result.error)return toast('Error al crear partida','error');
