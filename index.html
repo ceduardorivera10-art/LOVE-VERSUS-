@@ -961,14 +961,21 @@ async function submitFinalAnswers(){
 async function finishTriviaFromEvent(gameData){
     if(!gameData||gameData.id!==gameId)return;
     var resultEl=$('#triviaResultado'); if(!resultEl)return;
-    var flow=$('#triviaFlow'); if($('#gameMenu')&&!$('#gameMenu').classList.contains('active'))return; if(!flow||flow.style.display==='none')return; if(!questions||questions.length===0)return;
+    var flow=$('#triviaFlow'); if(!flow||flow.style.display==='none')return;
+    if(!questions||questions.length===0)return;
+    var isSolo=!gameData.player2_telegram_id;
     var tp=$('#triviaPreguntas'); if(tp)tp.classList.add('hidden');
     var wm=$('#waitingMsg'); if(wm)wm.style.display='none';
     if(timer){clearInterval(timer);timer=null;}
     var p1=gameData.player1_responses||[]; var p2=gameData.player2_responses||[];
-    if(p1.length===0||p2.length===0){ var wm2=$('#waitingMsg'); if(wm2){wm2.style.display='block';wm2.textContent='Esperando respuestas del rival...';} return; }
+    if(!isSolo&&(p1.length===0||p2.length===0)){ var wm2=$('#waitingMsg'); if(wm2){wm2.style.display='block';wm2.textContent='Esperando respuestas del rival...';} return; }
     var c1=0,c2=0,matches=0;
     questions.forEach(function(q,i){ if(p1[i]&&p1[i].selectedOption===q.c)c1++; if(p2[i]&&p2[i].selectedOption===q.c)c2++; if(p1[i]&&p2[i]&&p1[i].selectedOption===p2[i].selectedOption)matches++; });
+    if(isSolo){
+        var score=Math.round(c1/questions.length*100);
+        showResult(score,'🧪 Práctica: acertaste '+c1+'/'+questions.length+'. Las victorias y el ranking solo cuentan en duelos 1vs1.');
+        return;
+    }
     var compat=p1.length?Math.round(matches/p1.length*100):0;
     var winner=c1>c2?1:c2>c1?2:0;
     if(winner===playerNum && recordedWinFor!==gameData.id){ recordedWinFor=gameData.id; await supabase.rpc('add_trivia_win',{user_id:tgUser.id}); energy.victorias++; updateProfileStats(); }
